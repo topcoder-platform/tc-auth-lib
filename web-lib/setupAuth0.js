@@ -90,7 +90,7 @@ const authSetup = function () {
             }).catch(function (e) {
                 console.log("Error in refreshing token: ", e)
                 if (e.error && ((e.error == "login_required") || (e.error == "timeout"))) {
-                    init();
+                    clearInterval(callRefreshTokenFun); 
                 }
             }
             );
