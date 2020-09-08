@@ -1,4 +1,4 @@
-const fromPairs = require('lodash/fromPairs')
+const _ = require('lodash')
 
 
 export function getToken(key) {
@@ -82,7 +82,7 @@ function getTokenExpirationDate(token) {
 }
 
 function parseCookie(cookie) {
-  return fromPairs(cookie.split(';').map((pair) => pair.split('=').map((part) => part.trim())))
+  return _.fromPairs(cookie.split(';').map((pair) => pair.split('=').map((part) => part.trim())))
 }
 
 function readCookie(name) {
