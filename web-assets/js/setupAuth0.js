@@ -35,7 +35,7 @@ const authSetup = function () {
     const refreshTokenOffset = 65; // in seconds
     const returnAppUrl = qs['retUrl'];
     const shouldLogout = qs['logout'];
-    const resSource = qs['resSource'];
+    const regSource = qs['regSource'];
     
 
     var auth0 = null;
@@ -113,7 +113,7 @@ const authSetup = function () {
         auth0
             .loginWithPopup({
                 redirect_uri: host + '/callback.html',
-                resSource: resSource
+                regSource: regSource
             })
             .then(function () {
                 auth0.isAuthenticated().then(function (isAuthenticated) {
