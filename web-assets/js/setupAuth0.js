@@ -23,18 +23,19 @@ const qs = (function (a) {
 
 const authSetup = function () {
 
-    const domain = '<tenant>';
-    const clientId = '<client-id>';
+    const domain = 'topcoder-dev.auth0.com';
+    const clientId = 'BXWXUWnilVUPdN01t2Se29Tw2ZYNGZvH';
     const useLocalStorage = false;
     const useRefreshTokens = false;
     const v3JWTCookie = 'v3jwt';
     const tcJWTCookie = 'tcjwt';
     const tcSSOCookie = 'tcsso';
-    const cookieExpireIn = 30; // 30 mins
-    const refreshTokenInterval = 300000; // in milliseconds
-    const refreshTokenOffset = 60;
+    const cookieExpireIn = 12*60; // 12 hrs
+    const refreshTokenInterval = 60000; // in milliseconds
+    const refreshTokenOffset = 65; // in seconds
     const returnAppUrl = qs['retUrl'];
     const shouldLogout = qs['logout'];
+    const resSource = qs['resSource'];
     
 
     var auth0 = null;
@@ -45,6 +46,7 @@ const authSetup = function () {
     const registerSuccessUrl = host + '/register_success.html';
 
     const init = function () {
+        correctOldUrl();
         createAuth0Client({
             domain: domain,
             client_id: clientId,
@@ -110,7 +112,8 @@ const authSetup = function () {
     const login = function () {
         auth0
             .loginWithPopup({
-                redirect_uri: host + '/callback.html'
+                redirect_uri: host + '/callback.html',
+                resSource: resSource
             })
             .then(function () {
                 auth0.isAuthenticated().then(function (isAuthenticated) {
@@ -145,6 +148,7 @@ const authSetup = function () {
             if (callRefreshTokenFun != null) {
                 clearInterval(callRefreshTokenFun);
             }
+            refreshToken();
             callRefreshTokenFun = setInterval(refreshToken, refreshTokenInterval);
         }
     }
@@ -273,5 +277,13 @@ const authSetup = function () {
         }
         return hostDomain;
     }
+
+    function correctOldUrl() {
+        let pattern = '#!/member';
+        if (window.location.href.indexOf(pattern) > -1) {
+            window.location.href = window.location.href.replace(pattern, ''); 
+        }
+    }
+
     init();
 };
