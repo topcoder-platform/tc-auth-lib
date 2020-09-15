@@ -36,6 +36,7 @@ const authSetup = function () {
     const returnAppUrl = qs['retUrl'];
     const shouldLogout = qs['logout'];
     const regSource = qs['regSource'];
+    const utmSource= qs['utm_source'];
     
 
     var auth0 = null;
@@ -113,7 +114,8 @@ const authSetup = function () {
         auth0
             .loginWithPopup({
                 redirect_uri: host + '/callback.html',
-                regSource: regSource
+                regSource: regSource,
+                utmSource: utmSource
             })
             .then(function () {
                 auth0.isAuthenticated().then(function (isAuthenticated) {
