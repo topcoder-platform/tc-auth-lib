@@ -283,6 +283,7 @@ const authSetup = function () {
     function correctOldUrl() {
         const pattern = '#!/member';
         const sso_pattern = '/#!/sso-login';
+        const logout_pattern = '/#!/logout?';
  
 	if (window.location.href.indexOf(pattern) > -1) {
             window.location.href = window.location.href.replace(pattern, ''); 
@@ -290,6 +291,10 @@ const authSetup = function () {
 
 	if (window.location.href.indexOf(sso_pattern) > -1) {
             window.location.href = window.location.href.replace(sso_pattern, '');
+        }
+
+	if (window.location.href.indexOf(logout_pattern) > -1) {
+            window.location.href = window.location.href.replace(logout_pattern, '/?logout=true&');
         }
     }
 
