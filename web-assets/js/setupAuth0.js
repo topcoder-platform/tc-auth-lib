@@ -281,9 +281,15 @@ const authSetup = function () {
     }
 
     function correctOldUrl() {
-        let pattern = '#!/member';
-        if (window.location.href.indexOf(pattern) > -1) {
+        const pattern = '#!/member';
+        const sso_pattern = '/#!/sso-login';
+ 
+	if (window.location.href.indexOf(pattern) > -1) {
             window.location.href = window.location.href.replace(pattern, ''); 
+        }
+
+	if (window.location.href.indexOf(sso_pattern) > -1) {
+            window.location.href = window.location.href.replace(sso_pattern, '');
         }
     }
 
