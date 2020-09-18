@@ -30,14 +30,14 @@ const authSetup = function () {
     const v3JWTCookie = 'v3jwt';
     const tcJWTCookie = 'tcjwt';
     const tcSSOCookie = 'tcsso';
-    const cookieExpireIn = 12*60; // 12 hrs
+    const cookieExpireIn = 12 * 60; // 12 hrs
     const refreshTokenInterval = 60000; // in milliseconds
     const refreshTokenOffset = 65; // in seconds
     const returnAppUrl = qs['retUrl'];
     const shouldLogout = qs['logout'];
     const regSource = qs['regSource'];
-    const utmSource= qs['utm_source'];
-    
+    const utmSource = qs['utm_source'];
+
 
     var auth0 = null;
     var isAuthenticated = false;
@@ -56,6 +56,7 @@ const authSetup = function () {
                 : 'memory',
             useRefreshTokens: useRefreshTokens
         }).then(_init);
+        window.addEventListener("message", receiveMessage, false);
     };
 
     const _init = function (authObj) {
@@ -93,7 +94,7 @@ const authSetup = function () {
             }).catch(function (e) {
                 console.log("Error in refreshing token: ", e)
                 if (e.error && ((e.error == "login_required") || (e.error == "timeout"))) {
-                    clearInterval(callRefreshTokenFun); 
+                    clearInterval(callRefreshTokenFun);
                 }
             }
             );
@@ -284,18 +285,25 @@ const authSetup = function () {
         const pattern = '#!/member';
         const sso_pattern = '/#!/sso-login';
         const logout_pattern = '/#!/logout?';
- 
-	if (window.location.href.indexOf(pattern) > -1) {
-            window.location.href = window.location.href.replace(pattern, ''); 
+
+        if (window.location.href.indexOf(pattern) > -1) {
+            window.location.href = window.location.href.replace(pattern, '');
         }
 
-	if (window.location.href.indexOf(sso_pattern) > -1) {
+        if (window.location.href.indexOf(sso_pattern) > -1) {
             window.location.href = window.location.href.replace(sso_pattern, '');
         }
 
-	if (window.location.href.indexOf(logout_pattern) > -1) {
+        if (window.location.href.indexOf(logout_pattern) > -1) {
             window.location.href = window.location.href.replace(logout_pattern, '/?logout=true&');
         }
+    }
+
+    /**
+     * will receive message from iframe
+     */
+    function receiveMessage(e) {
+        console.log("received Event:", e);
     }
 
     init();
