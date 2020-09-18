@@ -37,6 +37,8 @@ const authSetup = function () {
     const shouldLogout = qs['logout'];
     const regSource = qs['regSource'];
     const utmSource = qs['utm_source'];
+    const loggerMode = "dev";
+    const IframeLogoutRequestType = "LOGOUT_REQUEST";
 
 
     var auth0 = null;
@@ -299,11 +301,24 @@ const authSetup = function () {
         }
     }
 
+    function logger(label, message) {
+        if (loggerMode === "dev") {
+            console.log(label, message);
+        }
+    }
+
     /**
      * will receive message from iframe
      */
     function receiveMessage(e) {
-        console.log("received Event:", e);
+        logger("received Event:", e);
+        if (e.data && e.data.type && e.origin) {
+            if (e.data.type === IframeLogoutRequestType) {
+                host = e.origin;
+                logout();
+            }
+        }
+
     }
 
     init();
