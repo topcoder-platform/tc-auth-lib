@@ -7,7 +7,7 @@ let url = ''
 let mock = false
 let token = ''
 
-function configureConnector({connectorUrl, frameId, mockMode, mockToken}) {
+export function configureConnector({connectorUrl, frameId, mockMode, mockToken}) {
   if (mockMode) {
     mock = true
     token = mockToken
@@ -65,7 +65,7 @@ const proxyCall = function() {
   }
 }
 
-function getFreshToken() {
+export function getFreshToken() {
   if (mock) {
     if (token) {
       return Promise.resolve(token)
@@ -78,8 +78,5 @@ function getFreshToken() {
     .then( data => data.token )
 }
 
-module.exports = {
-  getFreshToken,
-  configureConnector
-}
+
 

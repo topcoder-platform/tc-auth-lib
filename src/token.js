@@ -1,12 +1,12 @@
-const fromPairs = require('lodash/fromPairs')
+const _ = require('lodash')
 
 
-function getToken(key) {
+export function getToken(key) {
   return readCookie(key)
 }
 
 
-function decodeToken(token) {
+export function decodeToken(token) {
   const parts = token.split('.')
 
   if (parts.length !== 3) {
@@ -36,7 +36,7 @@ function decodeToken(token) {
   return t
 }
 
-function isTokenExpired(token, offsetSeconds = 0) {
+export function isTokenExpired(token, offsetSeconds = 0) {
   const d = getTokenExpirationDate(token)
 
   if (d === null) {
@@ -82,16 +82,10 @@ function getTokenExpirationDate(token) {
 }
 
 function parseCookie(cookie) {
-  return fromPairs(cookie.split(';').map((pair) => pair.split('=').map((part) => part.trim())))
+  return _.fromPairs(cookie.split(';').map((pair) => pair.split('=').map((part) => part.trim())))
 }
 
 function readCookie(name) {
   return parseCookie(document.cookie)[name]
 }
 
-
-module.exports = {
-  isTokenExpired,
-  decodeToken,
-  getToken
-}

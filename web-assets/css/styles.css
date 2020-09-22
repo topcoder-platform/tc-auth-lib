@@ -1,0 +1,374 @@
+:root {
+  font-size: 62.5%;
+}
+
+html {
+  -webkit-tap-highlight-color: #59a7ff;
+  box-sizing: border-box;
+  min-height: 100%;
+}
+
+body {
+  background-color: #f6f6f6;
+  font-family: "Roboto", sans-serif;
+  font-size: 1.4rem;
+  font-weight: 400;
+  margin: 0;
+  padding: 0;
+}
+
+*,
+:after,
+:before {
+  box-sizing: inherit;
+}
+
+/*For IE*/
+main {
+  display: block;
+}
+
+a,
+a:active,
+a:visited {
+  -webkit-tap-highlight-color: transparent;
+  color: #0d61bf;
+  cursor: pointer;
+  outline: 0;
+  text-decoration: none;
+}
+a:hover {
+  color: #097dce;
+  text-decoration: none;
+}
+
+button {
+  background-color: #006ad7;
+  border: 1px solid transparent;
+  border-radius: 25px;
+  color: #fff;
+  font-size: 1.6rem;
+  font-weight: 600;
+  height: 50px;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  min-width: 150px;
+  outline: 0;
+  text-transform: uppercase;
+}
+
+button:not(:disabled):hover {
+  background-image: linear-gradient(180deg, #3996ff, #127bf3);
+}
+a,
+button {
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+button:focus,
+a:focus {
+  outline: 1px solid #59a7ff;
+}
+
+button:disabled {
+  background-color: #d1d3d4;
+  border: none;
+  cursor: default;
+  opacity: 0.4;
+}
+
+p {
+  color: #37373c;
+  font-size: 1.6rem;
+  margin: 0 0 10px;
+}
+h1 {
+  align-self: center;
+  color: #2a2a2a;
+  font-size: 3.4rem;
+  font-weight: 400;
+  margin: 20px 0;
+  text-transform: uppercase;
+}
+
+select,
+input {
+  background-color: transparent;
+  border: 1px solid #aaa;
+  border-radius: 5px;
+  color: #2a2a2a;
+  font-size: 1.6rem;
+  height: 50px;
+  padding: 1px 5px 1px 15px;
+  outline: 0;
+  width: 100%;
+}
+
+/*For IE*/
+::-ms-clear {
+  display: none;
+}
+
+select:focus,
+input:focus,
+select:hover,
+input:hover {
+  box-shadow: inset 0 0 3px 0 #b7b7b7;
+}
+
+select {
+  -moz-appearance: none; /* Firefox */
+  -webkit-appearance: none; /* Safari and Chrome */
+  appearance: none;
+  background: transparent url("./images/icons/arrow.svg") no-repeat
+    calc(100% - 10px) center;
+  background-size: 15px;
+  padding-right: 35px;
+}
+
+/*For IE*/
+select::-ms-expand {
+  display: none;
+}
+
+/** IE requires arrow add as parent class of select box to get output **/
+.custom-dropdowm-arrow {
+  background: #fff url("./images/icons/arrow.svg") calc(100% - 10px) 17px;
+  background-repeat: no-repeat;
+  background-size: 15px;
+}
+
+.custom-dropdowm-arrow select {
+  background: none;
+}
+
+.page-wrapper {
+  margin: 0 auto;
+  max-width: 1240px;
+  padding: 0 15px;
+  width: 100%;
+}
+
+.clip-me {
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+/** Start - Skip to content **/
+.action.skip {
+  box-sizing: border-box;
+  position: absolute;
+}
+.action.skip:not(:focus) {
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+}
+
+.action.skip:focus {
+  background: #f0f0f0;
+  left: 0;
+  padding: 10px;
+  text-align: center;
+  top: 0;
+  z-index: 15;
+}
+/** End - Skip to content **/
+
+.header {
+  border-radius: 10px 10px 0 0;
+  background-color: #3d3d3d;
+  padding: 20px 10px;
+  text-align: center;
+}
+
+.header .logo-link {
+  display: inline-block;
+}
+
+.header .logo-link img {
+  height: 30px;
+}
+
+.footer {
+  color: #2a2a2a;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  margin: 0 auto 20px;
+  padding: 20px 0;
+}
+.footer .privacy-policy {
+  text-decoration: underline;
+}
+
+.footer .privacy-policy:hover {
+  text-decoration: none;
+}
+
+.center-align-card .page-wrapper {
+  max-width: 90%;
+  padding: 0;
+}
+.center-align-card .page-content {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px 1px #e9e9e9;
+  margin: 10% auto 20px;
+  position: relative;
+}
+
+.center-align-card .page-content .page-main {
+  padding: 50px 40px 80px;
+  position: relative;
+  text-align: center;
+}
+
+.center-align-card .page-content .page-main .page-title-heading {
+  margin-top: 0;
+}
+
+.center-align-card .page-content .page-main .page-description {
+  color: #3d3d3d;
+  font-size: 2rem;
+  font-weight: 300;
+  line-height: 1.5;
+  margin-bottom: 0;
+}
+
+/** Start : Input/select box - field area style **/
+.input-field {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.input-field label {
+  -webkit-font-smoothing: antialiased;
+  bottom: 100%;
+  background-color: #fff;
+  color: #3e3e3e;
+  font-size: 1.6rem;
+  height: auto;
+  left: 0;
+  line-height: 1.4;
+  margin: 5px 0 5px 12px;
+  max-width: 100%;
+  overflow: hidden;
+  padding: 0 0 0 3px;
+  position: absolute;
+  right: auto;
+  transform-origin: left top;
+  transform: translate3d(0, 42px, 0) scale(1);
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: unset;
+  z-index: 1;
+}
+
+.input-field.active label {
+  transform: translate3d(0, 18px, 0) scale(0.95);
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+    width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.input-field.focussed label {
+  color: #006ad7;
+}
+
+/** End : Input/select box - field area style **/
+
+/**
+ * Message - Error Message style
+ **/
+
+.messages .message {
+  border-radius: 5px;
+  display: none;
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+  padding: 15px 40px 15px 10px;
+  position: relative;
+  text-align: left;
+}
+
+.messages .close-error {
+  cursor: pointer;
+  height: 20px;
+  position: absolute;
+  right: 10px;
+  text-align: center;
+  top: 15px;
+  width: 20px;
+}
+.messages .message:before {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  content: "";
+  display: inline-block;
+  height: 20px;
+  line-height: 1.25;
+  overflow: hidden;
+  text-align: center;
+  width: 20px;
+  vertical-align: top;
+}
+
+.messages .message .message-content {
+  display: inline-block;
+  margin-left: 10px;
+  width: calc(100% - 35px);
+  vertical-align: top;
+}
+
+.messages .message.error {
+  background-color: #ea1900;
+  color: #ffffff;
+}
+.messages .message.error:before {
+  content: "\26A0";
+}
+
+.messages .close-error:before {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  content: "\2716";
+  display: inline-block;
+  height: 20px;
+  line-height: 1.25;
+  overflow: hidden;
+  text-align: center;
+  vertical-align: middle;
+  width: 20px;
+}
+
+/** Mobile - specific CSS **/
+@media (max-width: 767px) {
+  .footer {
+    padding-bottom: 10px;
+  }
+  .footer .copyright-text,
+  .footer .privacy-polic {
+    margin-bottom: 10px;
+  }
+}
+
+/** Desktop + tab - specific CSS **/
+@media (min-width: 768px) {
+  .center-align-card .page-content {
+    margin-top: 12%;
+  }
+  .center-align-card .page-wrapper {
+    max-width: 520px;
+  }
+}

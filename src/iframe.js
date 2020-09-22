@@ -1,4 +1,4 @@
-function createFrame(id, src) {
+export function createFrame(id, src) {
   const iframe = document.createElement('iframe')
 
   iframe.id = id
@@ -10,7 +10,4 @@ function createFrame(id, src) {
   document.body.appendChild(iframe)
 
   return iframe
-}
-module.exports = {
-  createFrame
 }

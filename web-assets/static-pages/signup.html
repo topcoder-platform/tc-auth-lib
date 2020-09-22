@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Signup</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" href="./images/favicon.ico" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.min.js"
+      integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://authlib.topcoder-dev.com/country.js"></script>
+    <script>
+      var formAction = "https://topcoder-dev.auth0.com/continue";
+      var apiServerUrl = "https://api.topcoder-dev.com/v3/users";
+      var qs = (function (a) {
+        if (a == "") return {};
+        var b = {};
+        for (var i = 0; i < a.length; ++i) {
+          var p = a[i].split("=", 2);
+          if (p.length == 1) b[p[0]] = "";
+          else b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
+        }
+        return b;
+      })(window.location.search.substr(1).split("&"));
+    </script>
+    <script>
+      $(document).ready(function () {
+        $.each(countryObjs, function () {
+          $("#country").append(
+            $("<option></option>").text(this.name).val(JSON.stringify(this))
+          );
+        });
+        $("#continueBtn").click(function () {
+          var handle = $("#handle").val();
+          var country = $("#country").val();
+          $.ajax({
+            url: apiServerUrl + "/validateHandle?handle=" + handle,
+            xhrFields: {
+              withCredentials: true,
+            },
+            success: function (result) {
+              if (
+                result.result.status === 200 &&
+                !result.result.content.valid
+              ) {
+                $("#error").html("Error: " + result.result.content.reason);
+                $("#error").closest(".message").fadeIn();
+              }
+              if (result.result.status === 200 && result.result.content.valid) {
+                $("#error").closest(".message").fadeOut();
+                $("#error").html("");
+                document.getElementById("signup").action = formAction;
+                document.getElementById("state").value = qs["state"];
+                document.getElementById("source").value = qs["source"] || null;
+                document.getElementById("signup").submit();
+              }
+            },
+          });
+          return false;
+        });
+
+        /**
+         * Script for field placeholder
+         **/
+        $(".messages .close-error").on("click", function () {
+          $(this).closest(".message").fadeOut();
+        });
+        var inputObj = $(".input-field .input-text"),
+          continueBtnDisable = false;
+        inputObj
+          .on("focus", function () {
+            $(this).parent().addClass("active focussed");
+          })
+          .on("blur", function () {
+            var parentObj = $(this).parent();
+            if ($(this).val() === "") {
+              parentObj.removeClass("active");
+            }
+            parentObj.removeClass("focussed");
+          })
+          .on("change", function () {
+            var disableStatus = false;
+            inputObj.each(function (index, element) {
+              if ($(element).val() === "") {
+                disableStatus = true;
+                return;
+              }
+            });
+            setContinueButtonDisabledStatus(disableStatus);
+          })
+          .each(function (index, element) {
+            var parentObj = $(element).parent();
+            if ($(element).val() !== "") {
+              parentObj.addClass("active");
+            } else {
+              parentObj.removeClass("active");
+            }
+
+            if ($(element).val() === "" && continueBtnDisable === false) {
+              continueBtnDisable = true;
+            }
+
+            setContinueButtonDisabledStatus(continueBtnDisable);
+          });
+      });
+      function setContinueButtonDisabledStatus(status) {
+        var continueBtnObj = $("#continueBtn");
+        if (status) {
+          continueBtnObj.attr("disabled", true);
+        } else {
+          continueBtnObj.removeAttr("disabled");
+        }
+      }
+    </script>
+  </head>
+
+  <body class="center-align-card">
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+      <!-- For ADA - Skip to Content Area -->
+      <a class="action skip" href="#contentarea">Skip to Content</a>
+      <!-- Page Content Area -  Header + Main content -->
+      <div class="page-content">
+        <header class="header">
+          <a href="/" class="logo-link">
+            <img
+              src="./images/logo.png"
+              alt="Topcoder Logo"
+              width="94"
+              height="30"
+            />
+          </a>
+        </header>
+        <main id="main" class="page-main">
+          <a id="contentarea" tabindex="-1"></a>
+          <h1 id="page-title-heading" class="page-title-heading clip-me">
+            Signup
+          </h1>
+          <div class="messages">
+            <div role="alert" class="message error">
+              <div id="error" class="message-content"></div>
+              <span class="close-error" tabindex="0">
+                <span class="clip-me">Close</span>
+              </span>
+            </div>
+          </div>
+          <form method="GET" id="signup" action="#">
+            <input id="state" name="state" value="" type="hidden" />
+            <input id="source" name="source" value="" type="hidden" />
+            <div id="hd" class="input-field active">
+              <label for="handle">Enter your handle</label>
+              <input
+                id="handle"
+                name="handle"
+                size="43"
+                class="input-text"
+                autocomplete="off"
+              />
+            </div>
+            <div id="cc" class="input-field active custom-dropdowm-arrow">
+              <label for="country">Select your country </label>
+              <select id="country" name="country" class="input-text"></select>
+            </div>
+            <div id="sb" class="action-wrapper">
+              <button
+                type="submit"
+                id="continueBtn"
+                class="continue-btn"
+                disabled="disabled"
+              >
+                Continue
+              </button>
+            </div>
+          </form>
+        </main>
+      </div>
+      <footer class="footer">
+        <div class="copyright-text">
+          <strong>&copy;</strong> 2020 Topcoder. All Rights Reserved
+        </div>
+        <a
+          class="privacy-policy"
+          href="https://www.topcoder.com/privacy-policy/"
+          >Privacy Policy</a
+        >
+      </footer>
+    </div>
+  </body>
+</html>
