@@ -53,8 +53,8 @@ const proxyCall = function() {
       iframe.contentWindow.postMessage(payload, url)
     }) */
     return new Promise((resolve, reject) => {
-      const token = getToken('tcjwt')
-      token ? resolve({ token: token }) : reject("tcjwt cookie not found")
+      const token = getToken('v3jwt')
+      token ? resolve({ token: token }) : reject("v3jwt cookie not found")
     })
   }
 
