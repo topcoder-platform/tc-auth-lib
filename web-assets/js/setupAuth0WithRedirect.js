@@ -163,6 +163,13 @@ const authSetup = function () {
     };
 
     const postLogin = function () {
+        if (isLoggedIn() && returnAppUrl) {
+            auth0.isAuthenticated().then(function (isAuthenticated) {
+                if (isAuthenticated) {
+                    window.location = returnAppUrl;
+                }
+            });
+        }
         logger('calling postLogin: ', true);
         logger('callRefreshTokenFun: ', callRefreshTokenFun);
         if (callRefreshTokenFun != null) {
