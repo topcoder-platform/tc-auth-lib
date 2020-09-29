@@ -167,6 +167,8 @@ const authSetup = function () {
             auth0.isAuthenticated().then(function (isAuthenticated) {
                 if (isAuthenticated) {
                     window.location = returnAppUrl;
+                } else {
+                    login(); // old session exist case
                 }
             });
         }
