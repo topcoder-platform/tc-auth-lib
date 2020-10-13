@@ -33,7 +33,7 @@ const authSetup = function () {
     const cookieExpireIn = 12 * 60; // 12 hrs
     const refreshTokenInterval = 60000; // in milliseconds
     const refreshTokenOffset = 65; // in seconds
-    const returnAppUrl = qs['retUrl'];
+    let returnAppUrl = qs['retUrl'];
     const shouldLogout = qs['logout'];
     const regSource = qs['regSource'];
     const utmSource = qs['utm_source'];
@@ -43,6 +43,7 @@ const authSetup = function () {
 
     if (utmSource && utmSource != 'undefined') {
         domain = "topcoder-dev.auth0.com";
+        returnAppUrl += '&utm_source=' + utmSource;
     }
 
 
