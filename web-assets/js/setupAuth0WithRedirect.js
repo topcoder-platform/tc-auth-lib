@@ -23,7 +23,7 @@ const qs = (function (a) {
 
 const authSetup = function () {
 
-    const domain = 'topcoder-dev.auth0.com';
+    let domain = 'auth.topcoder-dev.com';
     const clientId = 'BXWXUWnilVUPdN01t2Se29Tw2ZYNGZvH';
     const useLocalStorage = false;
     const useRefreshTokens = false;
@@ -40,6 +40,10 @@ const authSetup = function () {
     const appUrl = qs['appUrl'] || false;
     const loggerMode = "dev";
     const IframeLogoutRequestType = "LOGOUT_REQUEST";
+
+    if (utmSource && utmSource != 'undefined') {
+        domain = "topcoder-dev.auth0.com";
+    }
 
 
     var auth0 = null;
