@@ -49,6 +49,8 @@ $(document).ready(function () {
           document.getElementById("signup").action = qs["formAction"];
           document.getElementById("state").value = qs["state"];
           document.getElementById("source").value = qs["source"] || null;
+          document.getElementById("utmMedium").value = qs["utmMedium"] || null;
+          document.getElementById("utmCampaign").value = qs["utmCampaign"] || null;
           document.getElementById("signup").submit();
         }
       },
