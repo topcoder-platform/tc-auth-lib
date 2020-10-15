@@ -37,11 +37,16 @@ const authSetup = function () {
     const shouldLogout = qs['logout'];
     const regSource = qs['regSource'];
     const utmSource = qs['utm_source'];
+    const utmMedium = qs['utm_medium'];
+    const utmCampaign = qs['utm_campaign'];
     const appUrl = qs['appUrl'] || false;
     const loggerMode = "dev";
     const IframeLogoutRequestType = "LOGOUT_REQUEST";
+    const enterpriseCustomers = ['wipro', 'zurich', 'cs'];
 
-    if (utmSource && utmSource != 'undefined') {
+    if (utmSource &&
+        (utmSource != 'undefined') &&
+        (enterpriseCustomers.indexOf(utmSource) > -1)) {
         domain = "topcoder-dev.auth0.com";
         returnAppUrl += '&utm_source=' + utmSource;
     }
@@ -131,7 +136,9 @@ const authSetup = function () {
             .loginWithRedirect({
                 redirect_uri: host + '?appUrl=' + returnAppUrl,
                 regSource: regSource,
-                utmSource: utmSource
+                utmSource: utmSource,
+                utmCampaign: utmCampaign,
+                utmMedium: utmMedium
             })
             .then(function () {
                 auth0.isAuthenticated().then(function (isAuthenticated) {
@@ -216,7 +223,7 @@ const authSetup = function () {
                 host = registerSuccessUrl;
                 logout();
             }
-        }).catch(function(e) {
+        }).catch(function (e) {
             logger("Error in fetching token from auth0: ", e);
         });
     };
@@ -297,7 +304,7 @@ const authSetup = function () {
         const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
         return v ? v[2] : undefined;
     }
- // end token.js 
+    // end token.js 
 
     function getHostDomain() {
         let hostDomain = "";
