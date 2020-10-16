@@ -51,6 +51,7 @@ $(document).ready(function () {
           document.getElementById("source").value = qs["source"] || null;
           document.getElementById("utmMedium").value = qs["utmMedium"] || null;
           document.getElementById("utmCampaign").value = qs["utmCampaign"] || null;
+          document.getElementById("returnUrl").value = qs["returnUrl"] || null;
           document.getElementById("signup").submit();
         }
       },

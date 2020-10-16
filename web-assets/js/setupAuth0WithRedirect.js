@@ -32,8 +32,7 @@ const authSetup = function () {
     const tcSSOCookie = 'tcsso';
     const cookieExpireIn = 12 * 60; // 12 hrs
     const refreshTokenInterval = 60000; // in milliseconds
-    const refreshTokenOffset = 65; // in seconds
-    let returnAppUrl = qs['retUrl'];
+    const refreshTokenOffset = 65; // in seconds  
     const shouldLogout = qs['logout'];
     const regSource = qs['regSource'];
     const utmSource = qs['utm_source'];
@@ -42,7 +41,8 @@ const authSetup = function () {
     const appUrl = qs['appUrl'] || false;
     const loggerMode = "dev";
     const IframeLogoutRequestType = "LOGOUT_REQUEST";
-    const enterpriseCustomers = ['wipro', 'zurich', 'cs'];
+    const enterpriseCustomers = ['wipro', 'topgear', 'zurich', 'cs'];
+    let returnAppUrl = qs['retUrl'];
 
     if (utmSource &&
         (utmSource != 'undefined') &&
