@@ -138,7 +138,8 @@ const authSetup = function () {
                 regSource: regSource,
                 utmSource: utmSource,
                 utmCampaign: utmCampaign,
-                utmMedium: utmMedium
+                utmMedium: utmMedium,
+                returnUrl: returnAppUrl
             })
             .then(function () {
                 auth0.isAuthenticated().then(function (isAuthenticated) {
