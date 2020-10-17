@@ -48,10 +48,11 @@ $(document).ready(function () {
           $("#error").html("");
           document.getElementById("signup").action = qs["formAction"];
           document.getElementById("state").value = qs["state"];
-          document.getElementById("source").value = qs["source"] || null;
-          document.getElementById("utmMedium").value = qs["utmMedium"] || null;
-          document.getElementById("utmCampaign").value = qs["utmCampaign"] || null;
-          document.getElementById("returnUrl").value = qs["returnUrl"] || null;
+          document.getElementById("regSource").value = qs["regSource"];
+          document.getElementById("utmSource").value = qs["utmSource"];
+          document.getElementById("utmMedium").value = qs["utmMedium"];
+          document.getElementById("utmCampaign").value = qs["utmCampaign"];
+          document.getElementById("returnUrl").value = qs["returnUrl"];
           document.getElementById("signup").submit();
         }
       },
