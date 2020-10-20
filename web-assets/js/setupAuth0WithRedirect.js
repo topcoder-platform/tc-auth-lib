@@ -61,6 +61,7 @@ const authSetup = function () {
 
     const init = function () {
         correctOldUrl();
+        changeWindowMessage();
         createAuth0Client({
             domain: domain,
             client_id: clientId,
@@ -161,6 +162,13 @@ const authSetup = function () {
         setCookie(tcJWTCookie, "", -1);
         setCookie(v3JWTCookie, "", -1);
         setCookie(tcSSOCookie, "", -1);
+
+        // to clear any old session
+        setCookie('auth0Jwt', "", -1);
+        setCookie('zendeskJwt', "", -1);
+        setCookie('auth0Refresh', "", -1);
+        // for scorecard
+        setCookie('JSESSIONID', "", -1);
     };
 
     const isLoggedIn = function () {
@@ -353,6 +361,17 @@ const authSetup = function () {
             }
         }
 
+    }
+
+    function changeWindowMessage() {
+        if ((!returnAppUrl && !appUrl) || ((returnAppUrl == 'undefined') && (appUrl == 'undefined'))) {
+            try {
+                document.getElementById("page-title-heading").innerHTML = "Alert";
+                document.getElementById("loading_message_p").innerHTML = "Login/Logout action is not called. Please check return url (retUrl) value in query parameters."
+            } catch (err) {
+                logger("Error in changing loading message: ", err.message)
+            }
+        }
     }
 
     // execute    
