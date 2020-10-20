@@ -1,5 +1,5 @@
 
-var apiServerUrl = "https://api.topcoder-dev.com/v3/users";
+var apiServerUrl = "https://api.topcoder.com/v3/users";
 var qs = (function (a) {
   if (a == "") return {};
   var b = {};
