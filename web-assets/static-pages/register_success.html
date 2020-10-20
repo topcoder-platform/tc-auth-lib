@@ -1,30 +1,59 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Register Success</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" href="./images/favicon.ico" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
 
-<head>
-   
-    <style>
-        div {
-            padding-top: 20%;
-            text-align: center;
-            margin: auto;
-            width: 50%;
-            font-size: large;
-        }
-
-        input {
-            padding: 10px;
-        }
-    </style>
-</head>
-
-<body>
-    <div id='main'>
-        Thanks for joining Topcoder.
-        <p>We've sent you a confirmation link. Please check your email and click the link
-        to activate your account. If you can't find the message, please email to
-        support@topcoder.com.
-        Thanks for joining Topcoder.
-        </p>
-</body>
-
+  <body class="center-align-card">
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+      <!-- For ADA - Skip to Content Area -->
+      <a class="action skip" href="#contentarea">Skip to Content</a>
+      <!-- Page Content Area -  Header + Main content -->
+      <div class="page-content">
+        <header class="header">
+          <a href="/" class="logo-link">
+            <img
+              src="./images/logo.png"
+              alt="Topcoder Logo"
+              width="94"
+              height="30"
+            />
+          </a>
+        </header>
+        <main id="main" class="page-main">
+          <a id="contentarea" tabindex="-1"></a>
+          <h1 id="page-title-heading" class="page-title-heading">
+            Thanks for joining Topcoder.
+          </h1>
+          <p class="page-description">
+            We've sent you a confirmation link. Please check your email and
+            click the link to activate your account. If you can't find the
+            message, please email to
+            <a href="mailto:support@topcoder.com">support@topcoder.com</a>.
+            Thanks for joining Topcoder.
+          </p>
+        </main>
+      </div>
+      <footer class="footer">
+        <div class="copyright-text">
+          <strong>&copy;</strong> 2020 Topcoder. All Rights Reserved
+        </div>
+        <a
+          class="privacy-policy"
+          href="https://www.topcoder.com/privacy-policy/"
+          >Privacy Policy</a
+        >
+      </footer>
+    </div>
+  </body>
 </html>
