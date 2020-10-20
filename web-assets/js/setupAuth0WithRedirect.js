@@ -61,6 +61,7 @@ const authSetup = function () {
 
     const init = function () {
         correctOldUrl();
+        changeWindowMessage();
         createAuth0Client({
             domain: domain,
             client_id: clientId,
@@ -358,6 +359,17 @@ const authSetup = function () {
             }
         }
 
+    }
+
+    function changeWindowMessage() {
+        if (!returnAppUrl || returnAppUrl == 'undefined') {
+            try {
+                document.getElementById("page-title-heading").innerHTML = "Alert";
+                document.getElementById("loading_message_p").innerHTML = "Login/Logout action is not called. Please check return url (retUrl) value in query parameters."
+            } catch (err) {
+                logger("Error in changing loading message: ", err.message)
+            }
+        }
     }
 
     // execute    
