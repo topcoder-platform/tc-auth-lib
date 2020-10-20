@@ -161,6 +161,11 @@ const authSetup = function () {
         setCookie(tcJWTCookie, "", -1);
         setCookie(v3JWTCookie, "", -1);
         setCookie(tcSSOCookie, "", -1);
+
+        // to clear any old session
+        setCookie('auth0Jwt', "", -1);
+        setCookie('zendeskJwt', "", -1);
+        setCookie('auth0Refresh', "", -1);
     };
 
     const isLoggedIn = function () {
