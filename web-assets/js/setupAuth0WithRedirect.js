@@ -109,16 +109,53 @@ const authSetup = function () {
         var token = getCookie(tcJWTCookie);
         if (!token || isTokenExpired(token)) {
             logger('refreshing token... at: ', `${d.getHours()}::${d.getMinutes()}::${d.getSeconds()} `);
-            auth0.getTokenSilently().then(function (token) {
-                showAuth0Info();
-                storeToken();
-            }).catch(function (e) {
-                logger("Error in refreshing token: ", e)
-                if (e.error && ((e.error == "login_required") || (e.error == "timeout"))) {
-                    clearInterval(callRefreshTokenFun);
+            try {
+                let issuerHostname = "";
+                if (token) {
+                    let tokenJson = decodeToken(token);
+                    let issuer = tokenJson.iss;
+                    issuerHostname = extractHostname(issuer);
                 }
+                if (domain !== issuerHostname) {
+                    domain = issuerHostname;
+                    logger("reintialize auth0 for new domain..", domain);
+                    createAuth0Client({
+                        domain: domain,
+                        client_id: clientId,
+                        cacheLocation: useLocalStorage
+                            ? 'localstorage'
+                            : 'memory',
+                        useRefreshTokens: useRefreshTokens
+                    }).then(function (newAuth0Obj) {
+                        auth0 = newAuth0Obj;
+                        auth0.getTokenSilently().then(function (token) {
+                            showAuth0Info();
+                            storeToken();
+                            logger("refreshing token for new domain..", domain);
+                        }).catch(function (e) {
+                            logger("Error in refreshing token: ", e)
+                            if (e.error && ((e.error == "login_required") || (e.error == "timeout"))) {
+                                clearInterval(callRefreshTokenFun);
+                            }
+                        }
+                        );
+                    });
+                } else {
+                    auth0.getTokenSilently().then(function (token) {
+                        showAuth0Info();
+                        storeToken();
+                    }).catch(function (e) {
+                        logger("Error in refreshing token: ", e)
+                        if (e.error && ((e.error == "login_required") || (e.error == "timeout"))) {
+                            clearInterval(callRefreshTokenFun);
+                        }
+                    }
+                    );
+                }
+            } catch (e) {
+                logger("Error in refresh token function ", e.message)
             }
-            );
+
         }
     };
 
@@ -372,6 +409,24 @@ const authSetup = function () {
                 logger("Error in changing loading message: ", err.message)
             }
         }
+    }
+
+    function extractHostname(url) {
+        var hostname;
+        //find & remove protocol (http, ftp, etc.) and get hostname
+
+        if (url.indexOf("//") > -1) {
+            hostname = url.split('/')[2];
+        }
+        else {
+            hostname = url.split('/')[0];
+        }
+        //find & remove port number
+        hostname = hostname.split(':')[0];
+        //find & remove "?"
+        hostname = hostname.split('?')[0];
+
+        return hostname;
     }
 
     // execute    
