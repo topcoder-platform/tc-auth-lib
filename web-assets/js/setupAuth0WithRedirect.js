@@ -367,6 +367,20 @@ const authSetup = function () {
         const sso_pattern = '/#!/sso-login';
         const logout_pattern = '/#!/logout?';
 
+        const url = window.location.href;
+
+        const result = url.match(/^(.+)(\#!\/(.+)\?)(.+)/);
+
+        if (result) {
+            try {
+                const newUrl = result[1] + "?" + result[4];
+                logger("new url: ", newUrl);
+                window.location.href = newUrl;
+            } catch (e) {
+                logger("Creating new url error: ", e.message);
+            }
+        }
+        // Need to cleanup below code, should never execute
         if (window.location.href.indexOf(pattern) > -1) {
             window.location.href = window.location.href.replace(pattern, '');
         }
