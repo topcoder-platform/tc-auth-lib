@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Login</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>
+       var url = window.location.href;
+       var result = url.match(/^(.+)(\/(.+)\/)(\/?)(.+)/); 
+       var host = window.location.host;
+       host = "https://" + host;
+       var newUrl = host;
+       if (result) {
+            try {
+                newUrl = host + result[5];
+                console.log("new url: ", newUrl);
+            } catch (e) {
+                console.log("Creating new url error: ", e.message);
+            }
+        }
+        window.location.href = newUrl;
+    </script>
+  </head>
+  <body>
+  </body>
+  </html>
