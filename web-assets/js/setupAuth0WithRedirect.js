@@ -200,18 +200,18 @@ const authSetup = function () {
         });
     };
 
-    const clearAllCookies = function() {
-            // TODO  
-            setCookie(tcJWTCookie, "", -1);
-            setCookie(v3JWTCookie, "", -1);
-            setCookie(tcSSOCookie, "", -1);
-    
-            // to clear any old session
-            setCookie('auth0Jwt', "", -1);
-            setCookie('zendeskJwt', "", -1);
-            setCookie('auth0Refresh', "", -1);
-            // for scorecard
-            setCookie('JSESSIONID', "", -1);
+    const clearAllCookies = function () {
+        // TODO  
+        setCookie(tcJWTCookie, "", -1);
+        setCookie(v3JWTCookie, "", -1);
+        setCookie(tcSSOCookie, "", -1);
+
+        // to clear any old session
+        setCookie('auth0Jwt', "", -1);
+        setCookie('zendeskJwt', "", -1);
+        setCookie('auth0Refresh', "", -1);
+        // for scorecard
+        setCookie('JSESSIONID', "", -1);
     }
 
     const isLoggedIn = function () {
@@ -421,10 +421,16 @@ const authSetup = function () {
     }
 
     function changeWindowMessage() {
+
         if ((!returnAppUrl && !appUrl) || ((returnAppUrl == 'undefined') && (appUrl == 'undefined'))) {
             try {
+                var hdomain = location.hostname.split('.').reverse()[1];
+                var linkurl = "http://" + window.location.host + "/?logout=true&retUrl=http://" + window.location.host;
+                if (hdomain) {
+                    linkurl = "https://" + window.location.host + "/?logout=true&retUrl=https://" + hdomain + ".com";
+                }
                 document.getElementById("page-title-heading").innerHTML = "Alert";
-                document.getElementById("loading_message_p").innerHTML = "Login/Logout action is not called. Please check return url (retUrl) value in query parameters."
+                document.getElementById("loading_message_p").innerHTML = "Login/Logout action is not called. Please check return url (retUrl) value in query parameters or <a href=" + linkurl + ">click here</a>";
             } catch (err) {
                 logger("Error in changing loading message: ", err.message)
             }
