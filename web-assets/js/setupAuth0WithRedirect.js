@@ -136,6 +136,7 @@ const authSetup = function () {
                             logger("Error in refreshing token: ", e)
                             if (e.error && ((e.error == "login_required") || (e.error == "timeout"))) {
                                 clearInterval(callRefreshTokenFun);
+                                clearAllCookies();
                             }
                         }
                         );
@@ -148,6 +149,7 @@ const authSetup = function () {
                         logger("Error in refreshing token: ", e)
                         if (e.error && ((e.error == "login_required") || (e.error == "timeout"))) {
                             clearInterval(callRefreshTokenFun);
+                            clearAllCookies();
                         }
                     }
                     );
@@ -192,21 +194,25 @@ const authSetup = function () {
     };
 
     const logout = function () {
-        // TODO  
-        setCookie(tcJWTCookie, "", -1);
-        setCookie(v3JWTCookie, "", -1);
-        setCookie(tcSSOCookie, "", -1);
-
-        // to clear any old session
-        setCookie('auth0Jwt', "", -1);
-        setCookie('zendeskJwt', "", -1);
-        setCookie('auth0Refresh', "", -1);
-        // for scorecard
-        setCookie('JSESSIONID', "", -1);
+        clearAllCookies();
         auth0.logout({
             returnTo: host
         });
     };
+
+    const clearAllCookies = function() {
+            // TODO  
+            setCookie(tcJWTCookie, "", -1);
+            setCookie(v3JWTCookie, "", -1);
+            setCookie(tcSSOCookie, "", -1);
+    
+            // to clear any old session
+            setCookie('auth0Jwt', "", -1);
+            setCookie('zendeskJwt', "", -1);
+            setCookie('auth0Refresh', "", -1);
+            // for scorecard
+            setCookie('JSESSIONID', "", -1);
+    }
 
     const isLoggedIn = function () {
         var token = getCookie(tcJWTCookie);
