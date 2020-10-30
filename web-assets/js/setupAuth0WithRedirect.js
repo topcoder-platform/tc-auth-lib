@@ -136,6 +136,7 @@ const authSetup = function () {
                             logger("Error in refreshing token: ", e)
                             if (e.error && ((e.error == "login_required") || (e.error == "timeout"))) {
                                 clearInterval(callRefreshTokenFun);
+                                clearAllCookies();
                             }
                         }
                         );
