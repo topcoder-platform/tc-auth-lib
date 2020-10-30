@@ -106,7 +106,7 @@ const authSetup = function () {
     const refreshToken = function () {
         let d = new Date();
         logger('checking token status at: ', `${d.getHours()}::${d.getMinutes()}::${d.getSeconds()} `);
-        var token = getCookie(tcJWTCookie);
+        var token = getCookie(v3JWTCookie);
         if (!token || isTokenExpired(token)) {
             logger('refreshing token... at: ', `${d.getHours()}::${d.getMinutes()}::${d.getSeconds()} `);
             try {
@@ -192,9 +192,6 @@ const authSetup = function () {
     };
 
     const logout = function () {
-        auth0.logout({
-            returnTo: host
-        });
         // TODO  
         setCookie(tcJWTCookie, "", -1);
         setCookie(v3JWTCookie, "", -1);
@@ -206,6 +203,9 @@ const authSetup = function () {
         setCookie('auth0Refresh', "", -1);
         // for scorecard
         setCookie('JSESSIONID', "", -1);
+        auth0.logout({
+            returnTo: host
+        });
     };
 
     const isLoggedIn = function () {
