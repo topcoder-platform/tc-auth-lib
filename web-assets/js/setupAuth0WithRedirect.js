@@ -89,6 +89,9 @@ const authSetup = function () {
             return;
         } else if (!isLoggedIn() && returnAppUrl) {
             login();
+        } else if (qs['error'] && qs['state']) {
+             logger("Error in executing callback(): ", qs['error_description']);
+             showLoginError(qs['error_description'], appUrl);
         } else {
             logger("User already logged in", true);
             postLogin();
@@ -453,6 +456,15 @@ const authSetup = function () {
         hostname = hostname.split('?')[0];
 
         return hostname;
+    }
+
+    function showLoginError(message, linkUrl) {
+        try {
+            document.getElementById("page-title-heading").innerHTML = "Alert";
+            document.getElementById("loading_message_p").innerHTML = message + " <a href=" + linkUrl + ">click here</a>";
+        } catch (err) {
+            logger("Error in changing loading message: ", err.message)
+        }
     }
 
     // execute    
