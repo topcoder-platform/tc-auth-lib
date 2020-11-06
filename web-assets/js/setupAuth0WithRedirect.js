@@ -41,7 +41,7 @@ const authSetup = function () {
     const appUrl = qs['appUrl'] || false;
     const loggerMode = "dev";
     const IframeLogoutRequestType = "LOGOUT_REQUEST";
-    const enterpriseCustomers = ['wipro', 'topgear', 'zurich', 'cs'];
+    const enterpriseCustomers = ['zurich', 'cs'];
     let returnAppUrl = qs['retUrl'];
 
     if (utmSource &&
