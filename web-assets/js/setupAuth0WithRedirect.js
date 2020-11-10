@@ -428,14 +428,18 @@ const authSetup = function () {
                 logger("inside auth0 block", "ok");
                 auth0.isAuthenticated().then(function (isAuthenticated) {
                     logger("inside auth0 block isAuthenticated", isAuthenticated);
-                    auth0.getTokenSilently().then(function (token) {
-                        logger("inside auth0 block getTokenSilently", token);
-                        storeToken();
-                        informIt(success, e);
-                    }).catch(function (err) {
-                        logger("receiveMessage: Error in refreshing through ifram token: ", err)
+                    if (isAuthenticated) {
+                        auth0.getTokenSilently().then(function (token) {
+                            logger("inside auth0 block getTokenSilently", token);
+                            storeToken();
+                            informIt(success, e);
+                        }).catch(function (err) {
+                            logger("receiveMessage: Error in refreshing through ifram token: ", err)
+                            informIt(failed, e);
+                        });
+                    } else {
                         informIt(failed, e);
-                    });
+                    }
                 }).catch(function (err) {
                     logger("receiveMessage: Error occured in checkng authentication", err);
                     informIt(failed, e);
