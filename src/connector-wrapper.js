@@ -1,5 +1,5 @@
 const {createFrame} = require('./iframe')
-const {getToken} = require ('./token')
+const {getToken, isTokenExpired} = require ('./token')
 
 let iframe = null
 let loading = null
@@ -36,28 +36,34 @@ const proxyCall = function() {
   }
 
   function request() {
-    return new Promise((resolve, reject) => {
-      function receiveMessage(e) {
-        console.log("Received at auth-lib:", e)
-        const safeFormat = e.data.type === "SUCCESS" || e.data.type === "FAILURE"
-        if (safeFormat) {
-          window.removeEventListener('message', receiveMessage)
-          if (e.data.type === "SUCCESS") {
-            const token = getToken('v3jwt')
-            token ? resolve({ token: token }) : reject("v3jwt cookie not found")
-          } 
-          if (e.data.type === "FAILURE") {
-            reject("unable to get refesh token")
+    const token = getToken('v3jwt')
+    if (token && !isTokenExpired(token, 65)) {
+      return new Promise((resolve, reject) => {
+        token ? resolve({ token: token }) : reject("v3jwt cookie not found")
+      })
+    } else {
+      return new Promise((resolve, reject) => {
+        function receiveMessage(e) {
+          console.log("Received at auth-lib:", e)
+          const safeFormat = e.data.type === "SUCCESS" || e.data.type === "FAILURE"
+          if (safeFormat) {
+            window.removeEventListener('message', receiveMessage)
+            if (e.data.type === "SUCCESS") {
+              token ? resolve({ token: token }) : reject("v3jwt cookie not found")
+            }
+            if (e.data.type === "FAILURE") {
+              reject("unable to get refesh token")
+            }
           }
         }
-      }
 
-      window.addEventListener('message', receiveMessage)
+        window.addEventListener('message', receiveMessage)
 
-      const payload = { type: "REFRESH_TOKEN" }
+        const payload = { type: "REFRESH_TOKEN" }
 
-      iframe.contentWindow.postMessage(payload, url)
-    }) 
+        iframe.contentWindow.postMessage(payload, url)
+      })
+    }
   }
 
   if (loading) {

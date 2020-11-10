@@ -421,18 +421,28 @@ const authSetup = function () {
             type: "SUCCESS"
         };
         if (e.data.type === "REFRESH_TOKEN") {
-            auth0.isAuthenticated().then(function (isAuthenticated) {
-                auth0.getTokenSilently().then(function (token) {
-                    storeToken();
-                    informIt(success, e);
+            const token = getCookie(v3JWTCookie);
+            if (token && !isTokenExpired(token, 65)) {
+                informIt(success, e);
+            } else if (auth0) {
+                logger("inside auth0 block", "ok");
+                auth0.isAuthenticated().then(function (isAuthenticated) {
+                    logger("inside auth0 block isAuthenticated", isAuthenticated);
+                    auth0.getTokenSilently().then(function (token) {
+                        logger("inside auth0 block getTokenSilently", token);
+                        storeToken();
+                        informIt(success, e);
+                    }).catch(function (err) {
+                        logger("receiveMessage: Error in refreshing through ifram token: ", err)
+                        informIt(failed, e);
+                    });
                 }).catch(function (err) {
-                    logger("receiveMessage: Error in refreshing through ifram token: ", err)
+                    logger("receiveMessage: Error occured in checkng authentication", err);
                     informIt(failed, e);
                 });
-            }).catch(function (err) {
-                logger("receiveMessage: Error occured in checkng authentication", err);
+            } else {
                 informIt(failed, e);
-            });
+            }
         } else {
             informIt(failed, e);
         }
