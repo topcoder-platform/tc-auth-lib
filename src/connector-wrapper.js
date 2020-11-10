@@ -36,26 +36,26 @@ const proxyCall = function() {
   }
 
   function request() {
-    /*return new Promise( (resolve, reject) => {
+    return new Promise((resolve, reject) => {
       function receiveMessage(e) {
-          const safeFormat = e.data.type === SUCCESS || e.data.type === FAILURE
-          if (safeFormat) {
-              window.removeEventListener('message', receiveMessage)
-              if (e.data.type === SUCCESS) resolve(e.data)
-              if (e.data.type === FAILURE) reject(e.error)
+        const safeFormat = e.data.type === "SUCCESS" || e.data.type === "FAILURE"
+        if (safeFormat) {
+          window.removeEventListener('message', receiveMessage)
+          if (e.data.type === "SUCCESS") {
+            const token = getToken('v3jwt')
+            token ? resolve({ token: token }) : reject("v3jwt cookie not found")
+          } else {
+            reject("unable to refesh token")
           }
+        }
       }
-
+      
       window.addEventListener('message', receiveMessage)
 
-      const payload = Object.assign({}, { type: REQUEST }, params)
+      const payload = { type: "REFRESH_TOKEN" }
 
       iframe.contentWindow.postMessage(payload, url)
-    }) */
-    return new Promise((resolve, reject) => {
-      const token = getToken('v3jwt')
-      token ? resolve({ token: token }) : reject("v3jwt cookie not found")
-    })
+    }) 
   }
 
   if (loading) {

@@ -90,8 +90,8 @@ const authSetup = function () {
         } else if (!isLoggedIn() && returnAppUrl) {
             login();
         } else if (qs['error'] && qs['state']) {
-             logger("Error in executing callback(): ", qs['error_description']);
-             showLoginError(qs['error_description'], appUrl);
+            logger("Error in executing callback(): ", qs['error_description']);
+            showLoginError(qs['error_description'], appUrl);
         } else {
             logger("User already logged in", true);
             postLogin();
@@ -410,17 +410,36 @@ const authSetup = function () {
     }
 
     /**
-     * will receive message from iframe
-     */
+    * will receive message from iframe
+    */
     function receiveMessage(e) {
         logger("received Event:", e);
-        if (e.data && e.data.type && e.origin) {
-            if (e.data.type === IframeLogoutRequestType) {
-                host = e.origin;
-                logout();
-            }
+        const failed = {
+            type: "FAILURE"
+        };
+        const success = {
+            type: "SUCCESS"
+        };
+        if (e.type === "REFRESH_TOKEN") {
+            auth0.isAuthenticated().then(function (isAuthenticated) {
+                auth0.getTokenSilently().then(function (token) {
+                    storeToken();
+                    informIt(success, e);
+                }).catch(function (err) {
+                    logger("receiveMessage: Error in refreshing through ifram token: ", err)
+                    informIt(failed, e);
+                });
+            }).catch(function (err) {
+                logger("receiveMessage: Error occured in checkng authentication", err);
+                informIt(failed, e);
+            });
+        } else {
+            informIt(failed, e);
         }
+    }
 
+    function informIt(data, e) {
+        e.source.postMessage(data, e.origin);
     }
 
     function changeWindowMessage() {
