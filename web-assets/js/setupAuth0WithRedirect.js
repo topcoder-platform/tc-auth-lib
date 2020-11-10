@@ -420,7 +420,7 @@ const authSetup = function () {
         const success = {
             type: "SUCCESS"
         };
-        if (e.type === "REFRESH_TOKEN") {
+        if (e.data.type === "REFRESH_TOKEN") {
             auth0.isAuthenticated().then(function (isAuthenticated) {
                 auth0.getTokenSilently().then(function (token) {
                     storeToken();

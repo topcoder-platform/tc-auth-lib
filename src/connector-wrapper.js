@@ -38,18 +38,20 @@ const proxyCall = function() {
   function request() {
     return new Promise((resolve, reject) => {
       function receiveMessage(e) {
+        console.log("Received at auth-lib:", e)
         const safeFormat = e.data.type === "SUCCESS" || e.data.type === "FAILURE"
         if (safeFormat) {
           window.removeEventListener('message', receiveMessage)
           if (e.data.type === "SUCCESS") {
             const token = getToken('v3jwt')
             token ? resolve({ token: token }) : reject("v3jwt cookie not found")
-          } else {
-            reject("unable to refesh token")
+          } 
+          if (e.data.type === "FAILURE") {
+            reject("unable to get refesh token")
           }
         }
       }
-      
+
       window.addEventListener('message', receiveMessage)
 
       const payload = { type: "REFRESH_TOKEN" }
