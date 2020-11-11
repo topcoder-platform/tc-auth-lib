@@ -414,81 +414,95 @@ const authSetup = function () {
     */
     function receiveMessage(e) {
         logger("received Event:", e);
-        const failed = {
-            type: "FAILURE"
-        };
-        const success = {
-            type: "SUCCESS"
-        };
         if (e.data.type === "REFRESH_TOKEN") {
             const token = getCookie(v3JWTCookie);
-            if (token && !isTokenExpired(token, 65)) {
-                informIt(success, e);
-            } else if (auth0) {
-                auth0.isAuthenticated().then(function (isAuthenticated) {
-                    if (isAuthenticated) {
-                        auth0.getTokenSilently().then(function (token) {
-                            storeRefreshedToken();
-                            informIt(success, e);
-                        }).catch(function (err) {
-                            logger("receiveMessage: Error in refreshing token through iframe:", err)
-                            informIt(failed, e);
+            const failed = {
+                type: "FAILURE"
+            };
+            const success = {
+                type: "SUCCESS"
+            };
+
+            const informIt = function (payload) {
+                e.source.postMessage(payload, e.origin);
+            }
+            try {
+                const storeRefreshedToken = function (aObj) {
+                    aObj.getIdTokenClaims().then(function (claims) {
+                        idToken = claims.__raw;
+                        let userActive = false;
+                        Object.keys(claims).findIndex(function (key) {
+                            if (key.includes('active')) {
+                                userActive = claims[key];
+                                return true;
+                            }
+                            return false;
                         });
-                    } else {
-                        informIt(failed, e);
-                    }
-                }).catch(function (err) {
-                    logger("receiveMessage: Error occured in checkng authentication", err);
-                    informIt(failed, e);
-                });
-            } else {
-                informIt(failed, e);
+                        if (userActive) {
+                            let tcsso = '';
+                            Object.keys(claims).findIndex(function (key) {
+                                if (key.includes(tcSSOCookie)) {
+                                    tcsso = claims[key];
+                                    return true;
+                                }
+                                return false;
+                            });
+                            logger('Storing refreshed token...', true);
+                            setCookie(tcJWTCookie, idToken, cookieExpireIn);
+                            setCookie(v3JWTCookie, idToken, cookieExpireIn);
+                            setCookie(tcSSOCookie, tcsso, cookieExpireIn);
+                            informIt(success);
+                        } else {
+                            logger("Refeshed token - user active ? ", userActive);
+                            informIt(failed);
+                        }
+                    }).catch(function (err) {
+                        logger("Refeshed token - error in fetching token from auth0: ", err);
+                        informIt(failed);
+                    });
+                };
+
+                // main execution start here
+                if (token && !isTokenExpired(token)) {
+                    informIt(success);
+                } else {
+                    createAuth0Client({
+                        domain: domain,
+                        client_id: clientId,
+                        cacheLocation: useLocalStorage
+                            ? 'localstorage'
+                            : 'memory',
+                        useRefreshTokens: useRefreshTokens
+                    }).then(function (aObj) {
+                        aObj.isAuthenticated().then(function (isAuthenticated) {
+                            if (isAuthenticated) {
+                                aObj.getTokenSilently().then(function (token) {
+                                    storeRefreshedToken(aObj);
+                                }).catch(function (err) {
+                                    logger("receiveMessage: Error in refreshing token through iframe:", err)
+                                    informIt(failed);
+                                });
+                            } else {
+                                logger("authenticated ?", isAuthenticated);
+                                informIt(failed);
+                            }
+                        }).catch(function (err) {
+                            logger("receiveMessage: Error occured in checkng authentication", err);
+                            informIt(failed);
+                        });
+                    }).catch(function (err) {
+                        logger("receiveMessage: Error occured in initializing auth0", err);
+                        informIt(failed);
+                    });
+                }
+            } catch (e) {
+                logger("error occured in iframe handler:", e.message);
+                informIt(failed);
             }
         } else {
-            informIt(failed, e);
+            // do nothing
         }
     }
-
-    /**
-     * post message to iframe
-     * @param data payload
-     * @param e event object
-     */
-    function informIt(data, e) {
-        e.source.postMessage(data, e.origin);
-    }
-
-    function storeRefreshedToken() {
-        auth0.getIdTokenClaims().then(function (claims) {
-            idToken = claims.__raw;
-            let userActive = false;
-            Object.keys(claims).findIndex(function (key) {
-                if (key.includes('active')) {
-                    userActive = claims[key];
-                    return true;
-                }
-                return false;
-            });
-            if (userActive) {
-                let tcsso = '';
-                Object.keys(claims).findIndex(function (key) {
-                    if (key.includes(tcSSOCookie)) {
-                        tcsso = claims[key];
-                        return true;
-                    }
-                    return false;
-                });
-                logger('Storing refreshed token...', true);
-                setCookie(tcJWTCookie, idToken, cookieExpireIn);
-                setCookie(v3JWTCookie, idToken, cookieExpireIn);
-                setCookie(tcSSOCookie, tcsso, cookieExpireIn);
-            } else {
-                logger("Refeshed token - user active ? ", userActive);
-            }
-        }).catch(function (e) {
-            logger("Refeshed token - error in fetching token from auth0: ", e);
-        });
-    };
 
     function changeWindowMessage() {
 
