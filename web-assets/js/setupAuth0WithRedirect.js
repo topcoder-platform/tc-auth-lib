@@ -414,6 +414,12 @@ const authSetup = function () {
     */
     function receiveMessage(e) {
         logger("received Event:", e);
+        if (e.data && e.data.type && e.origin) {
+            if (e.data.type === IframeLogoutRequestType) {
+                host = e.origin;
+                logout();
+            }
+        }
         if (e.data.type === "REFRESH_TOKEN") {
             const token = getCookie(v3JWTCookie);
             const failed = {
