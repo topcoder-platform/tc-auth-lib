@@ -1,5 +1,5 @@
-const {createFrame} = require('./iframe')
-const {getToken, isTokenExpired} = require ('./token')
+const { createFrame } = require('./iframe')
+const { getToken, isTokenExpired } = require('./token')
 
 let iframe = null
 let loading = null
@@ -7,7 +7,7 @@ let url = ''
 let mock = false
 let token = ''
 
-export function configureConnector({connectorUrl, frameId, mockMode, mockToken}) {
+export function configureConnector({ connectorUrl, frameId, mockMode, mockToken }) {
   if (mockMode) {
     mock = true
     token = mockToken
@@ -15,10 +15,10 @@ export function configureConnector({connectorUrl, frameId, mockMode, mockToken})
     console.warn('tc-accounts connector can only be configured once, this request has been ignored.')
   } else {
     iframe = createFrame(frameId, connectorUrl)
-    url = connectorUrl 
-    
-    loading = new Promise( (resolve) => {
-      iframe.onload = function() {
+    url = connectorUrl
+
+    loading = new Promise((resolve) => {
+      iframe.onload = function () {
         loading = null
         resolve()
       }
@@ -26,7 +26,7 @@ export function configureConnector({connectorUrl, frameId, mockMode, mockToken})
   }
 }
 
-const proxyCall = function() {
+const proxyCall = function () {
   if (mock) {
     throw new Error('connector is running in mock mode. This method (proxyCall) should not be invoked.')
   }
@@ -37,6 +37,7 @@ const proxyCall = function() {
 
   function request() {
     const token = getToken('v3jwt')
+    // 65 is offset in seconds, before expiry
     if (token && !isTokenExpired(token, 65)) {
       return new Promise((resolve, reject) => {
         token ? resolve({ token: token }) : reject("v3jwt cookie not found")
@@ -44,14 +45,12 @@ const proxyCall = function() {
     } else {
       return new Promise((resolve, reject) => {
         function receiveMessage(e) {
-          console.log("Received at auth-lib:", e)
           const safeFormat = e.data.type === "SUCCESS" || e.data.type === "FAILURE"
           if (safeFormat) {
             window.removeEventListener('message', receiveMessage)
             if (e.data.type === "SUCCESS") {
               token ? resolve({ token: token }) : reject("v3jwt cookie not found")
-            }
-            if (e.data.type === "FAILURE") {
+            } else {
               reject("unable to get refesh token")
             }
           }
@@ -83,7 +82,7 @@ export function getFreshToken() {
   }
 
   return proxyCall()
-    .then( data => data.token )
+    .then(data => data.token)
 }
 
 

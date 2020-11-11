@@ -425,16 +425,13 @@ const authSetup = function () {
             if (token && !isTokenExpired(token, 65)) {
                 informIt(success, e);
             } else if (auth0) {
-                logger("inside auth0 block", "ok");
                 auth0.isAuthenticated().then(function (isAuthenticated) {
-                    logger("inside auth0 block isAuthenticated", isAuthenticated);
                     if (isAuthenticated) {
                         auth0.getTokenSilently().then(function (token) {
-                            logger("inside auth0 block getTokenSilently", token);
-                            storeToken();
+                            storeRefreshedToken();
                             informIt(success, e);
                         }).catch(function (err) {
-                            logger("receiveMessage: Error in refreshing through ifram token: ", err)
+                            logger("receiveMessage: Error in refreshing token through iframe:", err)
                             informIt(failed, e);
                         });
                     } else {
@@ -452,9 +449,46 @@ const authSetup = function () {
         }
     }
 
+    /**
+     * post message to iframe
+     * @param data payload
+     * @param e event object
+     */
     function informIt(data, e) {
         e.source.postMessage(data, e.origin);
     }
+
+    function storeRefreshedToken() {
+        auth0.getIdTokenClaims().then(function (claims) {
+            idToken = claims.__raw;
+            let userActive = false;
+            Object.keys(claims).findIndex(function (key) {
+                if (key.includes('active')) {
+                    userActive = claims[key];
+                    return true;
+                }
+                return false;
+            });
+            if (userActive) {
+                let tcsso = '';
+                Object.keys(claims).findIndex(function (key) {
+                    if (key.includes(tcSSOCookie)) {
+                        tcsso = claims[key];
+                        return true;
+                    }
+                    return false;
+                });
+                logger('Storing refreshed token...', true);
+                setCookie(tcJWTCookie, idToken, cookieExpireIn);
+                setCookie(v3JWTCookie, idToken, cookieExpireIn);
+                setCookie(tcSSOCookie, tcsso, cookieExpireIn);
+            } else {
+                logger("Refeshed token - user active ? ", userActive);
+            }
+        }).catch(function (e) {
+            logger("Refeshed token - error in fetching token from auth0: ", e);
+        });
+    };
 
     function changeWindowMessage() {
 
