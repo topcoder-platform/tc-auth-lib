@@ -69,7 +69,10 @@ const authSetup = function () {
                 ? 'localstorage'
                 : 'memory',
             useRefreshTokens: useRefreshTokens
-        }).then(_init);
+        }).then(_init).catch(function (e) {
+            logger("Error occurred in initializing auth0 object: ", e);
+            window.location.reload();
+        });
         window.addEventListener("message", receiveMessage, false);
     };
 
@@ -218,7 +221,7 @@ const authSetup = function () {
     }
 
     const isLoggedIn = function () {
-        var token = getCookie(tcJWTCookie);
+        var token = getCookie(v3JWTCookie);
         return token ? !isTokenExpired(token) : false;
     };
 
@@ -468,38 +471,27 @@ const authSetup = function () {
                     });
                 };
 
+                const getToken = function (aObj) {
+                    aObj.getTokenSilently({ timeoutInSeconds: 60 }).then(function (token) {
+                        storeRefreshedToken(aObj);
+                    }).catch(function (err) {
+                        logger("receiveMessage: Error in refreshing token through iframe:", err)
+                        informIt(failed);
+                    });
+
+                };
+
                 // main execution start here
                 if (token && !isTokenExpired(token)) {
                     informIt(success);
+                } else if (!token) {
+                    informIt(failed);
                 } else {
-                    createAuth0Client({
-                        domain: domain,
-                        client_id: clientId,
-                        cacheLocation: useLocalStorage
-                            ? 'localstorage'
-                            : 'memory',
-                        useRefreshTokens: useRefreshTokens
-                    }).then(function (aObj) {
-                        aObj.isAuthenticated().then(function (isAuthenticated) {
-                            if (isAuthenticated) {
-                                aObj.getTokenSilently().then(function (token) {
-                                    storeRefreshedToken(aObj);
-                                }).catch(function (err) {
-                                    logger("receiveMessage: Error in refreshing token through iframe:", err)
-                                    informIt(failed);
-                                });
-                            } else {
-                                logger("authenticated ?", isAuthenticated);
-                                informIt(failed);
-                            }
-                        }).catch(function (err) {
-                            logger("receiveMessage: Error occured in checkng authentication", err);
-                            informIt(failed);
-                        });
-                    }).catch(function (err) {
-                        logger("receiveMessage: Error occured in initializing auth0", err);
+                    if (auth0) {
+                        getToken(auth0);
+                    } else {
                         informIt(failed);
-                    });
+                    }
                 }
             } catch (e) {
                 logger("error occured in iframe handler:", e.message);
