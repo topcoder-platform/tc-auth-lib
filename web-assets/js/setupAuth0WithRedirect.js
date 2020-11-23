@@ -69,7 +69,10 @@ const authSetup = function () {
                 ? 'localstorage'
                 : 'memory',
             useRefreshTokens: useRefreshTokens
-        }).then(_init);
+        }).then(_init).catch(function (e) {
+            logger("Error occurred in initializing auth0 object: ", e);
+            window.location.reload();
+        });
         window.addEventListener("message", receiveMessage, false);
     };
 
@@ -90,8 +93,8 @@ const authSetup = function () {
         } else if (!isLoggedIn() && returnAppUrl) {
             login();
         } else if (qs['error'] && qs['state']) {
-             logger("Error in executing callback(): ", qs['error_description']);
-             showLoginError(qs['error_description'], appUrl);
+            logger("Error in executing callback(): ", qs['error_description']);
+            showLoginError(qs['error_description'], appUrl);
         } else {
             logger("User already logged in", true);
             postLogin();
@@ -218,7 +221,7 @@ const authSetup = function () {
     }
 
     const isLoggedIn = function () {
-        var token = getCookie(tcJWTCookie);
+        var token = getCookie(v3JWTCookie);
         return token ? !isTokenExpired(token) : false;
     };
 
@@ -410,8 +413,8 @@ const authSetup = function () {
     }
 
     /**
-     * will receive message from iframe
-     */
+    * will receive message from iframe
+    */
     function receiveMessage(e) {
         logger("received Event:", e);
         if (e.data && e.data.type && e.origin) {
@@ -420,7 +423,83 @@ const authSetup = function () {
                 logout();
             }
         }
+        if (e.data.type === "REFRESH_TOKEN") {
+            const token = getCookie(v3JWTCookie);
+            const failed = {
+                type: "FAILURE"
+            };
+            const success = {
+                type: "SUCCESS"
+            };
 
+            const informIt = function (payload) {
+                e.source.postMessage(payload, e.origin);
+            }
+            try {
+                const storeRefreshedToken = function (aObj) {
+                    aObj.getIdTokenClaims().then(function (claims) {
+                        idToken = claims.__raw;
+                        let userActive = false;
+                        Object.keys(claims).findIndex(function (key) {
+                            if (key.includes('active')) {
+                                userActive = claims[key];
+                                return true;
+                            }
+                            return false;
+                        });
+                        if (userActive) {
+                            let tcsso = '';
+                            Object.keys(claims).findIndex(function (key) {
+                                if (key.includes(tcSSOCookie)) {
+                                    tcsso = claims[key];
+                                    return true;
+                                }
+                                return false;
+                            });
+                            logger('Storing refreshed token...', true);
+                            setCookie(tcJWTCookie, idToken, cookieExpireIn);
+                            setCookie(v3JWTCookie, idToken, cookieExpireIn);
+                            setCookie(tcSSOCookie, tcsso, cookieExpireIn);
+                            informIt(success);
+                        } else {
+                            logger("Refeshed token - user active ? ", userActive);
+                            informIt(failed);
+                        }
+                    }).catch(function (err) {
+                        logger("Refeshed token - error in fetching token from auth0: ", err);
+                        informIt(failed);
+                    });
+                };
+
+                const getToken = function (aObj) {
+                    aObj.getTokenSilently({ timeoutInSeconds: 60 }).then(function (token) {
+                        storeRefreshedToken(aObj);
+                    }).catch(function (err) {
+                        logger("receiveMessage: Error in refreshing token through iframe:", err)
+                        informIt(failed);
+                    });
+
+                };
+
+                // main execution start here
+                if (token && !isTokenExpired(token)) {
+                    informIt(success);
+                } else if (!token) {
+                    informIt(failed);
+                } else {
+                    if (auth0) {
+                        getToken(auth0);
+                    } else {
+                        informIt(failed);
+                    }
+                }
+            } catch (e) {
+                logger("error occured in iframe handler:", e.message);
+                informIt(failed);
+            }
+        } else {
+            // do nothing
+        }
     }
 
     function changeWindowMessage() {
