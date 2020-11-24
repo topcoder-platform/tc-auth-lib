@@ -423,7 +423,7 @@ const authSetup = function () {
                 logout();
             }
         }
-        if (e.data.type === "REFRESH_TOKEN") {
+        if (e.data && e.data.type && e.data.type === "REFRESH_TOKEN") {
             const token = getCookie(v3JWTCookie);
             const failed = {
                 type: "FAILURE"
