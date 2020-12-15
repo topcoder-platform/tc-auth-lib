@@ -1,6 +1,6 @@
 {
   "name": "@topcoder-platform/tc-auth-lib",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Topcoder Authentication lib   ",
   "main": "index.js",
   "scripts": {
