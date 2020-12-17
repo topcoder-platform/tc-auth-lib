@@ -515,7 +515,31 @@ const authSetup = function () {
                 if (token && !isTokenExpired(token)) {
                     informIt(success);
                 } else if (!token) {
-                    informIt(failed);
+                    const auth0Session = getCookie('auth0.is.authenticated');
+                    logger('auth0 session available ?', auth0Session);
+                    if (auth0Session) {
+                        logger('auth session true', 1);
+                        if (!auth0) {
+                            createAuth0Client({
+                                domain: domain,
+                                client_id: clientId,
+                                cacheLocation: useLocalStorage
+                                    ? 'localstorage'
+                                    : 'memory',
+                                useRefreshTokens: useRefreshTokens
+                            }).then(function (newAuth0Obj) {
+                                getToken(newAuth0Obj);
+                            }).catch(function (e) {
+                                logger("Error occurred in re-initializing auth0 object: ", e);
+                                informIt(failed);
+                            });
+                        } else {
+                            getToken(auth0);
+                        }
+                    } else {
+                        informIt(failed);
+                    }
+
                 } else {
                     if (auth0) {
                         getToken(auth0);
