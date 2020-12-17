@@ -23,8 +23,8 @@ const qs = (function (a) {
 
 const authSetup = function () {
 
-    let domain = 'auth.topcoder.com';
-    const clientId = 'UW7BhsnmAQh0itl56g1jUPisBO9GoowD';
+    let domain = 'auth.topcoder-dev.com';
+    const clientId = 'BXWXUWnilVUPdN01t2Se29Tw2ZYNGZvH';
     const useLocalStorage = false;
     const useRefreshTokens = false;
     const v3JWTCookie = 'v3jwt';
@@ -38,16 +38,17 @@ const authSetup = function () {
     const utmSource = qs['utm_source'];
     const utmMedium = qs['utm_medium'];
     const utmCampaign = qs['utm_campaign'];
-    const appUrl = qs['appUrl'] || false;
-    const loggerMode = "prod";
+    const loggerMode = "dev";
     const IframeLogoutRequestType = "LOGOUT_REQUEST";
     const enterpriseCustomers = ['zurich', 'cs'];
+    const mode = qs['mode'] || 'signIn';
     let returnAppUrl = qs['retUrl'];
+    let appUrl = qs['appUrl'] || false;
 
     if (utmSource &&
         (utmSource != 'undefined') &&
         (enterpriseCustomers.indexOf(utmSource) > -1)) {
-        domain = "topcoder.auth0.com";
+        domain = "topcoder-dev.auth0.com";
         returnAppUrl += '&utm_source=' + utmSource;
     }
 
@@ -185,7 +186,8 @@ const authSetup = function () {
                 utmSource: utmSource,
                 utmCampaign: utmCampaign,
                 utmMedium: utmMedium,
-                returnUrl: returnAppUrl
+                returnUrl: returnAppUrl,
+                mode: mode
             })
             .then(function () {
                 auth0.isAuthenticated().then(function (isAuthenticated) {
@@ -272,9 +274,25 @@ const authSetup = function () {
                     return false;
                 });
                 logger('Storing token...', true);
-                setCookie(tcJWTCookie, idToken, cookieExpireIn);
-                setCookie(v3JWTCookie, idToken, cookieExpireIn);
-                setCookie(tcSSOCookie, tcsso, cookieExpireIn);
+                try {
+                    const exT = getCookieExpiry(idToken);
+                    if (exT) {
+                        setDomainCookie(tcJWTCookie, idToken, exT);
+                        setDomainCookie(v3JWTCookie, idToken, exT);
+                        setDomainCookie(tcSSOCookie, tcsso, exT);
+                    } else {
+                        setCookie(tcJWTCookie, idToken, cookieExpireIn);
+                        setCookie(v3JWTCookie, idToken, cookieExpireIn);
+                        setCookie(tcSSOCookie, tcsso, cookieExpireIn);
+                    }
+                } catch (e) {
+                    logger('Error occured in fecthing token expiry time', e.message);
+                }
+
+                // session still active, but app calling login
+                if (!appUrl && returnAppUrl) {
+                    appUrl = returnAppUrl
+                }
                 redirectToApp();
             } else {
                 logger("User active ? ", userActive);
@@ -457,10 +475,22 @@ const authSetup = function () {
                                 return false;
                             });
                             logger('Storing refreshed token...', true);
-                            setCookie(tcJWTCookie, idToken, cookieExpireIn);
-                            setCookie(v3JWTCookie, idToken, cookieExpireIn);
-                            setCookie(tcSSOCookie, tcsso, cookieExpireIn);
-                            informIt(success);
+                            try {
+                                const exT = getCookieExpiry(idToken);
+                                if (exT) {
+                                    setDomainCookie(tcJWTCookie, idToken, exT);
+                                    setDomainCookie(v3JWTCookie, idToken, exT);
+                                    setDomainCookie(tcSSOCookie, tcsso, exT);
+                                } else {
+                                    setCookie(tcJWTCookie, idToken, cookieExpireIn);
+                                    setCookie(v3JWTCookie, idToken, cookieExpireIn);
+                                    setCookie(tcSSOCookie, tcsso, cookieExpireIn);
+                                }
+                                informIt(success);
+                            } catch (e) {
+                                logger('Error occured in fecthing token expiry time', e.message);
+                                informIt(failed);
+                            }
                         } else {
                             logger("Refeshed token - user active ? ", userActive);
                             informIt(failed);
@@ -485,7 +515,31 @@ const authSetup = function () {
                 if (token && !isTokenExpired(token)) {
                     informIt(success);
                 } else if (!token) {
-                    informIt(failed);
+                    const auth0Session = getCookie('auth0.is.authenticated');
+                    logger('auth0 session available ?', auth0Session);
+                    if (auth0Session) {
+                        logger('auth session true', 1);
+                        if (!auth0) {
+                            createAuth0Client({
+                                domain: domain,
+                                client_id: clientId,
+                                cacheLocation: useLocalStorage
+                                    ? 'localstorage'
+                                    : 'memory',
+                                useRefreshTokens: useRefreshTokens
+                            }).then(function (newAuth0Obj) {
+                                getToken(newAuth0Obj);
+                            }).catch(function (e) {
+                                logger("Error occurred in re-initializing auth0 object: ", e);
+                                informIt(failed);
+                            });
+                        } else {
+                            getToken(auth0);
+                        }
+                    } else {
+                        informIt(failed);
+                    }
+
                 } else {
                     if (auth0) {
                         getToken(auth0);
@@ -545,6 +599,29 @@ const authSetup = function () {
             logger("Error in changing loading message: ", err.message)
         }
     }
+
+    function getCookieExpiry(token) {
+        const d = getTokenExpirationDate(token)
+        if (d === null) {
+            return false;
+        }
+        const diff = d.valueOf() - (new Date().valueOf()); //in millseconds
+        if (diff > 0) {
+            return diff; // in milliseconds
+        }
+        return false;
+    }
+
+    function setDomainCookie(cname, cvalue, exMilliSeconds) {
+        const cdomain = getHostDomain();
+
+        let d = new Date();
+        d.setTime(d.getTime() + exMilliSeconds);
+
+        let expires = ";expires=" + d.toUTCString();
+        document.cookie = cname + "=" + cvalue + cdomain + expires + ";path=/";
+    }
+
 
     // execute    
     init();

@@ -49,7 +49,7 @@ const proxyCall = function () {
           if (safeFormat) {
             window.removeEventListener('message', receiveMessage)
             if (e.data.type === "SUCCESS") {
-              token ? resolve({ token: token }) : reject("v3jwt cookie not found")
+              getToken('v3jwt') ? resolve({ token: getToken('v3jwt') }) : reject("v3jwt cookie not found")
             } else {
               reject("unable to get refesh token")
             }
