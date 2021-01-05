@@ -42,7 +42,7 @@ const authSetup = function () {
     const IframeLogoutRequestType = "LOGOUT_REQUEST";
     const enterpriseCustomers = ['zurich', 'cs'];
     const mode = qs['mode'] || 'signIn';
-    let returnAppUrl = qs['retUrl'];
+    let returnAppUrl = handleSpecificReturnUrl(qs['retUrl'], 'retUrl');
     let appUrl = qs['appUrl'] || false;
 
     if (utmSource &&
@@ -622,6 +622,40 @@ const authSetup = function () {
         document.cookie = cname + "=" + cvalue + cdomain + expires + ";path=/";
     }
 
+    function handleSpecificReturnUrl(value, param) {
+        try {
+            const domain = getHostDomain();
+            const prefixArray = ['apps', 'software'];
+            if (domain) {
+                for (let i = 0; i < prefixArray.length; i++) {
+                    if (value.indexOf(prefixArray[i] + domain) > -1) {
+                        const queryParam = window.location.search.substr(1);
+                        if (queryParam) {
+                            const indx = queryParam.indexOf(param);
+                            if (indx > -1) {
+                                //assuming queryParam value like retUrl=xxxxxx
+                                const result = queryParam.substring(indx + param.length + 1);
+                                // verify broken url : https://abc.com/&utm=abc
+                                if (result.indexOf('&') > -1 && result.indexOf('?') === -1) {
+                                        return value;
+                                }
+                                return result;
+                            } else {
+                                return value;
+                            }
+                        } else {
+                            return value;
+                        }
+                    }
+                }
+                return value;
+            }
+            return value;
+        } catch (e) {
+            logger('Issue while handling specific query param function', e.message);
+            return value;
+        }
+    };
 
     // execute    
     init();
