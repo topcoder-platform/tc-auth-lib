@@ -179,6 +179,7 @@ const authSetup = function () {
     };
 
     const login = function () {
+        logger('returnUrl', returnAppUrl);
         auth0
             .loginWithRedirect({
                 redirect_uri: host + '?appUrl=' + returnAppUrl,
@@ -624,11 +625,15 @@ const authSetup = function () {
 
     function handleSpecificReturnUrl(value, param) {
         try {
-            const domain = getHostDomain();
+            let hostdomain = "";
+            if (location.hostname !== 'localhost') {
+                hostdomain = "." + location.hostname.split('.').reverse()[1] +
+                    "." + location.hostname.split('.').reverse()[0];
+            }
             const prefixArray = ['apps', 'software'];
-            if (domain) {
+            if (hostdomain) {
                 for (let i = 0; i < prefixArray.length; i++) {
-                    if (value.indexOf(prefixArray[i] + domain) > -1) {
+                    if (value.indexOf(prefixArray[i] + hostdomain) > -1) {
                         const queryParam = window.location.search.substr(1);
                         if (queryParam) {
                             const indx = queryParam.indexOf(param);
@@ -636,10 +641,11 @@ const authSetup = function () {
                                 //assuming queryParam value like retUrl=xxxxxx
                                 const result = queryParam.substring(indx + param.length + 1);
                                 // verify broken url : https://abc.com/&utm=abc
+                                logger('handleSpecificReturnUrl: match query result', result);
                                 if (result.indexOf('&') > -1 && result.indexOf('?') === -1) {
                                         return value;
                                 }
-                                return result;
+                                return encodeURIComponent(decodeURIComponent(result));
                             } else {
                                 return value;
                             }
