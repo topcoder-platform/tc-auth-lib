@@ -88,7 +88,7 @@ const authSetup = function () {
                 logger('handleRedirectCallback() error: ', e);
             });
         } else if (shouldLogout) {
-            host = returnAppUrl ? returnAppUrl : host;
+            host = returnAppUrl ? decodeURIComponent(returnAppUrl) : host;
             logout();
             return;
         } else if (!isLoggedIn() && returnAppUrl) {
