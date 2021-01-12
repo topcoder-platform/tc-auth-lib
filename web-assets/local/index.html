@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Auth0</title>
+    <meta charset="utf-8" />
+    <script language="javascript" type="text/javascript"
+        src="https://accounts-auth0.topcoder-dev.com/setupAuth0WithRedirect.js"></script>
+</head>
+
+<body>
+    <script>
+        window.onload = authSetup;
+
+        function doLogin() {
+            window.location = './?retUrl=http://' + location.host
+        }
+
+        function doLogout() {
+            window.location = './?logout=true&retUrl=http://' + location.host
+        }
+    </script>
+    <div>
+        <p>Instructions:</p>
+        <p>
+            Run this index.html as local server like - http://localhost:3000 and keep open in seperate tab for
+            refreshing token.
+        </p>
+    </div>
+    <p>----------------------------------</p>
+    <div>
+        <span>Click Here To Login! </span><span><a href="#" onclick="doLogin();">Login</a></span>
+    </div>
+    <p>----------------------------------</p>
+    <div>
+        <span>Click Here To Logout! </span> <span> <a href="#" onclick="doLogout();">Logout</a> </span>
+    </div>
+</body>
+
+</html>
