@@ -23,8 +23,8 @@ const qs = (function (a) {
 
 const authSetup = function () {
 
-    let domain = 'auth.topcoder-dev.com';
-    const clientId = 'BXWXUWnilVUPdN01t2Se29Tw2ZYNGZvH';
+    let domain = '{{DOMAIN}}';
+    const clientId = '{{AUTH0_CLIENT_ID}}';
     const useLocalStorage = false;
     const useRefreshTokens = false;
     const v3JWTCookie = 'v3jwt';
@@ -38,7 +38,7 @@ const authSetup = function () {
     const utmSource = qs['utm_source'];
     const utmMedium = qs['utm_medium'];
     const utmCampaign = qs['utm_campaign'];
-    const loggerMode = "dev";
+    const loggerMode = "{{LOGGERMODE}}";
     const IframeLogoutRequestType = "LOGOUT_REQUEST";
     const enterpriseCustomers = ['zurich', 'cs'];
     const mode = qs['mode'] || 'signIn';
@@ -48,7 +48,7 @@ const authSetup = function () {
     if (utmSource &&
         (utmSource != 'undefined') &&
         (enterpriseCustomers.indexOf(utmSource) > -1)) {
-        domain = "topcoder-dev.auth0.com";
+        domain = "{{AUTH0DOMAIN}}";
         returnAppUrl += '&utm_source=' + utmSource;
     }
 
