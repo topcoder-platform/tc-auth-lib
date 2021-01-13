@@ -42,7 +42,7 @@ const authSetup = function () {
     const IframeLogoutRequestType = "LOGOUT_REQUEST";
     const enterpriseCustomers = ['zurich', 'cs'];
     const mode = qs['mode'] || 'signIn';
-    let returnAppUrl = qs['retUrl'];
+    let returnAppUrl = handleSpecificReturnUrl(qs['retUrl'], 'retUrl');
     let appUrl = qs['appUrl'] || false;
 
     if (utmSource &&
@@ -88,7 +88,7 @@ const authSetup = function () {
                 logger('handleRedirectCallback() error: ', e);
             });
         } else if (shouldLogout) {
-            host = returnAppUrl ? returnAppUrl : host;
+            host = returnAppUrl ? decodeURIComponent(returnAppUrl) : host;
             logout();
             return;
         } else if (!isLoggedIn() && returnAppUrl) {
@@ -179,6 +179,7 @@ const authSetup = function () {
     };
 
     const login = function () {
+        logger('returnUrl', returnAppUrl);
         auth0
             .loginWithRedirect({
                 redirect_uri: host + '?appUrl=' + returnAppUrl,
@@ -622,6 +623,45 @@ const authSetup = function () {
         document.cookie = cname + "=" + cvalue + cdomain + expires + ";path=/";
     }
 
+    function handleSpecificReturnUrl(value, param) {
+        try {
+            let hostdomain = "";
+            if (location.hostname !== 'localhost') {
+                hostdomain = "." + location.hostname.split('.').reverse()[1] +
+                    "." + location.hostname.split('.').reverse()[0];
+            }
+            const prefixArray = ['apps', 'software'];
+            if (hostdomain && value) {
+                for (let i = 0; i < prefixArray.length; i++) {
+                    if (value.indexOf(prefixArray[i] + hostdomain) > -1) {
+                        const queryParam = window.location.search.substr(1);
+                        if (queryParam) {
+                            const indx = queryParam.indexOf(param);
+                            if (indx > -1) {
+                                //assuming queryParam value like retUrl=xxxxxx
+                                const result = queryParam.substring(indx + param.length + 1);
+                                // verify broken url : https://abc.com/&utm=abc
+                                logger('handleSpecificReturnUrl: match query result', result);
+                                if (result.indexOf('&') > -1 && result.indexOf('?') === -1) {
+                                        return value;
+                                }
+                                return encodeURIComponent(decodeURIComponent(result));
+                            } else {
+                                return value;
+                            }
+                        } else {
+                            return value;
+                        }
+                    }
+                }
+                return value;
+            }
+            return value;
+        } catch (e) {
+            logger('Issue while handling specific query param function', e.message);
+            return value;
+        }
+    };
 
     // execute    
     init();
