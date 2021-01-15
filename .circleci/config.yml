@@ -26,13 +26,14 @@ builddeploy_steps: &builddeploy_steps
           command: |
             ./awsconfiguration.sh $DEPLOY_ENV
             source awsenvconf
-            ./buildenv.sh -e $DEPLOY_ENV -b ${LOGICAL_ENV}-${APPNAME}-deployvar
+            ./buildenv.sh -e $DEPLOY_ENV -b ${LOGICAL_ENV}-${APPNAME}-buildvar
             source buildenvvar          
             ./build.sh
       - deploy:
           name: Running MasterScript.
           command: |
             source awsenvconf
+            ./buildenv.sh -e $DEPLOY_ENV -b ${LOGICAL_ENV}-${APPNAME}-deployvar
             source buildenvvar
             #./master_deploy.sh -d CFRONT -e $DEPLOY_ENV -c true
 
