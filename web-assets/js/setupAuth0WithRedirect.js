@@ -23,7 +23,7 @@ const qs = (function (a) {
 
 const authSetup = function () {
 
-    let domain = '{{DOMAIN}}';
+    let domain = 'auth.{{DOMAIN}}';
     const clientId = '{{AUTH0_CLIENT_ID}}';
     const useLocalStorage = false;
     const useRefreshTokens = false;
