@@ -46,7 +46,14 @@ $(document).ready(function () {
         if (result.result.status === 200 && result.result.content.valid) {
           $("#error").closest(".message").fadeOut();
           $("#error").html("");
-          $('#signup').attr('action', qs["formAction"]);
+          let formAction = qs["formAction"];
+          const opt1 = 'https://auth.{{DOMAIN}}/continue';
+          const opt2 = 'https://{{AUTH0DOMAIN}}/continue';
+          if (!formAction.startWith(opt1) && !formAction(opt2)) {
+            // looks like XSS attack
+            formAction = "#";
+          }
+          $('#signup').attr('action', formAction);
           $("#state").val(qs["state"]);
           $("#regSource").val(qs["regSource"]);
           $("#utmSource").val(qs["utmSource"]);

@@ -9,6 +9,7 @@ perl -pi -e "s/\{\{AUTH0DOMAIN\}\}/$AUTH0DOMAIN/g" $CONFFILENAME
 
 SIGNUPFILENAME="./web-assets/js/signup.js"
 perl -pi -e "s/\{\{DOMAIN\}\}/$DOMAIN/g" $SIGNUPFILENAME
+perl -pi -e "s/\{\{AUTH0DOMAIN\}\}/$AUTH0DOMAIN/g" $SIGNUPFILENAME
 
 
 mkdir dist
