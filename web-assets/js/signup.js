@@ -49,7 +49,7 @@ $(document).ready(function () {
           let formAction = qs["formAction"];
           const opt1 = 'https://auth.{{DOMAIN}}/continue';
           const opt2 = 'https://{{AUTH0DOMAIN}}/continue';
-          if (!formAction.startWith(opt1) && !formAction(opt2)) {
+          if (!formAction.startsWith(opt1) && !formAction.startsWith(opt2)) {
             // looks like XSS attack
             formAction = "#";
           }
