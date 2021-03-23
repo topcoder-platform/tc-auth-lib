@@ -1,5 +1,5 @@
 
-var apiServerUrl = "https://api.topcoder.com/v3/users";
+var apiServerUrl = "https://api.{{DOMAIN}}/v3/users";
 var qs = (function (a) {
   if (a == "") return {};
   var b = {};
@@ -46,14 +46,21 @@ $(document).ready(function () {
         if (result.result.status === 200 && result.result.content.valid) {
           $("#error").closest(".message").fadeOut();
           $("#error").html("");
-          document.getElementById("signup").action = qs["formAction"];
-          document.getElementById("state").value = qs["state"];
-          document.getElementById("regSource").value = qs["regSource"];
-          document.getElementById("utmSource").value = qs["utmSource"];
-          document.getElementById("utmMedium").value = qs["utmMedium"];
-          document.getElementById("utmCampaign").value = qs["utmCampaign"];
-          document.getElementById("returnUrl").value = qs["returnUrl"];
-          document.getElementById("signup").submit();
+          let formAction = qs["formAction"];
+          const opt1 = 'https://auth.{{DOMAIN}}/continue';
+          const opt2 = 'https://{{AUTH0DOMAIN}}/continue';
+          if (!formAction.startsWith(opt1) && !formAction.startsWith(opt2)) {
+            // looks like XSS attack
+            formAction = "#";
+          }
+          $('#signup').attr('action', formAction);
+          $("#state").val(qs["state"]);
+          $("#regSource").val(qs["regSource"]);
+          $("#utmSource").val(qs["utmSource"]);
+          $("#utmMedium").val(qs["utmMedium"]);
+          $("#utmCampaign").val(qs["utmCampaign"]);
+          $("#returnUrl").val(qs["returnUrl"]);
+          $("#signup").submit();
         }
       },
     });
