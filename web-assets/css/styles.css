@@ -261,7 +261,7 @@ select::-ms-expand {
 }
 
 .confirmation-card.center-align-card .page-content .page-main {
-  padding: 0px 50px 55px;
+  padding: 0px 50px 45px;
   position: relative;
   text-align: center;
 }
@@ -270,8 +270,8 @@ select::-ms-expand {
   padding: 27px 10px 21px 10px;
   background-color: transparent;
 }
-.confirmation-card .header .logo-link img {
-
+.confirmation-card .footer {
+  padding-top: 0px;
 }
 
 .confirmation-card.center-align-card .page-content .page-main .page-title-heading {
@@ -289,40 +289,54 @@ select::-ms-expand {
   font-family: "Roboto";
   font-size: 15px;
 }
-.confirmation-card.center-align-card .page-content .page-main .page-description ol {
-  counter-reset: counter;
+.confirmation-card.center-align-card .page-content .page-main .page-description ul {
   list-style: none;
 }
 
-.confirmation-card.center-align-card .page-content .page-main .page-description ol li{
+.confirmation-card.center-align-card .page-content .page-main .page-description ul li{
   margin: 0;
   line-height: 21px;
-  counter-increment: counter;
   position: relative;
 }
 
-.confirmation-card.center-align-card .page-content .page-main .page-description ol li:not(:last-child){
+.confirmation-card.center-align-card .page-content .page-main .page-description ul li:not(:last-child){
   padding-bottom: 28px;
 }
 
-.confirmation-card.center-align-card .page-content .page-main .page-description ol li::before {
-  content: counter(counter);
+.confirmation-card.center-align-card .page-content .page-main .page-description ul li::before {
   color: #FFFFFF;
   font-family: Roboto;
   font-size: 16px;
   line-height: 19px;
-  text-align: center;
   position: absolute;
   --size: 30px;
-  left: calc(-1 * var(--size) - 10px);
   line-height: var(--size);
+  left: calc(-1 * var(--size) - 11px);
   top: -4px;
-  background-image: linear-gradient(125.57deg, #2C95D7 0%, #83C5EE 100%);
-  border-radius: 100%;
-  width: 30px;
-  height: 28px;
-  text-align: center;
 }
+
+li:nth-child(1)::before {
+  content:"";
+  background-image: url('./images/1.png');
+  height: 28px;
+  width: 30px;
+}
+
+li:nth-child(2)::before {
+  content:"";
+  background-image: url('./images/2.png');
+  height: 28px;
+  width: 30px;
+}
+
+li:nth-child(3)::before {
+  content:"";
+  background-image: url('./images/3.png');
+  height: 28px;
+  width: 30px;
+}
+
+
 /** End: Confirmation Card  **/
 
 /** Start : Input/select box - field area style **/
