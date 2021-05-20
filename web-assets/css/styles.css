@@ -245,6 +245,100 @@ select::-ms-expand {
   margin-bottom: 0;
 }
 
+/** Start: Confirmation Card  **/
+.confirmation-card.center-align-card {
+ background-color: #C8C9CC;
+}
+
+.confirmation-card a,
+.confirmation-card a:active,
+.confirmation-card a:visited {
+  text-decoration: underline;
+}
+
+.confirmation-card.center-align-card .page-content {
+  box-shadow: none;
+}
+
+.confirmation-card.center-align-card .page-content .page-main {
+  padding: 0px 50px 45px;
+  position: relative;
+  text-align: center;
+}
+
+.confirmation-card .header {
+  padding: 27px 10px 21px 10px;
+  background-color: transparent;
+}
+.confirmation-card .footer {
+  padding-top: 0px;
+}
+
+.confirmation-card.center-align-card .page-content .page-main .page-title-heading {
+  color: #2A2A2A;
+  font-family: "Barlow Condensed";
+  font-weight: 500;
+  font-size: 34px;
+  line-height: 38px;
+  text-align: center;
+}
+.confirmation-card.center-align-card .page-content .page-main .page-description {
+  margin-top: 41px;
+  text-align: left;
+  font-weight: normal;
+  font-family: "Roboto";
+  font-size: 15px;
+}
+.confirmation-card.center-align-card .page-content .page-main .page-description ul {
+  list-style: none;
+}
+
+.confirmation-card.center-align-card .page-content .page-main .page-description ul li{
+  margin: 0;
+  line-height: 21px;
+  position: relative;
+}
+
+.confirmation-card.center-align-card .page-content .page-main .page-description ul li:not(:last-child){
+  padding-bottom: 28px;
+}
+
+.confirmation-card.center-align-card .page-content .page-main .page-description ul li::before {
+  color: #FFFFFF;
+  font-family: Roboto;
+  font-size: 16px;
+  line-height: 19px;
+  position: absolute;
+  --size: 30px;
+  line-height: var(--size);
+  left: calc(-1 * var(--size) - 11px);
+  top: -4px;
+}
+
+li:nth-child(1)::before {
+  content:"";
+  background-image: url('./images/1.png');
+  height: 28px;
+  width: 30px;
+}
+
+li:nth-child(2)::before {
+  content:"";
+  background-image: url('./images/2.png');
+  height: 28px;
+  width: 30px;
+}
+
+li:nth-child(3)::before {
+  content:"";
+  background-image: url('./images/3.png');
+  height: 28px;
+  width: 30px;
+}
+
+
+/** End: Confirmation Card  **/
+
 /** Start : Input/select box - field area style **/
 .input-field {
   position: relative;
