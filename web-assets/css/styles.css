@@ -244,6 +244,74 @@ select::-ms-expand {
   line-height: 1.5;
   margin-bottom: 0;
 }
+/** Start: Check Email Card  **/
+.checkemail-card .header {
+  padding: 35px 10px 12px 10px;
+  background-color: transparent;
+}
+
+.checkemail-card.center-align-card .page-content .page-main {
+  padding: 0px 50px 40px;
+  position: relative;
+  text-align: center;
+}
+
+.checkemail-card.center-align-card .page-content .page-main .page-title-heading {
+  color: #2A2A2A;
+  font-family: Roboto;
+  font-weight: normal;
+  font-size: 24px;
+  line-height: 29px;
+  text-align: center;
+  text-transform: none;
+}
+.checkemail-card.center-align-card .page-content .page-main .page-subtitle-heading {
+  color: #2A2A2A;
+  font-family: Roboto;
+  font-weight: bold;
+  font-size: 15px;
+  line-height: 21px;
+  text-align: center;
+  text-transform: none;
+}
+
+.checkemail-card.center-align-card .page-content .page-main .page-description {
+  margin-top: 30px;
+  text-align: left;
+  font-weight: normal;
+  font-family: "Roboto";
+  font-size: 15px;
+}
+
+.checkemail-card.center-align-card .page-content .page-main .page-description ul {
+  list-style: none;
+  list-style-image: url(./images/arrow.svg);
+  margin: 0px;
+}
+
+.checkemail-card.center-align-card .page-content .page-main .page-description ul li {
+  line-height: 21px;
+  position: relative;
+}
+.checkemail-card.center-align-card .page-content .page-main .page-description ul li span {
+  position: relative;
+  top: -3px
+}
+
+.checkemail-card.center-align-card .page-content .page-main .page-description ul li::marker {
+  margin-top: 3px;
+}
+
+
+.checkemail-card.center-align-card .page-content .page-main .page-description ul li:not(:last-child){
+  margin: 0px 0px 30px 0px;
+ }
+
+.checkemail-card .footer {
+  padding-top: 0px;
+}
+
+/** End: Check Email Card  **/
 
 /** Start: Confirmation Card  **/
 .confirmation-card.center-align-card {
@@ -291,10 +359,11 @@ select::-ms-expand {
 }
 .confirmation-card.center-align-card .page-content .page-main .page-description ul {
   list-style: none;
+  margin: 0px;
 }
 
 .confirmation-card.center-align-card .page-content .page-main .page-description ul li{
-  margin: 0;
+  margin-bottom: 0;
   line-height: 21px;
   position: relative;
 }
@@ -315,28 +384,26 @@ select::-ms-expand {
   top: -4px;
 }
 
-li:nth-child(1)::before {
+.confirmation-card.center-align-card .page-content .page-main .page-description ul li:nth-child(1)::before {
   content:"";
   background-image: url('./images/1.png');
   height: 28px;
   width: 30px;
 }
 
-li:nth-child(2)::before {
+.confirmation-card.center-align-card .page-content .page-main .page-description ul li:nth-child(2)::before {
   content:"";
   background-image: url('./images/2.png');
   height: 28px;
   width: 30px;
 }
 
-li:nth-child(3)::before {
+.confirmation-card.center-align-card .page-content .page-main .page-description ul li:nth-child(3)::before {
   content:"";
   background-image: url('./images/3.png');
   height: 28px;
   width: 30px;
 }
-
-
 /** End: Confirmation Card  **/
 
 /** Start : Input/select box - field area style **/
