@@ -58,7 +58,7 @@ const authSetup = function () {
     var idToken = null;
     var callRefreshTokenFun = null;
     var host = window.location.protocol + "//" + window.location.host
-    const registerSuccessUrl = host + '/register_success.html';
+    const registerSuccessUrl = host + '/check_email.html';
 
     const init = function () {
         correctOldUrl();

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="10px" height="16px" viewBox="0 0 10 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>BEB65045-0E34-4A20-8C62-2EFECC6910A8</title>
+    <defs>
+        <polygon id="path-1" points="1.9 15.7 0.4 14.3 6.7 8 0.4 1.7 1.9 0.3 9.6 8"></polygon>
+    </defs>
+    <g id="Registration-V3" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="06-Confirmation-V5" transform="translate(-492.000000, -391.000000)">
+            <g id="Group-2" transform="translate(449.000000, 123.000000)">
+                <g id="icons/arrow/minimal-right" transform="translate(43.000000, 268.000000)">
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <use id="icon-color" fill="#0AB88A" xlink:href="#path-1"></use>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
