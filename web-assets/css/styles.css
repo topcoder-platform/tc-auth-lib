@@ -199,6 +199,14 @@ select::-ms-expand {
   height: 30px;
 }
 
+.copyright-text {
+  font-size: 12px;
+}
+
+.privacy-policy {
+  font-size: 12px;
+}
+
 .footer {
   color: #2a2a2a;
   display: flex;
@@ -519,7 +527,7 @@ select::-ms-expand {
     padding-bottom: 10px;
   }
   .footer .copyright-text,
-  .footer .privacy-polic {
+  .footer .privacy-policy {
     margin-bottom: 10px;
   }
 }
