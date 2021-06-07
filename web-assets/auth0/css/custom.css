@@ -46,12 +46,12 @@ body {
 }
 
 .auth0-lock.auth0-lock div.auth0-lock-tabs-container {
-   margin-left: 0px;
-   margin-right: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
 }
 
 .auth0-lock.auth0-lock ul.auth0-lock-tabs {
-   box-shadow: 0 1px 0 0 #E9E9E9;
+    box-shadow: 0 1px 0 0 #E9E9E9;
 }
 .auth0-lock.auth0-lock .auth0-lock-tabs a {
     font-family: Roboto;
@@ -239,6 +239,7 @@ div.auth0-lock-error::before{
     font-size: 28px;
     color: #2A2A2A;
     font-weight: 500;
+    line-height: inherit;
 }
 /* end: header */
 
@@ -263,6 +264,23 @@ div.auth0-lock-error::before{
 }
 /* end: terms */
 
+/* social/enterprise buttons */
+.auth0-lock.auth0-lock a.auth0-lock-social-button[data-provider^=google].auth0-lock-social-big-button,
+.auth0-lock.auth0-lock a.auth0-lock-social-button[data-provider^=oauth2].auth0-lock-social-big-button,
+.auth0-lock.auth0-lock a.auth0-lock-social-button[data-provider^=github].auth0-lock-social-big-button{
+    display: inline-block;
+    margin: 10px 17px;
+    width: auto;
+    border: 0;
+    overflow: unset;
+}
+
+.auth0-lock.auth0-lock a.auth0-lock-social-button.auth0-lock-social-big-button div.auth0-lock-social-button-text {
+    font-family: Roboto;
+    font-weight: normal;
+    font-size: 14px;
+}
+
 .auth0-lock.auth0-lock a.auth0-lock-social-button[data-provider^=google].auth0-lock-social-big-button .auth0-lock-social-button-icon,
 .auth0-lock.auth0-lock a.auth0-lock-social-button[data-provider^=oauth2].auth0-lock-social-big-button .auth0-lock-social-button-icon,
 .auth0-lock.auth0-lock a.auth0-lock-social-button[data-provider^=github].auth0-lock-social-big-button .auth0-lock-social-button-icon{
@@ -271,11 +289,25 @@ div.auth0-lock-error::before{
     background-size:  100%;
 }
 
-.auth0-lock.auth0-lock a.auth0-lock-social-button[data-provider^=google].auth0-lock-social-big-button,
-.auth0-lock.auth0-lock a.auth0-lock-social-button.auth0-lock-social-big-button{
+.auth0-lock.auth0-lock a.auth0-lock-social-button[data-provider^=google].auth0-lock-social-big-button {
     border: 0px;
 }
+.auth0-lock.auth0-lock a.auth0-lock-social-button[data-provider^=google].auth0-lock-social-big-button div.auth0-lock-social-button-text,
+.auth0-lock.auth0-lock a.auth0-lock-social-button[data-provider^=oauth2].auth0-lock-social-big-button div.auth0-lock-social-button-text,
+.auth0-lock.auth0-lock a.auth0-lock-social-button[data-provider^=github].auth0-lock-social-big-button div.auth0-lock-social-button-text {
+    padding: 0px;
+    top: 20px;
+    position: relative;
+    font-size: 10px;
+    box-sizing: border-box;
+    display: block;
+    overflow: unset;
+    width: unset;
+}
 
+.auth0-lock.auth0-lock a.auth0-lock-social-button[data-provider^=google].auth0-lock-social-big-button div.auth0-lock-social-button-text,
+.auth0-lock.auth0-lock a.auth0-lock-social-button[data-provider^=oauth2].auth0-lock-social-big-button div.auth0-lock-social-button-text,
+.auth0-lock.auth0-lock a.auth0-lock-social-button[data-provider^=github].auth0-lock-social-big-button div.auth0-lock-social-button-text,
 .auth0-lock.auth0-lock a.auth0-lock-social-button.auth0-lock-social-big-button:hover:not([disabled]) .auth0-lock-social-button-text,
 .auth0-lock.auth0-lock a.auth0-lock-social-button.auth0-lock-social-big-button:focus:not([disabled]) .auth0-lock-social-button-text,
 .auth0-lock.auth0-lock a.auth0-lock-social-button[data-provider^=google]:hover:not([disabled]) .auth0-lock-social-button-icon,
@@ -287,26 +319,7 @@ div.auth0-lock-error::before{
     border: 0px;
 }
 
-.auth0-lock.auth0-lock a.auth0-lock-social-button.auth0-lock-social-big-button {
-    display: inline-block;
-    margin: 10px 17px;
-    width: auto;
-    border: 0;
-    overflow: unset;
-}
 
-.auth0-lock.auth0-lock a.auth0-lock-social-button.auth0-lock-social-big-button div.auth0-lock-social-button-text {
-    box-sizing: border-box;
-    display: block;
-    overflow: unset;
-    width: unset;
-    padding: 0px;
-    top: 20px;
-    position: relative;
-    font-family: Roboto;
-    font-weight: normal;
-    font-size: 10px;
-}
 /* end: social buttons */
 
 /* member column*/
