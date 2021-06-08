@@ -8,7 +8,10 @@ body {
 }
 
 .page-wrapper {
-    margin: 60px auto auto auto;
+    margin-top: 60px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: clamp(70px, 5%, 70px);
     padding: 0px;
     text-align: center;
 }
@@ -18,7 +21,6 @@ body {
 
 .column {
     display: inline-block;
-    min-height: 820px;
 }
 
 .signup-column {
@@ -324,10 +326,12 @@ div.auth0-lock-error::before{
 
 /* member column*/
 .member-column {
+    min-height: 820px;
+    height: clamp(820px, 100%, 820px);
     border-radius: 10px 10px;
     width: 1139px;
     background-repeat: no-repeat;
-    background-position:right;
+    background-position: top right;
     background-image: url(https://tc-public-static-files.topcoder.com/topcoder-auth/images/bg.png);
 }
 #member-signin-container, #member-signup-container {
@@ -389,13 +393,14 @@ div.auth0-lock-error::before{
 
     .member-column {
         background: none;
+        min-height: auto;
     }
 }
 
 /** Desktop + tab - specific CSS **/
 @media (min-width: 768px) {
     .auth0-lock.auth0-lock div.auth0-lock-center {
-        padding: 0px 40px;
+        padding-top:0px;
     }
     .auth0-lock.auth0-lock div.auth0-lock-header-bg {
         background: white;
