@@ -199,6 +199,14 @@ select::-ms-expand {
   height: 30px;
 }
 
+.copyright-text {
+  font-size: 12px;
+}
+
+.privacy-policy {
+  font-size: 12px;
+}
+
 .footer {
   color: #2a2a2a;
   display: flex;
@@ -244,6 +252,167 @@ select::-ms-expand {
   line-height: 1.5;
   margin-bottom: 0;
 }
+/** Start: Check Email Card  **/
+.checkemail-card .header {
+  padding: 35px 10px 12px 10px;
+  background-color: transparent;
+}
+
+.checkemail-card.center-align-card .page-content .page-main {
+  padding: 0px 50px 40px;
+  position: relative;
+  text-align: center;
+}
+
+.checkemail-card.center-align-card .page-content .page-main .page-title-heading {
+  color: #2A2A2A;
+  font-family: Roboto;
+  font-weight: normal;
+  font-size: 24px;
+  line-height: 29px;
+  text-align: center;
+  text-transform: none;
+}
+.checkemail-card.center-align-card .page-content .page-main .page-subtitle-heading {
+  color: #2A2A2A;
+  font-family: Roboto;
+  font-weight: bold;
+  font-size: 15px;
+  line-height: 21px;
+  text-align: center;
+  text-transform: none;
+}
+
+.checkemail-card.center-align-card .page-content .page-main .page-description {
+  margin-top: 30px;
+  text-align: left;
+  font-weight: normal;
+  font-family: "Roboto";
+  font-size: 15px;
+}
+
+.checkemail-card.center-align-card .page-content .page-main .page-description ul {
+  list-style: none;
+  list-style-image: url(./images/arrow.svg);
+  margin: 0px;
+}
+
+.checkemail-card.center-align-card .page-content .page-main .page-description ul li {
+  line-height: 21px;
+  position: relative;
+}
+.checkemail-card.center-align-card .page-content .page-main .page-description ul li span {
+  position: relative;
+  top: -3px
+}
+
+.checkemail-card.center-align-card .page-content .page-main .page-description ul li::marker {
+  margin-top: 3px;
+}
+
+
+.checkemail-card.center-align-card .page-content .page-main .page-description ul li:not(:last-child){
+  margin: 0px 0px 30px 0px;
+ }
+
+.checkemail-card .footer {
+  padding-top: 0px;
+}
+
+/** End: Check Email Card  **/
+
+/** Start: Confirmation Card  **/
+.confirmation-card.center-align-card {
+ background-color: #C8C9CC;
+}
+
+.confirmation-card a,
+.confirmation-card a:active,
+.confirmation-card a:visited {
+  text-decoration: underline;
+}
+
+.confirmation-card.center-align-card .page-content {
+  box-shadow: none;
+}
+
+.confirmation-card.center-align-card .page-content .page-main {
+  padding: 0px 50px 45px;
+  position: relative;
+  text-align: center;
+}
+
+.confirmation-card .header {
+  padding: 27px 10px 21px 10px;
+  background-color: transparent;
+}
+.confirmation-card .footer {
+  padding-top: 0px;
+}
+
+.confirmation-card.center-align-card .page-content .page-main .page-title-heading {
+  color: #2A2A2A;
+  font-family: "Barlow Condensed";
+  font-weight: 500;
+  font-size: 34px;
+  line-height: 38px;
+  text-align: center;
+}
+.confirmation-card.center-align-card .page-content .page-main .page-description {
+  margin-top: 41px;
+  text-align: left;
+  font-weight: normal;
+  font-family: "Roboto";
+  font-size: 15px;
+}
+.confirmation-card.center-align-card .page-content .page-main .page-description ul {
+  list-style: none;
+  margin: 0px;
+}
+
+.confirmation-card.center-align-card .page-content .page-main .page-description ul li{
+  margin-bottom: 0;
+  line-height: 21px;
+  position: relative;
+}
+
+.confirmation-card.center-align-card .page-content .page-main .page-description ul li:not(:last-child){
+  padding-bottom: 28px;
+}
+
+.confirmation-card.center-align-card .page-content .page-main .page-description ul li::before {
+  color: #FFFFFF;
+  font-family: Roboto;
+  font-size: 16px;
+  line-height: 19px;
+  position: absolute;
+  --size: 30px;
+  line-height: var(--size);
+  left: calc(-1 * var(--size) - 11px);
+  top: -4px;
+}
+
+.confirmation-card.center-align-card .page-content .page-main .page-description ul li:nth-child(1)::before {
+  content:"";
+  background-image: url('./images/1.png');
+  height: 28px;
+  width: 30px;
+}
+
+.confirmation-card.center-align-card .page-content .page-main .page-description ul li:nth-child(2)::before {
+  content:"";
+  background-image: url('./images/2.png');
+  height: 28px;
+  width: 30px;
+}
+
+.confirmation-card.center-align-card .page-content .page-main .page-description ul li:nth-child(3)::before {
+  content:"";
+  background-image: url('./images/3.png');
+  height: 28px;
+  width: 30px;
+}
+/** End: Confirmation Card  **/
 
 /** Start : Input/select box - field area style **/
 .input-field {
@@ -358,7 +527,7 @@ select::-ms-expand {
     padding-bottom: 10px;
   }
   .footer .copyright-text,
-  .footer .privacy-polic {
+  .footer .privacy-policy {
     margin-bottom: 10px;
   }
 }
@@ -370,5 +539,8 @@ select::-ms-expand {
   }
   .center-align-card .page-wrapper {
     max-width: 520px;
+  }
+  .confirmation-card.center-align-card .page-wrapper {
+    max-width: 511px;
   }
 }
