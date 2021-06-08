@@ -24,10 +24,11 @@
     })(window.location.search.substr(1).split("&"));
     window.addEventListener("load", () => {
       var state = qs['state'];
-      if (state) {
+      var handle = qs['handle'];
+      if (state && handle) {
         document.querySelector("#resend").addEventListener("click", e => {
           e.preventDefault();
-          window.location = 'https://auth.topcoder-dev.com/continue?state=' + state + '&resend=true';
+          window.location = 'https://auth.topcoder-dev.com/continue?state=' + state + '&resend=1&handle=' + handle;
         });
       }
     });
