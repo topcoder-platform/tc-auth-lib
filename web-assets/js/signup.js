@@ -11,12 +11,7 @@ var qs = (function (a) {
   return b;
 })(window.location.search.substr(1).split("&"));
 $(document).ready(function () {
-  $("#continueBtn").submit(function() {
-           $(this).submit(function() {
-               return false;
-           });
-           return true;
-  }); 
+  $('.continue-btn').dblclick(false);
   $.each(countryObjs, function () {
     $("#country").append(
       $("<option></option>").text(this.name).val(JSON.stringify(this))
