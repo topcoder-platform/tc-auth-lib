@@ -61,6 +61,7 @@ $(document).ready(function () {
           $("#utmCampaign").val(qs["utmCampaign"]);
           $("#returnUrl").val(qs["returnUrl"]);
           $("#signup").submit();
+          setContinueButtonDisabledStatus(true);
         }
       },
     });
