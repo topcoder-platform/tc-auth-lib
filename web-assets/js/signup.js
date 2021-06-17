@@ -11,7 +11,12 @@ var qs = (function (a) {
   return b;
 })(window.location.search.substr(1).split("&"));
 $(document).ready(function () {
-  $('.continue-btn').dblclick(false);
+  document.addEventListener('dblclick', function (event) {
+    console.log("Double-click disabled!");
+    event.preventDefault();
+    event.stopPropagation();
+  }, true //capturing phase!!
+  );
   $.each(countryObjs, function () {
     $("#country").append(
       $("<option></option>").text(this.name).val(JSON.stringify(this))
@@ -20,14 +25,14 @@ $(document).ready(function () {
   //first name & last name div
   var firstname = qs['firstName'];
   if (firstname !== 'undefined') {
-    $("#firstName").val(firstname);  
+    $("#firstName").val(firstname);
     $("#fn").hide();
-  } 
+  }
   var lastname = qs['lastName'];
   if (lastname !== 'undefined') {
-    $("#lastName").val(lastname);  
+    $("#lastName").val(lastname);
     $("#ln").hide();
-  } 
+  }
   $("#continueBtn").click(function () {
     var handle = $("#handle").val();
     var country = $("#country").val();
