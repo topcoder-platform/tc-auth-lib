@@ -1,5 +1,6 @@
 
 var apiServerUrl = "https://api.{{DOMAIN}}/v3/users";
+var submit_flag = true;
 var qs = (function (a) {
   if (a == "") return {};
   var b = {};
@@ -49,7 +50,7 @@ $(document).ready(function () {
           $("#error").html("Error: " + result.result.content.reason);
           $("#error").closest(".message").fadeIn();
         }
-        if (result.result.status === 200 && result.result.content.valid) {
+        if (result.result.status === 200 && result.result.content.valid && submit_flag) {
           $("#error").closest(".message").fadeOut();
           $("#error").html("");
           let formAction = qs["formAction"];
@@ -67,6 +68,7 @@ $(document).ready(function () {
           $("#utmCampaign").val(qs["utmCampaign"]);
           $("#returnUrl").val(qs["returnUrl"]);
           $("#signup").submit();
+          submit_flag = false;
           setContinueButtonDisabledStatus(true);
         }
       },
