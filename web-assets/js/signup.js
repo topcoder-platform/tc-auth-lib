@@ -11,6 +11,10 @@ var qs = (function (a) {
   return b;
 })(window.location.search.substr(1).split("&"));
 $(document).ready(function () {
+  $("#continueBtn").dblclick(function(e){
+    e.preventDefault();
+    console.log("Double-click disabled!");
+  });
   $.each(countryObjs, function () {
     $("#country").append(
       $("<option></option>").text(this.name).val(JSON.stringify(this))
