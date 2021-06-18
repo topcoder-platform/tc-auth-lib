@@ -34,7 +34,7 @@ $(document).ready(function () {
     $("#lastName").val(lastname);
     $("#ln").hide();
   }
-  $("#continueBtn").click(function () {
+  $("#continueBtn").one("click", function () {
     var handle = $("#handle").val();
     var country = $("#country").val();
     $.ajax({
