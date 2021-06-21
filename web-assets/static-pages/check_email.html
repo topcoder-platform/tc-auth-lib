@@ -29,6 +29,8 @@
           e.preventDefault();
           window.location = 'https://auth.topcoder-dev.com/continue?state=' + state + '&resend=1';
         });
+      } else {
+        document.querySelector("#resend-txt").style.display = "none";
       }
     });
   </script>
@@ -54,9 +56,9 @@
         </h2>
         <div class="page-description">
           <ul>
-            <li><span>Don't see an email? Try spam just in case. You can also request to have us <a href="#"
-                  id="resend">resend </a> the
-                  activation email
+            <li><span>Don't see an email? Try spam just in case. <span id="resend-text" >You can also request to have us <a href="#"
+              id="resend">resend </a> the
+              activation email.</span>
                   If you still have any issues, you can always email <a
                     href="mailto:support@topcoder.com">support@topcoder.com</a>.
               </span>
