@@ -461,6 +461,12 @@ div.auth0-lock-error::before{
         width: auto;
         margin: 0px 20px 10px 20px;
     }
+    div.auth0-lock-error-msg {
+        white-space:normal;
+    }
+    div.auth0-lock-error::before {
+     left: calc(100% + 5px)
+    }
     /* end: form */
 
     /* terms */
