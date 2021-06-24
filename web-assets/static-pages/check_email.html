@@ -1,64 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>Check your email to activate your account</title>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" href="./images/favicon.ico" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&display=swap"
-      rel="stylesheet"
-    />
-    <link href="https://fonts.googleapis.com/css2?family=Barlow&family=Barlow+Condensed:wght@500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./styles.css" />
-  </head>
 
-  <body class="center-align-card checkemail-card">
-    <!-- Page Wrapper -->
-    <div class="page-wrapper">
-      <!-- For ADA - Skip to Content Area -->
-      <a class="action skip" href="#contentarea">Skip to Content</a>
-      <!-- Page Content Area -  Header + Main content -->
-      <div class="page-content">
-        <header class="header">
-            <img
-              src="./images/email.png"
-              alt="Check Email"
-              width="104"
-              height="89"
-            />
-        </header>
-        <main id="main" class="page-main">
-          <a id="contentarea" tabindex="-1"></a>
-          <h1 id="page-title-heading" class="page-title-heading">
-            Check your email to <br/>activate your account
-          </h1>
-          <h2 id="page-subtitle-heading" class="page-subtitle-heading">
-            Welcome to the Topcoder Community!
-          </h2>
-          <div class="page-description">
-           <ul>
-             <li><span>Don't see an email? Try spam just in case.
-               If you still have any issues, you can always email <a href="mailto:support@topcoder.com">support@topcoder.com</a>.
-               </span>
-             </li>
-             <li><span>Latest Topcoder News<br/><a href="https://www.topcoder.com/blog/category/community-stories/?s=&so=&o=">Community Stories</a> / <a href="https://www.topcoder.com/blog/category/customer-success/?s=&so=&o=">Customer Success</a> /
-               <a href="https://www.topcoder.com/blog/category/future-of-work/?s=&so=&o=">Future of Work</a></span></li>
-           </ul>
-          </div>
-        </main>
-      </div>
-      <footer class="footer">
-        <div class="copyright-text">
-          <strong>&copy;</strong> 2021 Topcoder. All Rights Reserved
+<head>
+  <title>Check your email to activate your account</title>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="shortcut icon" href="./images/favicon.ico" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow&family=Barlow+Condensed:wght@500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+  <script>
+    var qs = (function (a) {
+      if (a == "") return {};
+      var b = {};
+      for (var i = 0; i < a.length; ++i) {
+        var p = a[i].split("=", 2);
+        if (p.length == 1) b[p[0]] = "";
+        else b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
+      }
+      return b;
+    })(window.location.search.substr(1).split("&"));
+    window.addEventListener("load", () => {
+      var state = qs['state'];
+      if (state) {
+        document.querySelector("#resend").addEventListener("click", e => {
+          e.preventDefault();
+          window.location = 'https://auth.topcoder-dev.com/continue?state=' + state + '&resend=1';
+        });
+      } else {
+        document.querySelector("#resend-text").style.display = "none";
+      }
+    });
+  </script>
+</head>
+
+<body class="center-align-card checkemail-card">
+  <!-- Page Wrapper -->
+  <div class="page-wrapper">
+    <!-- For ADA - Skip to Content Area -->
+    <a class="action skip" href="#contentarea">Skip to Content</a>
+    <!-- Page Content Area -  Header + Main content -->
+    <div class="page-content">
+      <header class="header">
+        <img src="./images/email.png" alt="Check Email" width="104" height="89" />
+      </header>
+      <main id="main" class="page-main">
+        <a id="contentarea" tabindex="-1"></a>
+        <h1 id="page-title-heading" class="page-title-heading">
+          Check your email to <br />activate your account
+        </h1>
+        <h2 id="page-subtitle-heading" class="page-subtitle-heading">
+          Welcome to the Topcoder Community!
+        </h2>
+        <div class="page-description">
+          <ul>
+            <li><span>Don't see an email? Try spam just in case.
+                <span id="resend-text" style="position:static;">
+                  You can also request to have us
+                  <a href="#" id="resend">resend </a>
+                  the activation email.
+                </span>
+                If you still have any issues, you can always email <a
+                  href="mailto:support@topcoder.com">support@topcoder.com</a>.
+              </span>
+            </li>
+            <li><span>Latest Topcoder News<br /><a
+                  href="https://www.topcoder.com/blog/category/community-stories/?s=&so=&o=">Community Stories</a> / <a
+                  href="https://www.topcoder.com/blog/category/customer-success/?s=&so=&o=">Customer Success</a> /
+                <a href="https://www.topcoder.com/blog/category/future-of-work/?s=&so=&o=">Future of Work</a></span>
+            </li>
+          </ul>
         </div>
-        <a
-          class="privacy-policy"
-          href="https://www.topcoder.com/privacy-policy/"
-          >Privacy Policy</a
-        >
-      </footer>
+      </main>
     </div>
-  </body>
+    <footer class="footer">
+      <div class="copyright-text">
+        <strong>&copy;</strong> 2021 Topcoder. All Rights Reserved
+      </div>
+      <a class="privacy-policy" href="https://www.topcoder.com/privacy-policy/">Privacy Policy</a>
+    </footer>
+  </div>
+</body>
+
 </html>
