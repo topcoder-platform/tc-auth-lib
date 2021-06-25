@@ -414,6 +414,151 @@ select::-ms-expand {
 }
 /** End: Confirmation Card  **/
 
+/** Start: Sign Up Card  **/
+.center-align-card.signup-card .page-wrapper {
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0px;
+  text-align: center;
+  max-width: 1139px;
+}
+
+.center-align-card.signup-card .page-content {
+  margin-top: 60px;
+  min-height: 820px;
+  height: clamp(820px, 100%, 820px);
+  border-radius: 10px 10px;
+  width: 1139px;
+  background-repeat: no-repeat;
+  background-position: top right;
+  background-image: url(./images/signup_bg.png);
+}
+
+.center-align-card.signup-card .page-main {
+  padding: 0px 50px 40px 40px;
+  width: 100%;
+  max-width:495px;
+}
+
+.center-align-card.signup-card .page-main header{
+   background: transparent;
+   border-radius: 0px;
+   padding: 28px 0px 17px 0px;
+}
+.center-align-card.signup-card .page-main .page-title-heading{
+  color: #2A2A2A;
+  font-family: Roboto, sans-serif;
+  font-weight: 500 ;
+  font-size: 28px;
+  line-height: 38px;
+  text-transform: capitalize;
+  padding-bottom: 46px;
+}
+
+
+.center-align-card.signup-card .page-content #signup-container {
+  color: white;
+  text-align: left;
+  position: absolute;
+  margin-left:495px;
+
+}
+
+.center-align-card.signup-card .page-content #signup-container .title{
+  font-weight: 500;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 34px;
+  line-height: 38px;
+  padding: 81px 0px 20px 143px;
+}
+
+.center-align-card.signup-card .page-content #signup-container .body{
+  font-weight: normal;
+  font-family: 'Roboto';
+  font-size: 18px;
+  line-height: 27px;
+  padding: 0px 88px 0px 143px;
+}
+.center-align-card.signup-card .page-content .input-field {
+  margin-bottom: 10px;
+}
+.center-align-card.signup-card .page-content .input-field select,  .center-align-card.signup-card .page-content .input-field input{
+  border: 1px solid #D4D4D4;
+  border-radius: 4px;
+  color: #2A2A2A;
+  font-family: Roboto;
+  font-size: 14px;
+}
+.center-align-card.signup-card .page-content .input-field .icon-arrow g{
+  fill: #AAAAAA;
+  opacity: 1;
+}
+.center-align-card.signup-card .page-content .input-field .icon-arrow {
+  transform: rotate(90deg);
+}
+
+.center-align-card.signup-card .page-content .input-field .icon-arrow {
+  position: absolute;
+  top: 18px;
+  width: 12px;
+  height: 14px;
+  right: 14px;
+  pointer-events: none;
+
+}
+
+.center-align-card.signup-card .page-content .input-field select:focus,
+.center-align-card.signup-card .page-content .input-field input:focus,
+.center-align-card.signup-card .page-content .input-field select:hover,
+.center-align-card.signup-card .page-content .input-field input:hover {
+  box-shadow: none;
+}
+.center-align-card.signup-card .page-content .input-field label{
+  color: #AAAAAA;
+  font-family: Roboto;
+  font-size: 14px;
+  line-height: 22px;
+  width: 146px;
+  text-align: left;
+}
+
+.center-align-card.signup-card .page-content button.continue-btn
+{
+  background-color: #137D60;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 405px;
+  height: 48px;
+  color: #FFFFFF;
+  font-family: Roboto;
+  font-size: 17px;
+  line-height: 20px;
+  font-weight: normal;
+  text-transform: capitalize;
+}
+.center-align-card.signup-card .page-content .terms {
+  text-align: left;
+  padding-bottom: 25px;
+}
+
+.center-align-card.signup-card .page-content .terms,
+.center-align-card.signup-card .page-content .terms a{
+  color: #37373C;
+  font-family: Roboto;
+  font-size: 13px;
+  line-height: 20px;
+}
+.center-align-card.signup-card .page-content .terms a,
+.center-align-card.signup-card .page-content .terms a:visited,
+.center-align-card.signup-card .page-content .terms a :active,
+.center-align-card.signup-card .page-content .terms a:focus {
+  text-decoration: underline;
+  font-size: 13px;
+  line-height: 20px;
+  color: #0D61BF;
+}
+/** End: Sign Up Card  **/
+
 /** Start : Input/select box - field area style **/
 .input-field {
   position: relative;
@@ -521,17 +666,6 @@ select::-ms-expand {
   width: 20px;
 }
 
-/** Mobile - specific CSS **/
-@media (max-width: 767px) {
-  .footer {
-    padding-bottom: 10px;
-  }
-  .footer .copyright-text,
-  .footer .privacy-policy {
-    margin-bottom: 10px;
-  }
-}
-
 /** Desktop + tab - specific CSS **/
 @media (min-width: 768px) {
   .center-align-card .page-content {
@@ -542,5 +676,45 @@ select::-ms-expand {
   }
   .confirmation-card.center-align-card .page-wrapper {
     max-width: 511px;
+  }
+
+  .center-align-card.signup-card .page-content {
+    width: 1139px;
+    min-height: 820px;
+    height: 820px;
+  }
+}
+
+@media (max-width: 1156px) {
+  .center-align-card.signup-card .page-content {
+    background-image: none;
+    width: 90%;
+    max-width: 495px;
+    min-height: auto;
+    height: auto;
+  }
+  .center-align-card.signup-card .page-content #signup-container {
+    display: none;
+  }
+}
+
+/** Mobile - specific CSS **/
+@media (max-width: 767px) {
+  .center-align-card.signup-card .page-wrapper {
+    background-image: none;
+    width: 90%;
+    min-height: auto;
+    height: auto;
+  }
+  .center-align-card.signup-card .page-content #signup-container {
+    display: none;
+  }
+
+  .footer {
+    padding-bottom: 10px;
+  }
+  .footer .copyright-text,
+  .footer .privacy-policy {
+    margin-bottom: 10px;
   }
 }

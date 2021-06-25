@@ -10,6 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&display=swap"
       rel="stylesheet"
     />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./styles.css" />
 
     <script
@@ -20,27 +21,31 @@
     <script src="https://tc-public-static-files.topcoder.com/topcoder-auth/js/country.js"></script>
     <script type="text/javascript" src="signup.js"></script>
   </head>
-  <body class="center-align-card">
+  <body class="center-align-card signup-card">
     <!-- Page Wrapper -->
     <div class="page-wrapper">
       <!-- For ADA - Skip to Content Area -->
       <a class="action skip" href="#contentarea">Skip to Content</a>
       <!-- Page Content Area -  Header + Main content -->
       <div class="page-content">
-        <header class="header">
-          <a href="/" class="logo-link">
-            <img
-              src="./images/logo.png"
-              alt="Topcoder Logo"
-              width="94"
-              height="30"
-            />
-          </a>
-        </header>
+        <div id="signup-container" name="signup-container">
+          <div class="title">ONE MORE STEP</div>
+          <div class="body">Create your username - it's how you will be known in the community by members and customers.</div>
+        </div>
         <main id="main" class="page-main">
+          <header class="header">
+            <a href="/" class="logo-link">
+              <img
+                      src="./images/logo_dark_small.png"
+                      alt="Topcoder Logo"
+                      width="85"
+                      height="30"
+              />
+            </a>
+          </header>
           <a id="contentarea" tabindex="-1"></a>
           <h1 id="page-title-heading" class="page-title-heading">
-            JOIN TOPCODER
+            Join Topcoder
           </h1>
           <div class="messages">
             <div role="alert" class="message error">
@@ -58,7 +63,7 @@
             <input id="utmMedium" name="utmMedium" value="" type="hidden" />
             <input id="returnUrl" name="returnUrl" value="" type="hidden" />
             <div id="hd" class="input-field active">
-              <label for="handle">Enter Username</label>
+              <label for="handle">Username / Handle</label>
               <input
                 id="handle"
                 name="handle"
@@ -68,7 +73,7 @@
               />
             </div>
             <div id="fn" class="input-field active">
-              <label for="firstName">Enter your First Name</label>
+              <label for="firstName">First Name</label>
               <input
                 id="firstName"
                 name="firstName"
@@ -78,7 +83,7 @@
               />
             </div>
             <div id="ln" class="input-field active">
-              <label for="lastName">Enter your Last Name</label>
+              <label for="lastName">Last Name</label>
               <input
                 id="lastName"
                 name="lastName"
@@ -87,32 +92,34 @@
                 autocomplete="off"
               />
             </div>
-            <div id="cc" class="input-field active custom-dropdowm-arrow">
-              <label for="country">Select your country </label>
+            <div id="cc" class="input-field active">
+              <label for="country">Choose your country</label>
               <select id="country" name="country" class="input-text"></select>
+              <span><svg aria-hidden="true" focusable="false" width="5px" height="10px" viewBox="0 0 5 10" version="1.1"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="icon-arrow">
+                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g id="Lock" transform="translate(-396.000000, -3521.000000)"
+                                                                                     fill="#000000" opacity="0.539999962">
+                  <g id="SMS" transform="translate(153.000000, 3207.000000)"><g transform="translate(35.000000, 299.000000)">
+                    <g transform="translate(210.000000, 20.000000) rotate(-90.000000) translate(-210.000000, -20.000000) translate(198.000000, 8.000000)">
+                      <path id="Shape" d="M7,10 L12,15 L17,10 L7,10 Z"></path></g></g></g></g></g></svg></span>
+            </div>
+            <div class="terms">
+              <span>By clicking "Sign up", you agree to the <a href="https://www.topcoder.com/policy/terms-and-conditions" target="_blank" rel="noopener noreferrer">Terms</a> and <a href="https://www.topcoder.com/policy/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a> of Topcoder.</span>
             </div>
             <div id="sb" class="action-wrapper">
               <button
                 type="submit"
                 id="continueBtn"
                 class="continue-btn"
-                disabled="disabled"
-              >
-                Continue
+                disabled="disabled">
+                Sign Up
               </button>
             </div>
           </form>
         </main>
       </div>
       <footer class="footer">
-        <div class="copyright-text">
-          <strong>&copy;</strong> 2021 Topcoder. All Rights Reserved
-        </div>
-        <a
-          class="privacy-policy"
-          href="https://www.topcoder.com/privacy-policy/"
-          >Privacy Policy</a
-        >
+
       </footer>
     </div>
     
