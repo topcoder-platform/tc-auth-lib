@@ -28,7 +28,7 @@ $(document).ready(function () {
     $("#lastName").val(lastname);
     $("#ln").hide();
   }
-  $("#continueBtn").one("click", function () {
+  $("#continueBtn").click(function () {
     var handle = $("#handle").val();
     var country = $("#country").val();
     $.ajax({
