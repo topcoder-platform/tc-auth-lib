@@ -489,6 +489,10 @@ select::-ms-expand {
   font-family: Roboto;
   font-size: 14px;
 }
+.center-align-card.signup-card .page-content .input-field select{
+  background: none;
+}
+
 .center-align-card.signup-card .page-content .input-field .icon-arrow g{
   fill: #AAAAAA;
   opacity: 1;
@@ -504,7 +508,6 @@ select::-ms-expand {
   height: 14px;
   right: 14px;
   pointer-events: none;
-
 }
 
 .center-align-card.signup-card .page-content .input-field select:focus,
@@ -513,7 +516,7 @@ select::-ms-expand {
 .center-align-card.signup-card .page-content .input-field input:hover {
   box-shadow: none;
 }
-.center-align-card.signup-card .page-content .input-field label{
+.center-align-card.signup-card .page-content .input-field label {
   color: #AAAAAA;
   font-family: Roboto;
   font-size: 14px;
@@ -522,8 +525,14 @@ select::-ms-expand {
   text-align: left;
 }
 
-.center-align-card.signup-card .page-content button.continue-btn
-{
+.center-align-card.signup-card .page-content button.continue-btn:not(:disabled):hover {
+  background-image: none;
+}
+.center-align-card.signup-card .page-content button.continue-btn:focus{
+  outline: 0px;
+}
+
+.center-align-card.signup-card .page-content button.continue-btn {
   background-color: #137D60;
   border-radius: 4px;
   width: 100%;
