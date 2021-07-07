@@ -66,6 +66,7 @@ workflows:
             branches:
               only:
                 - dev
+                - hotfix/resendActivationEmail
 
       # Production builds are exectuted only on tagged commits to the
       # master branch.
