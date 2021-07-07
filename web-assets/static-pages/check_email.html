@@ -27,7 +27,7 @@
       if (state) {
         document.querySelector("#resend").addEventListener("click", e => {
           e.preventDefault();
-          window.location = 'https://auth.topcoder-dev.com/continue?state=' + state + '&resend=1';
+          window.location = 'https://auth.{{DOMAIN}}/continue?state=' + state + '&resend=1';
         });
       } else {
         document.querySelector("#resend-text").style.display = "none";

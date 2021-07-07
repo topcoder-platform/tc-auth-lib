@@ -11,6 +11,8 @@ SIGNUPFILENAME="./web-assets/js/signup.js"
 perl -pi -e "s/\{\{DOMAIN\}\}/$DOMAIN/g" $SIGNUPFILENAME
 perl -pi -e "s/\{\{AUTH0DOMAIN\}\}/$AUTH0DOMAIN/g" $SIGNUPFILENAME
 
+CHECKEMAIL="./web-assets/static-pages/check_email.html"
+perl -pi -e "s/\{\{DOMAIN\}\}/$DOMAIN/g" $CHECKEMAIL
 
 mkdir dist
 cp -rv ./web-assets/css/* ./dist/
