@@ -94,8 +94,9 @@ const authSetup = function () {
         } else if (!isLoggedIn() && returnAppUrl) {
             login();
         } else if (qs['error'] && qs['state']) {
-            logger("Error in executing callback(): ", qs['error_description']);
-            showLoginError(qs['error_description'], appUrl);
+            var error_description = encode(qs['error_description']);
+            logger("Error in executing callback(): ", error_description);
+            showLoginError(error_description, appUrl);
         } else {
             logger("User already logged in", true);
             postLogin();
@@ -383,6 +384,12 @@ const authSetup = function () {
     }
     // end token.js 
 
+    // XSS rules
+    const encode = function(str) {
+        return str.replace(/[\x26\x0A\<>'"]/g,function(str){return"&#"+str.charCodeAt(0)+";"})
+    }
+    // end XSS rules
+
     function getHostDomain() {
         let hostDomain = "";
         if (location.hostname !== 'localhost') {
@@ -594,8 +601,10 @@ const authSetup = function () {
 
     function showLoginError(message, linkUrl) {
         try {
-            document.getElementById("page-title-heading").innerHTML = "Alert";
-            document.getElementById("loading_message_p").innerHTML = message + " <a href=" + linkUrl + ">click here</a>";
+            document.getElementById("page-title-heading").innerText = "Alert";
+            var messageElement = document.createElement("span");
+            messageElement.appendChild(document.createTextNode(message));
+            document.getElementById("loading_message_p").innerHTML = messageElement.innerText + " <a href=" + linkUrl + ">click here</a>";
         } catch (err) {
             logger("Error in changing loading message: ", err.message)
         }
