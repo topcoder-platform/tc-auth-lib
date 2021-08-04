@@ -28,12 +28,6 @@ body {
     background-color: white !important;
 }
 
-.business-column {
-    border-radius: 10px;
-    background-image: none;
-    width: 495px;
-}
-
 /* widget */
 #hiw-login-container{
     width: 495px;
@@ -129,16 +123,18 @@ input::placeholder, .auth0-lock.auth0-lock div.auth0-lock-input-wrap .auth0-lock
 }
 
 .auth0-lock.auth0-lock button.auth0-lock-submit {
-    border-radius: 4px;
-    height: 48px;
-    line-height: 48px;
+    border-radius: 25px;
+    height: 50px;
+    line-height: 50px;
     padding: 0px;
     font-family: Roboto;
-    font-weight: normal;
-    font-size: 17px;
-    text-transform: capitalize;
+    font-weight: 500;
+    font-size: 20px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
     transition: unset;
     -webkit-transform: unset;
+    color:#FAFAFB;
 }
 
 .auth0-lock.auth0-lock button.auth0-lock-submit span {
@@ -320,61 +316,87 @@ div.auth0-lock-error::before{
     background-color: transparent !important;
     border: 0px;
 }
-
-
 /* end: social buttons */
 
-/* member column*/
-.member-column {
+/* member/business column */
+.member-column, .business-column {
     min-height: 820px;
     height: clamp(820px, 100%, 820px);
     border-radius: 10px 10px;
     width: 1139px;
     background-repeat: no-repeat;
     background-position: top right;
-    background-image: url(https://tc-public-static-files.topcoder.com/topcoder-auth/images/bg.png);
 }
-#member-signin-container, #member-signup-container {
+
+.business-column {
+    background-image: url(https://tc-public-static-files.topcoder.com/topcoder-auth/images/business_bg.png)
+}
+
+.member-column {
+    background-image: url(https://tc-public-static-files.topcoder.com/topcoder-auth/images/community_bg.png);
+}
+
+#member-signin-container, #member-signup-container, #business-signin-container, #business-signup-container {
     display: none;
     color: white;
     font-weight: 500;
     font-family: 'Barlow Condensed', sans-serif;
-    text-align: left;
     position: absolute;
 }
 
-#member-signin-container .header{
-    font-size: 48px;
-    line-height: 50px;
+#member-signin-container .title, #member-signup-container .title, #business-signin-container .title, #business-signup-container .title{
+    font-size: 60px;
+    line-height: 58px;
 }
 
-#member-signup-container .header {
-    font-size: 34px;
+#member-signin-container .header, #member-signup-container .header, #business-signin-container .header, #business-signup-container .header{
+    font-family: Roboto;
+    font-size: 12px;
+    letter-spacing: 1px;
+    line-height: 16px;
+    text-align: center;
+    font-weight: normal;
+    text-transform: uppercase;
+    padding-bottom: 3px;
+}
+#business-signin-container .title, #business-signup-container .title
+{
+    background: linear-gradient(90deg, #26B3C5, #45E0B8);
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -moz-text-fill-color: transparent;
 }
 
-#member-signup-container {
-    padding:  81px 0px 0px 634px;
+#member-signup-container,  #member-signin-container, #business-signin-container, #business-signup-container {
+    top: 60px;
+    padding:  82px 0px 0px 495px;
+    width: 644px;
+    position: absolute;
 }
 
-#member-signin-container {
-    padding:  130px 0px 0px 677px;
-}
-
-#member-signup-container {
-    padding:  81px 0px 0px 634px;
-}
 
 #member-signup-container .body {
     font-size: 18px;
     font-weight: normal;
     font-family: Roboto;
     line-height: 38px;
-    padding: 15px 0px;
+    padding: 21px 0px;
+    text-transform: capitalize;
+}
+
+#business-signup-container .body {
+    font-size: 34px;
+    font-weight: 500;
+    font-family: 'Barlow Condensed', sans-serif;
+    line-height: 38px;
+    padding: 5px 0px;
+    text-transform: uppercase;
 }
 
 #member-signup-container .body ul {
     margin: 0px 0px 0px -16px;
-    list-style: none url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMTJweCIgaGVpZ2h0PSI5cHgiIHZpZXdCb3g9IjAgMCAxMiA5IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPgogICAgPGRlZnM+CiAgICAgICAgPHBhdGggZD0iTTEwLjcyNSwwLjIyNSBMMy43NSw3LjIgTDEuMjc1LDQuNzI1IEMwLjk3NSw0LjQyNSAwLjUyNSw0LjQyNSAwLjIyNSw0LjcyNSBDLTAuMDc1LDUuMDI1IC0wLjA3NSw1LjQ3NSAwLjIyNSw1Ljc3NSBMMy4yMjUsOC43NzUgQzMuMzc1LDguOTI1IDMuNTI1LDkgMy43NSw5IEMzLjk3NSw5IDQuMTI1LDguOTI1IDQuMjc1LDguNzc1IEwxMS43NzUsMS4yNzUgQzEyLjA3NSwwLjk3NSAxMi4wNzUsMC41MjUgMTEuNzc1LDAuMjI1IEMxMS40NzUsLTAuMDc1IDExLjAyNSwtMC4wNzUgMTAuNzI1LDAuMjI1IFoiIGlkPSJwYXRoLTEiPjwvcGF0aD4KICAgIDwvZGVmcz4KICAgIDxnIGlkPSJSZWdpc3RyYXRpb24tVjMiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgogICAgICAgIDxnIGlkPSIwNy1SZWdpc3RyYXRpb24iIHRyYW5zZm9ybT0idHJhbnNsYXRlKC03NzUuMDAwMDAwLCAtMjA5LjAwMDAwMCkiPgogICAgICAgICAgICA8ZyBpZD0iaW1hZ2UtcmlnaHQtcmVnaXN0cmF0aW9uIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg2MjYuMDAwMDAwLCA2MC4wMDAwMDApIj4KICAgICAgICAgICAgICAgIDxnIGlkPSJHcm91cC02IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNDMuMDAwMDAwLCA4MS4wMDAwMDApIj4KICAgICAgICAgICAgICAgICAgICA8ZyBpZD0iaWNvbnMvY2hlY2ttYXJrIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg2LjAwMDAwMCwgNjguMDAwMDAwKSI+CiAgICAgICAgICAgICAgICAgICAgICAgIDxtYXNrIGlkPSJtYXNrLTIiIGZpbGw9IndoaXRlIj4KICAgICAgICAgICAgICAgICAgICAgICAgICAgIDx1c2UgeGxpbms6aHJlZj0iI3BhdGgtMSI+PC91c2U+CiAgICAgICAgICAgICAgICAgICAgICAgIDwvbWFzaz4KICAgICAgICAgICAgICAgICAgICAgICAgPHVzZSBpZD0iaWNvbi1jaGVja21hcmsiIGZpbGw9IiNGRkZGRkYiIHhsaW5rOmhyZWY9IiNwYXRoLTEiPjwvdXNlPgogICAgICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgPC9nPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+);
+    list-style: none;
 }
 /*end: member column */
 
@@ -401,6 +423,7 @@ div.auth0-lock-error::before{
 @media (min-width: 768px) {
     .auth0-lock.auth0-lock div.auth0-lock-center {
         padding-top:0px;
+        padding-bottom:34px;
     }
     .auth0-lock.auth0-lock div.auth0-lock-header-bg {
         background: white;
@@ -408,7 +431,7 @@ div.auth0-lock-error::before{
     }
 
     .auth0-lock.auth0-lock button.auth0-lock-submit{
-        border-radius: 4px;
+        border-radius: 25px;
     }
 }
 
@@ -457,7 +480,7 @@ div.auth0-lock-error::before{
         padding: 20px;
     }
     .auth0-lock.auth0-lock button.auth0-lock-submit{
-        border-radius: 4px;
+        border-radius: 25px;
         width: auto;
         margin: 0px 20px 10px 20px;
     }
