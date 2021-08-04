@@ -123,18 +123,16 @@ input::placeholder, .auth0-lock.auth0-lock div.auth0-lock-input-wrap .auth0-lock
 }
 
 .auth0-lock.auth0-lock button.auth0-lock-submit {
-    border-radius: 25px;
-    height: 50px;
-    line-height: 50px;
+    border-radius: 4px;
+    height: 48px;
+    line-height: 48px;
     padding: 0px;
     font-family: Roboto;
     font-weight: 500;
-    font-size: 20px;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
+    font-size: 17px;
+    text-transform: capitalize;
     transition: unset;
     -webkit-transform: unset;
-    color:#FAFAFB;
 }
 
 .auth0-lock.auth0-lock button.auth0-lock-submit span {
@@ -333,7 +331,7 @@ div.auth0-lock-error::before{
 }
 
 .member-column {
-    background-image: url(https://tc-public-static-files.topcoder.com/topcoder-auth/images/community_bg.png);
+    background-image: url(https://tc-public-static-files.topcoder.com/topcoder-auth/images/bg.png);
 }
 
 #member-signin-container, #member-signup-container, #business-signin-container, #business-signup-container {
@@ -343,8 +341,17 @@ div.auth0-lock-error::before{
     font-family: 'Barlow Condensed', sans-serif;
     position: absolute;
 }
+#member-signin-container .title{
+    font-size: 48px;
+    line-height: 50px;
+}
 
-#member-signin-container .title, #member-signup-container .title, #business-signin-container .title, #business-signup-container .title{
+#member-signup-container .title{
+    font-size: 34px;
+    text-align: left;
+}
+
+#business-signin-container .title, #business-signup-container .title{
     font-size: 60px;
     line-height: 58px;
 }
@@ -368,21 +375,29 @@ div.auth0-lock-error::before{
     -moz-text-fill-color: transparent;
 }
 
-#member-signup-container,  #member-signin-container, #business-signin-container, #business-signup-container {
+#member-signup-container, #member-signin-container, #business-signin-container, #business-signup-container {
     top: 60px;
     padding:  82px 0px 0px 495px;
     width: 644px;
     position: absolute;
 }
 
+#member-signin-container {
+    padding-top: 130px;
+}
+
+#member-signup-container {
+    padding-top: 81px;
+    padding-left: 634px;
+}
 
 #member-signup-container .body {
+    text-align: left;
     font-size: 18px;
     font-weight: normal;
     font-family: Roboto;
     line-height: 38px;
-    padding: 21px 0px;
-    text-transform: capitalize;
+    padding: 15px 0px;
 }
 
 #business-signup-container .body {
@@ -396,7 +411,7 @@ div.auth0-lock-error::before{
 
 #member-signup-container .body ul {
     margin: 0px 0px 0px -16px;
-    list-style: none;
+    list-style: none url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMTJweCIgaGVpZ2h0PSI5cHgiIHZpZXdCb3g9IjAgMCAxMiA5IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPgogICAgPGRlZnM+CiAgICAgICAgPHBhdGggZD0iTTEwLjcyNSwwLjIyNSBMMy43NSw3LjIgTDEuMjc1LDQuNzI1IEMwLjk3NSw0LjQyNSAwLjUyNSw0LjQyNSAwLjIyNSw0LjcyNSBDLTAuMDc1LDUuMDI1IC0wLjA3NSw1LjQ3NSAwLjIyNSw1Ljc3NSBMMy4yMjUsOC43NzUgQzMuMzc1LDguOTI1IDMuNTI1LDkgMy43NSw5IEMzLjk3NSw5IDQuMTI1LDguOTI1IDQuMjc1LDguNzc1IEwxMS43NzUsMS4yNzUgQzEyLjA3NSwwLjk3NSAxMi4wNzUsMC41MjUgMTEuNzc1LDAuMjI1IEMxMS40NzUsLTAuMDc1IDExLjAyNSwtMC4wNzUgMTAuNzI1LDAuMjI1IFoiIGlkPSJwYXRoLTEiPjwvcGF0aD4KICAgIDwvZGVmcz4KICAgIDxnIGlkPSJSZWdpc3RyYXRpb24tVjMiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgogICAgICAgIDxnIGlkPSIwNy1SZWdpc3RyYXRpb24iIHRyYW5zZm9ybT0idHJhbnNsYXRlKC03NzUuMDAwMDAwLCAtMjA5LjAwMDAwMCkiPgogICAgICAgICAgICA8ZyBpZD0iaW1hZ2UtcmlnaHQtcmVnaXN0cmF0aW9uIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg2MjYuMDAwMDAwLCA2MC4wMDAwMDApIj4KICAgICAgICAgICAgICAgIDxnIGlkPSJHcm91cC02IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNDMuMDAwMDAwLCA4MS4wMDAwMDApIj4KICAgICAgICAgICAgICAgICAgICA8ZyBpZD0iaWNvbnMvY2hlY2ttYXJrIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg2LjAwMDAwMCwgNjguMDAwMDAwKSI+CiAgICAgICAgICAgICAgICAgICAgICAgIDxtYXNrIGlkPSJtYXNrLTIiIGZpbGw9IndoaXRlIj4KICAgICAgICAgICAgICAgICAgICAgICAgICAgIDx1c2UgeGxpbms6aHJlZj0iI3BhdGgtMSI+PC91c2U+CiAgICAgICAgICAgICAgICAgICAgICAgIDwvbWFzaz4KICAgICAgICAgICAgICAgICAgICAgICAgPHVzZSBpZD0iaWNvbi1jaGVja21hcmsiIGZpbGw9IiNGRkZGRkYiIHhsaW5rOmhyZWY9IiNwYXRoLTEiPjwvdXNlPgogICAgICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgPC9nPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+);
 }
 /*end: member column */
 
@@ -431,7 +446,7 @@ div.auth0-lock-error::before{
     }
 
     .auth0-lock.auth0-lock button.auth0-lock-submit{
-        border-radius: 25px;
+        border-radius: 4px;
     }
 }
 
@@ -480,7 +495,7 @@ div.auth0-lock-error::before{
         padding: 20px;
     }
     .auth0-lock.auth0-lock button.auth0-lock-submit{
-        border-radius: 25px;
+        border-radius: 4px;
         width: auto;
         margin: 0px 20px 10px 20px;
     }
@@ -488,7 +503,7 @@ div.auth0-lock-error::before{
         white-space:normal;
     }
     div.auth0-lock-error::before {
-     left: calc(100% + 5px)
+        left: calc(100% + 5px)
     }
     /* end: form */
 
