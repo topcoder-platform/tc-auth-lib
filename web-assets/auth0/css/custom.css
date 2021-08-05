@@ -135,6 +135,15 @@ input::placeholder, .auth0-lock.auth0-lock div.auth0-lock-input-wrap .auth0-lock
     -webkit-transform: unset;
 }
 
+.auth0-lock.auth0-lock div.auth0-lock-input-checkbox {
+    color: #37373C;
+    font-size: 13px;
+}
+
+.auth0-lock.auth0-lock div.auth0-lock-input-checkbox span {
+    line-height: 22px;
+}
+
 .auth0-lock.auth0-lock button.auth0-lock-submit span {
     transition: unset;
     -webkit-transform: unset;
@@ -144,6 +153,9 @@ input::placeholder, .auth0-lock.auth0-lock div.auth0-lock-input-wrap .auth0-lock
     fill: rgb(19, 125, 96);
 }
 
+.auth0-lock.auth0-lock button.auth0-lock-submit:disabled svg g {
+    fill: #9b9b9b !important;
+}
 .auth0-lock.auth0-lock button.auth0-lock-submit span.auth0-label-submit {
 
 }
@@ -246,7 +258,11 @@ div.auth0-lock-error::before{
     padding: 0px 0px 25px 0px;
     color: #37373C;
     font-size: 13px;
-    line-height: 20px;
+    line-height: 22px;
+}
+
+.auth0-lock span.auth0-lock-sign-up-terms-agreement label input[type='checkbox'] {
+    top: 2px;
 }
 
 .auth0-lock.auth0-lock small.auth0-lock-terms a,
@@ -438,7 +454,7 @@ div.auth0-lock-error::before{
 @media (min-width: 768px) {
     .auth0-lock.auth0-lock div.auth0-lock-center {
         padding-top:0px;
-        padding-bottom:34px;
+        padding-bottom:11px;
     }
     .auth0-lock.auth0-lock div.auth0-lock-header-bg {
         background: white;
