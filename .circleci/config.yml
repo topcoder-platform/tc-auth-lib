@@ -29,11 +29,15 @@ builddeploy_steps: &builddeploy_steps
             ./buildenv.sh -e $DEPLOY_ENV -b ${LOGICAL_ENV}-${APPNAME}-buildvar
             source buildenvvar          
             ./build.sh
+            ./buildstatic.sh
       - deploy:
           name: Running MasterScript.
           command: |
             source awsenvconf
             ./buildenv.sh -e $DEPLOY_ENV -b ${LOGICAL_ENV}-${APPNAME}-deployvar
+            source buildenvvar
+            ./master_deploy.sh -d CFRONT -e $DEPLOY_ENV -c true
+            ./buildenv.sh -e $DEPLOY_ENV -b ${LOGICAL_ENV}-${APPNAME}-static-deployvar
             source buildenvvar
             ./master_deploy.sh -d CFRONT -e $DEPLOY_ENV -c true
 
