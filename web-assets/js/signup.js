@@ -114,6 +114,12 @@ $(document).ready(function () {
 
       setContinueButtonDisabledStatus(continueBtnDisable);
     });
+    $("#user_privacy_policy").on("change", function(){
+      continueBtnDisable = !this.checked;
+      if (!continueBtnDisable) {
+        setContinueButtonDisabledStatus(continueBtnDisable);
+      }
+    })
 });
 function setContinueButtonDisabledStatus(status) {
   var continueBtnObj = $("#continueBtn");
