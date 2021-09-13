@@ -35,7 +35,7 @@ $(document).ready(function () {
     if (!handle){
       $("#error").html("Need Username / Handle");
       $("#error").closest(".message").fadeIn();
-      return;
+      return false;
     }
     $.ajax({
       url: apiServerUrl + "/validateHandle?handle=" + handle,
