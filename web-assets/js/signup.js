@@ -37,6 +37,11 @@ $(document).ready(function () {
       $("#error").closest(".message").fadeIn();
       return false;
     }
+    if (!country){
+      $("#error").html("Choose your country");
+      $("#error").closest(".message").fadeIn();
+      return false;
+    }
     $.ajax({
       url: apiServerUrl + "/validateHandle?handle=" + handle,
       xhrFields: {
