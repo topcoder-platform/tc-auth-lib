@@ -343,11 +343,11 @@ div.auth0-lock-error::before{
 }
 
 .business-column {
-    background-image: url(https://tc-public-static-files.topcoder.com/topcoder-auth/images/business_bg.png)
+    background-image: url(https://tc-public-static-files.{{DOMAIN}}/topcoder-auth/images/business_bg.png)
 }
 
 .member-column {
-    background-image: url(https://tc-public-static-files.topcoder.com/topcoder-auth/images/bg.png);
+    background-image: url(https://tc-public-static-files.{{DOMAIN}}/topcoder-auth/images/bg.png);
 }
 
 #member-signin-container, #member-signup-container, #business-signin-container, #business-signup-container {
