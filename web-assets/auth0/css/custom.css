@@ -365,9 +365,14 @@ div.auth0-lock-error::before{
     font-family: 'Barlow Condensed', sans-serif;
     position: absolute;
 }
-#member-signin-container .title{
+#member-signin-container .title {
     font-size: 48px;
     line-height: 50px;
+    background: linear-gradient(90deg, #FFC43D, #F37593);
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -moz-text-fill-color: transparent;
 }
 
 #member-signup-container .title{
@@ -407,7 +412,7 @@ div.auth0-lock-error::before{
 }
 
 #member-signin-container {
-    padding-top: 130px;
+    padding-top: 53px;
 }
 
 #member-signup-container {
