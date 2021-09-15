@@ -342,7 +342,11 @@ div.auth0-lock-error::before{
     background-position: top right;
 }
 
-.business-column {
+.business-signin {
+    background-image: url(https://tc-public-static-files.{{DOMAIN}}/topcoder-auth/images/business_bg.png)
+}
+
+.business-signup {
     background-image: url(https://tc-public-static-files.{{DOMAIN}}/topcoder-auth/images/business_bg.png)
 }
 
