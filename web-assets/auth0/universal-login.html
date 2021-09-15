@@ -34,20 +34,12 @@
             <div id="main-container" name="main-container" class="column signup-column">
                 <div id="hiw-login-container" name="hiw-login-container"></div>
                 <div id="member-signin-container" name="member-signin-container" style="display: none">
-                    <div class="header"></div>
+                    <div class="header">community</div>
                     <div class="title">WELCOME BACK!</div>
                 </div>
                 <div id="member-signup-container" name="member-signup-container" style="display: none">
-                    <div class="header"></div>
-                    <div class="title">WHY JOIN US?</div>
-                    <div class="body">
-                        <ul>
-                            <li>We will welcome you to our community.</li>
-                            <li>You can earn real money.</li>
-                            <li>You can learn and improve your skills.</li>
-                            <li>Live the Topcoder lifestyle.</li>
-                        </ul>
-                    </div>
+                    <div class="header">community</div>
+                    <div class="title">YOUR LIFE IS ABOUT <br /> TO GET AWESOME</div>
                 </div>
                 <div id="business-signin-container" name="business-signin-container" style="display: none">
                     <div class="header">customer</div>
@@ -359,12 +351,13 @@
 
             if (mediaQuery != undefined && mediaQuery.matches === true) {
                 if (regSource === 'tcBusiness' || regSource === 'taasApp') {
-                    mainContainer.classList.add('business-column');
+                    mainContainer.classList.add('business-column', 'business-signin');
+                    mainContainer.classList.remove('business-signup');
                     businessSignInContainer.style.display = 'block';
                     businessSignUpContainer.style.display = 'none';
                 } else {
-                    mainContainer.classList.add('member-column');
-                    //memberSignInContainer.classList.add('member-column');
+                    mainContainer.classList.add('member-column', 'member-signin');
+                    mainContainer.classList.remove('member-signup');
                     memberSignInContainer.style.display = 'block';
                     memberSignUpContainer.style.display = 'none';
                 }
@@ -387,12 +380,13 @@
             if (mediaQuery != undefined && mediaQuery.matches === true) {
 
                 if (regSource === 'tcBusiness' || regSource === 'taasApp') {
-                    mainContainer.classList.add('business-column');
+                    mainContainer.classList.add('business-column', 'business-signup');
+                    mainContainer.classList.remove('business-signin');
                     businessSignInContainer.style.display = 'none';
                     businessSignUpContainer.style.display = 'block';
                 } else {
-                    mainContainer.classList.add('member-column');
-                    //memberSignUpContainer.classList.add('member-column');
+                    mainContainer.classList.add('member-column', 'member-signup');
+                    mainContainer.classList.remove('member-signin');
                     memberSignInContainer.style.display = 'none';
                     memberSignUpContainer.style.display = 'block';
                 }
