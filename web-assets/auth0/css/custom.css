@@ -342,12 +342,20 @@ div.auth0-lock-error::before{
     background-position: top right;
 }
 
-.business-column {
-    background-image: url(https://tc-public-static-files.topcoder.com/topcoder-auth/images/business_bg.png)
+.business-signin {
+    background-image: url(https://tc-public-static-files.{{DOMAIN}}/topcoder-auth/images/business-signin.png)
 }
 
-.member-column {
-    background-image: url(https://tc-public-static-files.topcoder.com/topcoder-auth/images/bg.png);
+.business-signup {
+    background-image: url(https://tc-public-static-files.{{DOMAIN}}/topcoder-auth/images/business-signup.png)
+}
+
+.member-signin {
+    background-image: url(https://tc-public-static-files.{{DOMAIN}}/topcoder-auth/images/member-signin.png);
+}
+
+.member-signup {
+    background-image: url(https://tc-public-static-files.{{DOMAIN}}/topcoder-auth/images/member-signup.png);
 }
 
 #member-signin-container, #member-signup-container, #business-signin-container, #business-signup-container {
@@ -357,14 +365,24 @@ div.auth0-lock-error::before{
     font-family: 'Barlow Condensed', sans-serif;
     position: absolute;
 }
-#member-signin-container .title{
+#member-signin-container .title {
     font-size: 48px;
     line-height: 50px;
+    background: linear-gradient(90deg, #FFC43D, #F37593);
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -moz-text-fill-color: transparent;
 }
 
-#member-signup-container .title{
-    font-size: 34px;
-    text-align: left;
+#member-signup-container .title {
+    font-size: 48px;
+    line-height: 50px;
+    background: linear-gradient(90deg, #FFC43D, #F37593);
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -moz-text-fill-color: transparent;
 }
 
 #business-signin-container .title, #business-signup-container .title{
@@ -399,12 +417,11 @@ div.auth0-lock-error::before{
 }
 
 #member-signin-container {
-    padding-top: 130px;
+    padding-top: 53px;
 }
 
 #member-signup-container {
-    padding-top: 81px;
-    padding-left: 634px;
+    padding-top: 53px;
 }
 
 #member-signup-container .body {
