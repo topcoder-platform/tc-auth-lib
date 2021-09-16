@@ -94,7 +94,9 @@
             </div>
             <div id="cc" class="input-field active">
               <label for="country">Choose your country</label>
-              <select id="country" name="country" class="input-text"></select>
+              <select id="country" name="country" class="input-text">
+                <option value='' ></option>
+              </select>
               <span><svg aria-hidden="true" focusable="false" width="5px" height="10px" viewBox="0 0 5 10" version="1.1"
                          xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="icon-arrow">
                 <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g id="Lock" transform="translate(-396.000000, -3521.000000)"
@@ -104,7 +106,17 @@
                       <path id="Shape" d="M7,10 L12,15 L17,10 L7,10 Z"></path></g></g></g></g></g></svg></span>
             </div>
             <div class="terms">
-              <span>By clicking "Sign up", you agree to the <a href="https://www.topcoder.com/policy/terms-and-conditions" target="_blank" rel="noopener noreferrer">Terms</a> and <a href="https://www.topcoder.com/policy/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a> of Topcoder.</span>
+              <span>
+                <label>
+                <input id='user_privacy_policy' type="checkbox" value="on" class="input-text user_pripacy_policy">
+                  <span>
+                    I agree to the <a href="https://www.topcoder.com/policy/privacy-policy" target="_new">Privacy Policy</a> of Topcoder.
+                    <br/>
+                    By clicking "Sign up", you agree to the <a href="https://www.topcoder.com/policy/terms-and-conditions"
+                      target="_blank" rel="noopener noreferrer">Terms</a> of Topcoder.
+                  </span>
+                </label>
+              </span>
             </div>
             <div id="sb" class="action-wrapper">
               <button

@@ -32,6 +32,16 @@ $(document).ready(function () {
   $("#continueBtn").click(function () {
     var handle = $("#handle").val();
     var country = $("#country").val();
+    if (!handle){
+      $("#error").html("Need Username / Handle");
+      $("#error").closest(".message").fadeIn();
+      return false;
+    }
+    if (!country){
+      $("#error").html("Choose your country");
+      $("#error").closest(".message").fadeIn();
+      return false;
+    }
     $.ajax({
       url: apiServerUrl + "/validateHandle?handle=" + handle,
       xhrFields: {
@@ -64,7 +74,7 @@ $(document).ready(function () {
           $("#returnUrl").val(qs["returnUrl"]);
           $("#signup").submit();
           submit_flag = false;
-          setContinueButtonDisabledStatus(true);
+          //setContinueButtonDisabledStatus(true);
         }
       },
     });
@@ -98,7 +108,7 @@ $(document).ready(function () {
           return;
         }
       });
-      setContinueButtonDisabledStatus(disableStatus);
+      //setContinueButtonDisabledStatus(disableStatus);
     })
     .each(function (index, element) {
       var parentObj = $(element).parent();
@@ -112,8 +122,11 @@ $(document).ready(function () {
         continueBtnDisable = true;
       }
 
-      setContinueButtonDisabledStatus(continueBtnDisable);
+      //setContinueButtonDisabledStatus(continueBtnDisable);
     });
+    $("#user_privacy_policy").on("change", function(){
+      setContinueButtonDisabledStatus(!this.checked);
+    })
 });
 function setContinueButtonDisabledStatus(status) {
   var continueBtnObj = $("#continueBtn");

@@ -727,3 +727,14 @@ select::-ms-expand {
     margin-bottom: 10px;
   }
 }
+
+.user_pripacy_policy {
+  background-color: transparent;
+  border: 1px solid #aaa;
+  border-radius: 5px;
+  color: #2a2a2a;
+  font-size: 1.6rem;
+  height: 14px;
+  outline: 0;
+  width: 14px;
+}
