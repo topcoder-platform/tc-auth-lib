@@ -110,7 +110,7 @@
                 title: 'Topcoder Login',
                 emailInputPlaceholder: 'Email',
                 passwordInputPlaceholder: 'Password',
-                signUpTerms: 'I agree to the <a href="https://www.topcoder.com/policy/privacy-policy" target="_new"">Privacy Policy</a> of Topcoder.<br/> By clicking "Sign up", you agree to the <a href="https://www.topcoder.com/policy/terms-and-conditions"  target="_new">Terms</a> of Topcoder.',
+                signUpTerms: 'Yes, I understand and agree to the <a href="https://www.topcoder.com/policy/privacy-policy" target="_new"">Privacy Policy</a> and <a href="https://www.topcoder.com/policy/terms-and-conditions"  target="_new">Terms</a> of Topcoder.',
                 signUpTitle: 'Join Topcoder',
                 signUpLabel: 'Sign Up',
                 signUpSubmitLabel: 'Sign Up',
@@ -322,10 +322,27 @@
         });
 
         lock.on('signup ready', function () {
-            var mediaQuery = window.matchMedia('(min-width: 1156px)');
-            updateSignUp(regSource);
-            mediaQuery.addListener(updateSignUp);
-        });
+                var mediaQuery = window.matchMedia('(min-width: 1156px)');
+                updateSignUp(regSource);
+                mediaQuery.addListener(updateSignUp);
+                try {
+                    const firstNameDiv =
+                        document.getElementById("1-firstName").parentNode.parentNode;
+                    const lastNameDiv =
+                        document.getElementById("1-lastName").parentNode.parentNode;
+                    const emailDiv = document.getElementById("1-email").parentNode.parentNode;
+                    emailDiv.parentNode.insertBefore(firstNameDiv, emailDiv);
+                    emailDiv.parentNode.insertBefore(lastNameDiv, emailDiv);
+                    try {
+                        document.getElementsByName("password")[0].placeholder = "Create a Password";
+                        //document.getElementById("1-country").value = "Select your country (current location)";
+                    } catch (e) {
+                        console.log("Error occured in changing placeholder text", e);
+                    }
+                } catch (e) {
+                    console.log("Error occured in form re-ordering", e);
+                }
+            });
 
         lock.show();
 
