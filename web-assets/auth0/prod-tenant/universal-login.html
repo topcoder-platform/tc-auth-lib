@@ -110,7 +110,7 @@
                 title: 'Topcoder Login',
                 emailInputPlaceholder: 'Email',
                 passwordInputPlaceholder: 'Password',
-                signUpTerms: 'I agree to the <a href="https://www.topcoder.com/policy/privacy-policy" target="_new"">Privacy Policy</a> of Topcoder.<br/> By clicking "Sign up", you agree to the <a href="https://www.topcoder.com/policy/terms-and-conditions"  target="_new">Terms</a> of Topcoder.',
+                signUpTerms: 'Yes, I understand and agree to the <a href="https://www.topcoder.com/policy/privacy-policy" target="_new"">Privacy Policy</a> and <a href="https://www.topcoder.com/policy/terms-and-conditions"  target="_new">Terms</a> of Topcoder.',
                 signUpTitle: 'Join Topcoder',
                 signUpLabel: 'Sign Up',
                 signUpSubmitLabel: 'Sign Up',
@@ -118,7 +118,7 @@
                 loginLabel: 'Log In',
                 loginSubmitLabel: 'Log In',
                 loginWithLabel: '%s',
-                usernameInputPlaceholder: 'Username / Handle',
+                usernameInputPlaceholder: 'Create a Username / Handle',
                 usernameOrEmailInputPlaceholder: 'Username / Handle',
                 forgotPasswordAction: 'Forgot your password?'
             };
@@ -326,17 +326,10 @@
                     {
                         type: "select",
                         name: "country",
-                        placeholder: "Choose your country",
+                        placeholder: "Select your country (current location)",
                         options: optionsObj,
                         // The following properties are optional
                         prefill: "us"
-                    },
-                    {
-                        name: 'how_did_hear',
-                        placeholder: 'How did you hear about us?',
-                        validator: function () {
-                            return true;
-                        }
                     }
                 ]
             }
@@ -392,6 +385,23 @@
             var mediaQuery = window.matchMedia('(min-width: 1156px)');
             updateSignUp(regSource);
             mediaQuery.addListener(updateSignUp);
+            try {
+                    const firstNameDiv =
+                        document.getElementById("1-firstName").parentNode.parentNode;
+                    const lastNameDiv =
+                        document.getElementById("1-lastName").parentNode.parentNode;
+                    const emailDiv = document.getElementById("1-email").parentNode.parentNode;
+                    emailDiv.parentNode.insertBefore(firstNameDiv, emailDiv);
+                    emailDiv.parentNode.insertBefore(lastNameDiv, emailDiv);
+                    try {
+                        document.getElementsByName("password")[0].placeholder = "Create a Password";
+                        //document.getElementById("1-country").value = "Select your country (current location)";
+                    } catch (e) {
+                        console.log("Error occured in changing placeholder text", e);
+                    }
+                } catch (e) {
+                    console.log("Error occured in form re-ordering", e);
+                }
         });
 
         lock.show();

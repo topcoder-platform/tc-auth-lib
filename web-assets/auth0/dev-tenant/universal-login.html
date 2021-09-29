@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>Sign In with Topcoder</title>
-       <link rel="shortcut icon" type="image/png" href="https://www.topcoder-dev.com/favicon.ico"/>
+    <link rel="shortcut icon" type="image/png" href="https://www.topcoder-dev.com/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
@@ -64,7 +64,11 @@
 <script src="https://cdn.auth0.com/js/es5-shim.min.js"></script>
 <![endif]-->
 
+    <!-- <script src="https://tc-public-static-files.topcoder-dev.com/topcoder-auth/js/lock.min_v2.js"></script>
+     -->
     <script src="https://cdn.auth0.com/js/lock/11.30/lock.min.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
+   -->
     <script language="javascript" type="text/javascript"
         src="https://tc-public-static-files.topcoder.com/topcoder-auth/js/country.js"></script>
     <script>
@@ -118,7 +122,7 @@
                 loginLabel: 'Log In',
                 loginSubmitLabel: 'Log In',
                 loginWithLabel: '%s',
-                usernameInputPlaceholder: 'Username / Handle',
+                usernameInputPlaceholder: 'Create a Username / Handle',
                 usernameOrEmailInputPlaceholder: 'Username / Handle',
                 forgotPasswordAction: 'Forgot your password?'
             };
@@ -280,17 +284,10 @@
                     {
                         type: "select",
                         name: "country",
-                        placeholder: "Choose your country",
+                        placeholder: "Select your country (current location)",
                         options: optionsObj,
                         // The following properties are optional
                         prefill: "us"
-                    },
-                    {
-                        name: 'how_did_hear',
-                        placeholder: 'How did you hear about us?',
-                        validator: function () {
-                            return true;
-                        }
                     }
                 ]
             }
@@ -322,27 +319,30 @@
         });
 
         lock.on('signup ready', function () {
-                var mediaQuery = window.matchMedia('(min-width: 1156px)');
-                updateSignUp(regSource);
-                mediaQuery.addListener(updateSignUp);
+            var mediaQuery = window.matchMedia('(min-width: 1156px)');
+            updateSignUp(regSource);
+            mediaQuery.addListener(updateSignUp);
+            try {
+                const firstNameDiv =
+                    document.getElementById("1-firstName").parentNode.parentNode;
+                const lastNameDiv =
+                    document.getElementById("1-lastName").parentNode.parentNode;
+                const emailDiv = document.getElementById("1-email").parentNode.parentNode;
+                emailDiv.parentNode.insertBefore(firstNameDiv, emailDiv);
+                emailDiv.parentNode.insertBefore(lastNameDiv, emailDiv);
                 try {
-                    const firstNameDiv =
-                        document.getElementById("1-firstName").parentNode.parentNode;
-                    const lastNameDiv =
-                        document.getElementById("1-lastName").parentNode.parentNode;
-                    const emailDiv = document.getElementById("1-email").parentNode.parentNode;
-                    emailDiv.parentNode.insertBefore(firstNameDiv, emailDiv);
-                    emailDiv.parentNode.insertBefore(lastNameDiv, emailDiv);
-                    try {
-                        document.getElementsByName("password")[0].placeholder = "Create a Password";
-                        //document.getElementById("1-country").value = "Select your country (current location)";
-                    } catch (e) {
-                        console.log("Error occured in changing placeholder text", e);
-                    }
+                    document.getElementsByName("password")[0].placeholder = "Create a Password";
+                    /*setTimeout(function() {
+                      document.getElementById("1-country").value = "Select your country (current location)"
+                    }, 300);*/
                 } catch (e) {
-                    console.log("Error occured in form re-ordering", e);
+                    console.log("Error occured in changing placeholder text", e);
                 }
-            });
+
+            } catch (e) {
+                console.log("Error occured in form re-ordering", e);
+            }
+        });
 
         lock.show();
 
@@ -412,13 +412,13 @@
 
     </script>
     <script>
-     !function () {
-         var analytics = window.analytics = window.analytics || []; if (!analytics.initialize) if (analytics.invoked) window.console && console.error && console.error("Segment snippet included twice."); else {
-             analytics.invoked = !0; analytics.methods = ["trackSubmit", "trackClick", "trackLink", "trackForm", "pageview", "identify", "reset", "group", "track", "ready", "alias", "debug", "page", "once", "off", "on", "addSourceMiddleware", "addIntegrationMiddleware", "setAnonymousId", "addDestinationMiddleware"]; analytics.factory = function (e) { return function () { var t = Array.prototype.slice.call(arguments); t.unshift(e); analytics.push(t); return analytics } }; for (var e = 0; e < analytics.methods.length; e++) { var key = analytics.methods[e]; analytics[key] = analytics.factory(key) } analytics.load = function (key, e) { var t = document.createElement("script"); t.type = "text/javascript"; t.async = !0; t.src = "https://cdn.segment.com/analytics.js/v1/" + key + "/analytics.min.js"; var n = document.getElementsByTagName("script")[0]; n.parentNode.insertBefore(t, n); analytics._loadOptions = e }; analytics._writeKey = "bkPtWMUMTYDhww2zsJluzxtdhtmSsyd9"; analytics.SNIPPET_VERSION = "4.13.2";
-             analytics.load("bkPtWMUMTYDhww2zsJluzxtdhtmSsyd9");
-             analytics.page();
-         }
-     }();
+        !function () {
+            var analytics = window.analytics = window.analytics || []; if (!analytics.initialize) if (analytics.invoked) window.console && console.error && console.error("Segment snippet included twice."); else {
+                analytics.invoked = !0; analytics.methods = ["trackSubmit", "trackClick", "trackLink", "trackForm", "pageview", "identify", "reset", "group", "track", "ready", "alias", "debug", "page", "once", "off", "on", "addSourceMiddleware", "addIntegrationMiddleware", "setAnonymousId", "addDestinationMiddleware"]; analytics.factory = function (e) { return function () { var t = Array.prototype.slice.call(arguments); t.unshift(e); analytics.push(t); return analytics } }; for (var e = 0; e < analytics.methods.length; e++) { var key = analytics.methods[e]; analytics[key] = analytics.factory(key) } analytics.load = function (key, e) { var t = document.createElement("script"); t.type = "text/javascript"; t.async = !0; t.src = "https://cdn.segment.com/analytics.js/v1/" + key + "/analytics.min.js"; var n = document.getElementsByTagName("script")[0]; n.parentNode.insertBefore(t, n); analytics._loadOptions = e }; analytics._writeKey = "bkPtWMUMTYDhww2zsJluzxtdhtmSsyd9"; analytics.SNIPPET_VERSION = "4.13.2";
+                analytics.load("bkPtWMUMTYDhww2zsJluzxtdhtmSsyd9");
+                analytics.page();
+            }
+        }();
     </script>
 </body>
 
