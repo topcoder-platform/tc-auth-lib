@@ -33,7 +33,7 @@ function create(user, callback) {
     var utmMedium = user.user_metadata.utmMedium;
     var utmCampaign = user.user_metadata.utmCampaign;
     var retUrl = user.user_metadata.returnUrl;
-    var afterActivationURL = "https://platform." + configuration.DOMAIN + "/onboard";
+    var afterActivationURL = retUrl != null ? retUrl : "https://" + configuration.DOMAIN + "/home";
     if (regSource === configuration.REG_BUSINESS) {
         afterActivationURL = "https://connect." + configuration.DOMAIN;
     }
