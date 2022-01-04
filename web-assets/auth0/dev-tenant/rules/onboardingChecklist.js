@@ -49,10 +49,10 @@ function (user, context, callback) {
                 }
 
                 global.M2MToken = body.access_token;
-                console.log('rule:onboarding-checklist:setting the M2MToken globally');
+                console.log('rule:onboarding-checklist:setting the M2MToken globally', global.M2MToken);
                 return callback(null, global.M2MToken);
             });
-        }
+        };
 
         getToken(function(err, token) {
             if (err) {
@@ -72,7 +72,7 @@ function (user, context, callback) {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
-                }
+                };
                 
                 axios(options).then(result => {
                     const data = result.data;        
@@ -80,7 +80,7 @@ function (user, context, callback) {
                     if (data.length === 0) {
                         context.redirect = {
                             url: redirectUrl
-                        }
+                        };
                         console.log('rule:onboarding-checklist:Setting redirectUrl', redirectUrl);
                         return callback(null, user, context);
                     }
@@ -89,8 +89,8 @@ function (user, context, callback) {
             
                     for (let checklistTrait of onboardingChecklistTrait.data) {
                         if (
-                            checklistTrait.onboarding_wizard != null &&
-                            (checklistTrait.onboarding_wizard.status != null ||
+                            checklistTrait.onboarding_wizard !== null &&
+                            (checklistTrait.onboarding_wizard.status !== null ||
                                 checklistTrait.onboarding_wizard.skip)
                             ) {
                                 return callback(null, user, context);
@@ -113,19 +113,19 @@ function (user, context, callback) {
         
                     context.redirect = {
                         url: redirectUrl
-                    }
+                    };
                     console.log('rule:onboarding-checklist:Setting redirectUrl', redirectUrl);
                     return callback(null, user, context);
                 }).catch(requestError => {
-                    console.log("rule:onboarding-checklist:Failed fetching onboarding_checklist with error", requestError);
+                    console.log("rule:onboarding-checklist:Failed fetching onboarding_checklist with error", requestError.response.status);
                     return callback(null, user, context);
-                })
+                });
                 
             } catch (e) {
                 console.log("rule:onboarding-checklist:Error in fetching onboarding_checklist", + e);            
                 return callback(null, user, context);
             }
-        })
+        });
     } else {
         return callback(null, user, context);
     }
