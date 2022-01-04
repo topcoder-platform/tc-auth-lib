@@ -54,6 +54,7 @@ function login(handleOrEmail, password, callback) {
         handle:user.result.content.handle,
         roles: user.result.content.roles,
         email_verified: user.result.content.emailActive,
+        created_at: user.result.content.createdAt
       });
     });
   }
