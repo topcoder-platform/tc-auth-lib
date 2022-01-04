@@ -14,10 +14,7 @@ function (user, context, callback) {
         if (!handle && provider === "auth0") {
           handle = _.get(user, "nickname", null);
         }
-
-        const loginCount = _.get(context, "stats.loginsCount");
-        console.log('rule:onboarding-checklist: loginCount', loginCount);
-        
+      
         const getToken = function(callback) {
             if (global.M2MToken) {
                 console.log('rule:onboarding-checklist:M2M token is available');
@@ -115,6 +112,9 @@ function (user, context, callback) {
                         url: redirectUrl
                     }
                     console.log('rule:onboarding-checklist:Setting redirectUrl', redirectUrl);
+                    return callback(null, user, context);
+                }).catch(requestError => {
+                    console.log("rule:onboarding-checklist:Failed fetching onboarding_checklist with error", requestError);
                     return callback(null, user, context);
                 })
                 
