@@ -14,6 +14,9 @@ function (user, context, callback) {
         if (!handle && provider === "auth0") {
           handle = _.get(user, "nickname", null);
         }
+
+        let createdAt = _.get(user, "created_at", null);
+        console.log('rule:onboarding-checklist: user created at', createdAt);
       
         const getToken = function(callback) {
             if (global.M2MToken) {
