@@ -1,6 +1,7 @@
 function (user, context, callback) {
     if (context.clientID === configuration.CLIENT_ACCOUNTS_LOGIN) {
         console.log("rule:onboarding-checklist:enter");
+        console.log("rule:onboarding-checklist:context.request", context.request);
 
         if (context.redirect) {
             console.log("rule:onboarding-checklist:exiting due to context being a redirect");
@@ -20,7 +21,6 @@ function (user, context, callback) {
 
         const createdAt = _.get(user, "created_at", null);
         const thresholdDate = moment(configuration.PROFILE_CREATION_DATE_THRESHOLD, "YYYY-MM-DD");
-        console.log('rule:onboarding-checklist: PROFILE_CREATION_DATE_THRESHOLD', thresholdDate);
 
         try {
             // For users created before thresholdDate, we don't want to check onboarding_checklist
@@ -79,7 +79,6 @@ function (user, context, callback) {
             global.AUTH0_CLAIM_NAMESPACE = "https://" + configuration.DOMAIN + "/";
             const axios = require('axios@0.19.2');
         
-            const redirectUrl = `https://platform.${configuration.DOMAIN}/onboard`;
             const options = {
                 method: 'GET',
                 url: `https://api.${configuration.DOMAIN}/v5/members/${handle}/traits?traitIds=onboarding_checklist`,
@@ -96,10 +95,8 @@ function (user, context, callback) {
             
                     if (data.length === 0) {                        
                         // User doesn't have any traits with traitId onboarding_checklist and should be shown the onboarding wizard
-                        context.redirect = {
-                            url: redirectUrl
-                        };
-                        console.log('rule:onboarding-checklist:Setting redirectUrl', redirectUrl);
+                        user.show_onboarding_wizard = true;
+                        console.log('rule:onboarding-checklist:Setting show_onboarding_wizard to true', user);
                         return callback(null, user, context);
                     }
 
@@ -130,10 +127,8 @@ function (user, context, callback) {
                     }
                     
                     // All checks failed - indicating user newly registered and needs to be shown the onboarding wizard
-                    context.redirect = {
-                        url: redirectUrl
-                    };
-                    console.log('rule:onboarding-checklist:Setting redirectUrl', redirectUrl);
+                    console.log('rule:onboarding-checklist: set show_onboarding_wizard', user);
+                    user.show_onboarding_wizard = true;
                     return callback(null, user, context);
                 } catch (e) {
                     console.log("rule:onboarding-checklist:Error in fetching onboarding_checklist", e);            
