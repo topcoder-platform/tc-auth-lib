@@ -24,6 +24,8 @@ const qs = (function (a) {
 const authSetup = function () {
 
     let domain = 'auth.{{DOMAIN}}';
+    
+    const onboardingWizardUrl = 'https://platform.{{DOMAIN}}/onboard';
     const clientId = '{{AUTH0_CLIENT_ID}}';
     const useLocalStorage = false;
     const useRefreshTokens = false;
@@ -232,8 +234,7 @@ const authSetup = function () {
 
     const redirectToOnboardingWizard = function () {
         logger("redirect to onboarding wizard");
-        const hostname = window.location.host.replace('www.', '');
-        window.location = `https://platform.${hostname}/onboard`;
+        window.location = onboardingWizardUrl;
     }
 
     const redirectToApp = function () {
