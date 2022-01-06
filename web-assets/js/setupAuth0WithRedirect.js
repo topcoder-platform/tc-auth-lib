@@ -44,6 +44,7 @@ const authSetup = function () {
     const mode = qs['mode'] || 'signIn';
     let returnAppUrl = handleSpecificReturnUrl(qs['retUrl'], 'retUrl');
     let appUrl = qs['appUrl'] || false;
+    let onboardingWizardUrl = null;
 
     if (utmSource &&
         (utmSource != 'undefined') &&
@@ -229,6 +230,12 @@ const authSetup = function () {
         return token ? !isTokenExpired(token) : false;
     };
 
+    const redirectToOnboardingWizard = function () {
+        logger("redirect to onboarding wizard");
+        const hostname = window.location.host.replace('www.', '');
+        window.location = `https://platform.${hostname}/onboard`;
+    }
+
     const redirectToApp = function () {
         logger("redirect to app", appUrl);
         if (appUrl) {
@@ -256,53 +263,59 @@ const authSetup = function () {
     }
 
     const storeToken = function () {
-        auth0.getIdTokenClaims().then(function (claims) {
-            idToken = claims.__raw;
-            let userActive = false;
-            Object.keys(claims).findIndex(function (key) {
-                if (key.includes('active')) {
-                    userActive = claims[key];
-                    return true;
-                }
-                return false;
-            });
-            if (userActive) {
-                let tcsso = '';
+        auth0.getUser().then(function (user) {
+            auth0.getIdTokenClaims().then(function (claims) {
+                idToken = claims.__raw;
+                let userActive = false;
                 Object.keys(claims).findIndex(function (key) {
-                    if (key.includes(tcSSOCookie)) {
-                        tcsso = claims[key];
+                    if (key.includes('active')) {
+                        userActive = claims[key];
                         return true;
                     }
                     return false;
                 });
-                logger('Storing token...', true);
-                try {
-                    const exT = getCookieExpiry(idToken);
-                    if (exT) {
-                        setDomainCookie(tcJWTCookie, idToken, exT);
-                        setDomainCookie(v3JWTCookie, idToken, exT);
-                        setDomainCookie(tcSSOCookie, tcsso, exT);
-                    } else {
-                        setCookie(tcJWTCookie, idToken, cookieExpireIn);
-                        setCookie(v3JWTCookie, idToken, cookieExpireIn);
-                        setCookie(tcSSOCookie, tcsso, cookieExpireIn);
+                if (userActive) {
+                    let tcsso = '';
+                    Object.keys(claims).findIndex(function (key) {
+                        if (key.includes(tcSSOCookie)) {
+                            tcsso = claims[key];
+                            return true;
+                        }
+                        return false;
+                    });
+                    logger('Storing token...', true);
+                    try {
+                        const exT = getCookieExpiry(idToken);
+                        if (exT) {
+                            setDomainCookie(tcJWTCookie, idToken, exT);
+                            setDomainCookie(v3JWTCookie, idToken, exT);
+                            setDomainCookie(tcSSOCookie, tcsso, exT);
+                        } else {
+                            setCookie(tcJWTCookie, idToken, cookieExpireIn);
+                            setCookie(v3JWTCookie, idToken, cookieExpireIn);
+                            setCookie(tcSSOCookie, tcsso, cookieExpireIn);
+                        }
+                    } catch (e) {
+                        logger('Error occured in fecthing token expiry time', e.message);
                     }
-                } catch (e) {
-                    logger('Error occured in fecthing token expiry time', e.message);
-                }
 
-                // session still active, but app calling login
-                if (!appUrl && returnAppUrl) {
-                    appUrl = returnAppUrl
+                    if (user.show_onboarding_wizard) {
+                        redirectToOnboardingWizard();
+                    } else {    
+                        // session still active, but app calling login
+                        if (!appUrl && returnAppUrl) {
+                            appUrl = returnAppUrl
+                        }
+                        redirectToApp();
+                    }
+                } else {
+                    logger("User active ? ", userActive);
+                    host = registerSuccessUrl;
+                    logout();
                 }
-                redirectToApp();
-            } else {
-                logger("User active ? ", userActive);
-                host = registerSuccessUrl;
-                logout();
-            }
-        }).catch(function (e) {
-            logger("Error in fetching token from auth0: ", e);
+            }).catch(function (e) {
+                logger("Error in fetching token from auth0: ", e);
+            }); 
         });
     };
 
