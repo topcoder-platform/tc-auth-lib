@@ -265,6 +265,7 @@ const authSetup = function () {
     const storeToken = function () {
         auth0.getUser().then(function (user) {
             auth0.getIdTokenClaims().then(function (claims) {
+                logger("claims...", claims);
                 idToken = claims.__raw;
                 let userActive = false;
                 Object.keys(claims).findIndex(function (key) {
