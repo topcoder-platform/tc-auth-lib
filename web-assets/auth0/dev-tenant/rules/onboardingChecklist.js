@@ -95,7 +95,7 @@ function (user, context, callback) {
             
                     if (data.length === 0) {                        
                         // User doesn't have any traits with traitId onboarding_checklist and should be shown the onboarding wizard
-                        context.idToken[global.AUTH0_CLAIM_NAMESPACE + 'show_onboarding_wizard'] = false;
+                        context.idToken[global.AUTH0_CLAIM_NAMESPACE + 'show_onboarding_wizard'] = true;
                         console.log('rule:onboarding-checklist:Setting show_onboarding_wizard to true', user);
                         return callback(null, user, context);
                     }
@@ -128,7 +128,7 @@ function (user, context, callback) {
                     
                     // All checks failed - indicating user newly registered and needs to be shown the onboarding wizard
                     console.log('rule:onboarding-checklist: set show_onboarding_wizard', user);
-                    context.idToken[global.AUTH0_CLAIM_NAMESPACE + 'show_onboarding_wizard'] = false;
+                    context.idToken[global.AUTH0_CLAIM_NAMESPACE + 'show_onboarding_wizard'] = true;
                     return callback(null, user, context);
                 } catch (e) {
                     console.log("rule:onboarding-checklist:Error in fetching onboarding_checklist", e);            
