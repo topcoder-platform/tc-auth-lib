@@ -266,11 +266,11 @@ const authSetup = function () {
         auth0.getIdTokenClaims().then(function (claims) {
             idToken = claims.__raw;
 
-            logger.info('Claims', JSON.stringify(claims));
+            logger('Claims', JSON.stringify(claims));
             
             let showOnboardingWizard = false;
             Object.keys(claims).forEach(key => {
-                logger.info('Checking key', key);
+                logger('Checking key', key);
                 if (key.indexOf('show_onboarding_wizard') !== -1) {
                     if (claims[key]) {
                         showOnboardingWizard = true;
@@ -278,7 +278,7 @@ const authSetup = function () {
                 }
             });
 
-            logger.info('Show Onboarding Wizard', showOnboardingWizard);
+            logger('Show Onboarding Wizard', showOnboardingWizard);
 
             let userActive = false;
             Object.keys(claims).findIndex(function (key) {
@@ -314,7 +314,7 @@ const authSetup = function () {
                 }
 
                 if (showOnboardingWizard) {
-                    logger.info('Take user to onboarding wizard');
+                    logger('Take user to onboarding wizard');
                     redirectToOnboardingWizard();
                 } else {    
                     // session still active, but app calling login
