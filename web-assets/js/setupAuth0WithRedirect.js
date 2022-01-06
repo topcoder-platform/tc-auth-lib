@@ -46,7 +46,6 @@ const authSetup = function () {
     const mode = qs['mode'] || 'signIn';
     let returnAppUrl = handleSpecificReturnUrl(qs['retUrl'], 'retUrl');
     let appUrl = qs['appUrl'] || false;
-    let onboardingWizardUrl = null;
 
     if (utmSource &&
         (utmSource != 'undefined') &&
