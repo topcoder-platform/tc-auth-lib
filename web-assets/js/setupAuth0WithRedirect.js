@@ -24,6 +24,8 @@ const qs = (function (a) {
 const authSetup = function () {
 
     let domain = 'auth.{{DOMAIN}}';
+    
+    const onboardingWizardUrl = 'https://platform.{{DOMAIN}}/onboard';
     const clientId = '{{AUTH0_CLIENT_ID}}';
     const useLocalStorage = false;
     const useRefreshTokens = false;
@@ -229,6 +231,11 @@ const authSetup = function () {
         return token ? !isTokenExpired(token) : false;
     };
 
+    const redirectToOnboardingWizard = function () {
+        logger("redirect to onboarding wizard");
+        window.location = onboardingWizardUrl;
+    }
+
     const redirectToApp = function () {
         logger("redirect to app", appUrl);
         if (appUrl) {
@@ -258,6 +265,21 @@ const authSetup = function () {
     const storeToken = function () {
         auth0.getIdTokenClaims().then(function (claims) {
             idToken = claims.__raw;
+
+            logger('Claims', JSON.stringify(claims));
+            
+            let showOnboardingWizard = false;
+            Object.keys(claims).forEach(key => {
+                logger('Checking key', key);
+                if (key.indexOf('show_onboarding_wizard') !== -1) {
+                    if (claims[key]) {
+                        showOnboardingWizard = true;
+                    }
+                }
+            });
+
+            logger('Show Onboarding Wizard', showOnboardingWizard);
+
             let userActive = false;
             Object.keys(claims).findIndex(function (key) {
                 if (key.includes('active')) {
@@ -265,7 +287,7 @@ const authSetup = function () {
                     return true;
                 }
                 return false;
-            });
+            });            
             if (userActive) {
                 let tcsso = '';
                 Object.keys(claims).findIndex(function (key) {
@@ -291,11 +313,16 @@ const authSetup = function () {
                     logger('Error occured in fecthing token expiry time', e.message);
                 }
 
-                // session still active, but app calling login
-                if (!appUrl && returnAppUrl) {
-                    appUrl = returnAppUrl
+                if (showOnboardingWizard) {
+                    logger('Take user to onboarding wizard');
+                    redirectToOnboardingWizard();
+                } else {    
+                    // session still active, but app calling login
+                    if (!appUrl && returnAppUrl) {
+                        appUrl = returnAppUrl
+                    }
+                    redirectToApp();
                 }
-                redirectToApp();
             } else {
                 logger("User active ? ", userActive);
                 host = registerSuccessUrl;
