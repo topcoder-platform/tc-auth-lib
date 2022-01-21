@@ -11,11 +11,27 @@ function (user, context, callback) {
         const _ = require('lodash');
         const moment = require('moment');
 
+        const isSocial = _.get(user, "identities[0].isSocial");
+        const connection = _.get(user, "identities[0].connection");
+
+        console.log("rule:onboarding-checklist: isSocial/connection", isSocial + "/" + connection);
+        console.log("rule:onboarding-checklist: WIPRO_SS_AZURE_AD_CONNECTION_NAME", configuration.WIPRO_SSO_AZURE_AD_CONNECTION_NAME);
+
+        if (_.includes([configuration.WIPRO_SSO_AZURE_AD_CONNECTION_NAME], connection)) {
+            console.log("rule:onboarding-checklist:exiting due to user being an enterprise user.");
+            return callback(null, user, context);
+        }
+
         let handle = _.get(user, "handle", null);
         const provider = _.get(user, "identities[0].provider", null);
-        if (!handle && provider === "auth0") {
+        if (isSocial || (!handle && provider === "auth0")) {
           handle = _.get(user, "nickname", null);
         }
+
+        if (handle == null) {
+            return callback();
+        }
+
 
         console.log("rule:onboarding-checklist: fetch onboarding_checklist for email/handle: ", user.email, handle, provider);
 
