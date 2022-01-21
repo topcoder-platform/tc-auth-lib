@@ -28,12 +28,12 @@ function (user, context, callback) {
           handle = _.get(user, "nickname", null);
         }
 
-        if (handle == null) {
-            return callback();
-        }
-
-
         console.log("rule:onboarding-checklist: fetch onboarding_checklist for email/handle: ", user.email, handle, provider);
+
+        // TODO: Properly fetch handle for social logins
+        if (handle == null || isSocial) {
+            return callback(null, user, context);
+        }
 
         const createdAt = _.get(user, "created_at", null);
         const thresholdDate = moment(configuration.PROFILE_CREATION_DATE_THRESHOLD, "YYYY-MM-DD");
