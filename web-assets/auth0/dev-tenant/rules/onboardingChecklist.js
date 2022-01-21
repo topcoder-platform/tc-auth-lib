@@ -22,8 +22,6 @@ function (user, context, callback) {
             return callback(null, user, context);
         }
 
-        console.log("rule:onboarding-checklist: fetch onboarding_checklist for email/handle: ", user.email, handle, provider);
-
         let handle = _.get(user, "handle", null);
         const provider = _.get(user, "identities[0].provider", null);
         if (isSocial || (!handle && provider === "auth0")) {
