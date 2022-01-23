@@ -427,7 +427,7 @@
             businessSignUpContainer.style.display = 'none';
 
             if (mediaQuery != undefined && mediaQuery.matches === true) {
-                if (regSource === 'tcBusiness' || regSource === 'taasApp') {
+                if (regSource === 'tcBusiness' || regSource === 'taasApp' || regSource === 'selfService') {
                     mainContainer.classList.add('business-column', 'business-signin');
                     mainContainer.classList.remove('business-signup');
                     businessSignInContainer.style.display = 'block';
@@ -456,7 +456,7 @@
 
             if (mediaQuery != undefined && mediaQuery.matches === true) {
 
-                if (regSource === 'tcBusiness' || regSource === 'taasApp') {
+                if (regSource === 'tcBusiness' || regSource === 'taasApp' || regSource === 'selfService') {
                     mainContainer.classList.add('business-column', 'business-signup');
                     mainContainer.classList.remove('business-signin');
                     businessSignInContainer.style.display = 'none';
