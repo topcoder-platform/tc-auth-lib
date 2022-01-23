@@ -370,11 +370,15 @@
                 if (regSource === 'tcBusiness' || regSource === 'taasApp' || regSource === 'selfService') {
                     mainContainer.classList.add('business-column', 'business-signin');
                     mainContainer.classList.remove('business-signup');
+                    mainContainer.classList.remove('member-column');
+                    mainContainer.classList.remove('member-signin');
                     businessSignInContainer.style.display = 'block';
                     businessSignUpContainer.style.display = 'none';
                 } else {
                     mainContainer.classList.add('member-column', 'member-signin');
                     mainContainer.classList.remove('member-signup');
+                    mainContainer.classList.remove('business-column');
+                    mainContainer.classList.remove('business-signin');
                     memberSignInContainer.style.display = 'block';
                     memberSignUpContainer.style.display = 'none';
                 }
