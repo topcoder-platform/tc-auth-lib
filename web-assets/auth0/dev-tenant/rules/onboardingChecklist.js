@@ -21,6 +21,8 @@ function (user, context, callback) {
             return callback(null, user, context);
         }
 
+        global.AUTH0_CLAIM_NAMESPACE = "https://" + configuration.DOMAIN + "/";
+        
         const handle = context.idToken[global.AUTH0_CLAIM_NAMESPACE + 'handle'];
         console.log("rule:onboarding-checklist: fetch onboarding_checklist for email/handle: ", user.email, handle);
 
