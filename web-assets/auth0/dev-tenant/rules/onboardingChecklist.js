@@ -1,7 +1,8 @@
 function (user, context, callback) {
     if (context.clientID === configuration.CLIENT_ACCOUNTS_LOGIN) {
         console.log("rule:onboarding-checklist:enter");
-        console.log("rule:onboarding-checklist:context.request", context.request);
+        
+        console.log("rule:onboarding-checklist:context.idToken", context.idToken);
         console.log("rule:onboarding-checklist:user", user);
 
         if (context.redirect) {
@@ -23,16 +24,9 @@ function (user, context, callback) {
             return callback(null, user, context);
         }
 
-        let handle = _.get(user, "handle", null);
-        const provider = _.get(user, "identities[0].provider", null);
-        if (isSocial || (!handle && provider === "auth0")) {
-            console.log("rule:onboarding-checklist: getting handle from user.nickname")
-            handle = _.get(user, "nickname", null);
-        }
+        const handle = context.idToken[global.AUTH0_CLAIM_NAMESPACE + 'handle'];
+        console.log("rule:onboarding-checklist: fetch onboarding_checklist for email/handle: ", user.email, handle);
 
-        console.log("rule:onboarding-checklist: fetch onboarding_checklist for email/handle: ", user.email, handle, provider);
-
-        // TODO: Properly fetch handle for social logins
         if (handle == null) {
             console.log("rule:onboarding-checklist: exiting due to handle being null.");
             return callback(null, user, context);
