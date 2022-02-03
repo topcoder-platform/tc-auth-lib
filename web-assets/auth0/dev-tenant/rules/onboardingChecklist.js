@@ -2,10 +2,7 @@ function (user, context, callback) {
     if (context.clientID === configuration.CLIENT_ACCOUNTS_LOGIN) {
         console.log("rule:onboarding-checklist:enter");
         
-        console.log("rule:onboarding-checklist:context.idToken", context.idToken);
-        console.log("rule:onboarding-checklist:user", user);
-
-        if (context.redirect) {
+       if (context.redirect) {
             console.log("rule:onboarding-checklist:exiting due to context being a redirect");
             return callback(null, user, context);
         }
