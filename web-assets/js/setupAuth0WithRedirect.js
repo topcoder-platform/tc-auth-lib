@@ -187,9 +187,9 @@ const authSetup = function () {
             .loginWithRedirect({
                 redirect_uri: host + '?appUrl=' + returnAppUrl,
                 regSource: regSource,
-                utmSource: utmSource,
-                utmCampaign: utmCampaign,
-                utmMedium: utmMedium,
+                utm_source: utmSource,
+                utm_campaign: utmCampaign,
+                utm_medium: utmMedium,
                 returnUrl: returnAppUrl,
                 mode: mode
             })

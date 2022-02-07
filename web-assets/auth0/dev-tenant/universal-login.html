@@ -79,9 +79,9 @@
         var language;
         var optionsObj = Array();
         var regSource = config.extraParams.regSource || null;
-        var utmSource = config.extraParams.utmSource || null;
-        var utmMedium = config.extraParams.utmMedium || null;
-        var utmCampaign = config.extraParams.utmCampaign || null;
+        var utmSource = config.extraParams.utm_source || null;
+        var utmMedium = config.extraParams.utm_medium || null;
+        var utmCampaign = config.extraParams.utm_campaign || null;
         var retUrl = config.extraParams.returnUrl || null;
         var loginMode = config.extraParams.mode || 'signIn';
 
@@ -248,17 +248,17 @@
                     },
                     {
                         type: "hidden",
-                        name: "utmSource",
+                        name: "utm_source",
                         value: utmSource
                     },
                     {
                         type: "hidden",
-                        name: "utmMedium",
+                        name: "utm_medium",
                         value: utmMedium
                     },
                     {
                         type: "hidden",
-                        name: "utmCampaign",
+                        name: "utm_campaign",
                         value: utmCampaign
                     },
                     {
@@ -427,7 +427,7 @@
                 (i[r].q = i[r].q || []).push(arguments)
             }, i[r].l = 1 * new Date(); a = s.createElement(o),
                 m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
-        })(window, document, 'script', 'https://www.google-analytics.com/analytics_debug.js', 'ga');
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
         ga('create', 'UA-6340959-1', 'auto');
         ga('send', 'pageview');
