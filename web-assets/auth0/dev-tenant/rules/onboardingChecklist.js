@@ -1,9 +1,8 @@
 function (user, context, callback) {
     if (context.clientID === configuration.CLIENT_ACCOUNTS_LOGIN) {
         console.log("rule:onboarding-checklist:enter");
-        console.log("rule:onboarding-checklist:context.request", context.request);
-
-        if (context.redirect) {
+        
+       if (context.redirect) {
             console.log("rule:onboarding-checklist:exiting due to context being a redirect");
             return callback(null, user, context);
         }
@@ -22,16 +21,11 @@ function (user, context, callback) {
             return callback(null, user, context);
         }
 
-        let handle = _.get(user, "handle", null);
-        const provider = _.get(user, "identities[0].provider", null);
-        if (isSocial || (!handle && provider === "auth0")) {
-          handle = _.get(user, "nickname", null);
-        }
+        const handle = context.idToken[global.AUTH0_CLAIM_NAMESPACE + 'handle'];
+        console.log("rule:onboarding-checklist: fetch onboarding_checklist for email/handle: ", user.email, handle);
 
-        console.log("rule:onboarding-checklist: fetch onboarding_checklist for email/handle: ", user.email, handle, provider);
-
-        // TODO: Properly fetch handle for social logins
-        if (handle == null || isSocial) {
+        if (handle == null) {
+            console.log("rule:onboarding-checklist: exiting due to handle being null.");
             return callback(null, user, context);
         }
 
@@ -112,7 +106,7 @@ function (user, context, callback) {
                     if (data.length === 0) {                        
                         // User doesn't have any traits with traitId onboarding_checklist and should be shown the onboarding wizard
                         context.idToken[global.AUTH0_CLAIM_NAMESPACE + 'show_onboarding_wizard'] = true;
-                        console.log('rule:onboarding-checklist:Setting show_onboarding_wizard to true', user);
+                        console.log('rule:onboarding-checklist:Setting show_onboarding_wizard to true');
                         return callback(null, user, context);
                     }
 
@@ -128,7 +122,7 @@ function (user, context, callback) {
                             }
                     }
         
-                    const profileCompletedData = onboardingChecklistTrait.data[0].profile_completed;
+                    const profileCompletedData = onboardingChecklistTrait.data.length > 0 ? onboardingChecklistTrait.data[0].profile_completed : null;
         
                     if (profileCompletedData) {
                         if (profileCompletedData.status === "completed") {
@@ -143,7 +137,7 @@ function (user, context, callback) {
                     }
                     
                     // All checks failed - indicating user newly registered and needs to be shown the onboarding wizard
-                    console.log('rule:onboarding-checklist: set show_onboarding_wizard', user);
+                    console.log('rule:onboarding-checklist: set show_onboarding_wizard');
                     context.idToken[global.AUTH0_CLAIM_NAMESPACE + 'show_onboarding_wizard'] = true;
                     return callback(null, user, context);
                 } catch (e) {

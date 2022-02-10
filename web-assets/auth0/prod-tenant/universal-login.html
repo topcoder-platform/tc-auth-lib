@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>Sign In with Topcoder</title>
-    <link rel="shortcut icon" type="image/png" href="https://www.topcoder.com/favicon.ico"/>
+    <link rel="shortcut icon" type="image/png" href="https://www.topcoder.com/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
@@ -24,8 +24,17 @@
         }
     </script>
 
+    <!-- Google Tag Manager -->
+    <script>(function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-MXXQHG8');</script>
+    <!-- End Google Tag Manager -->
 </head>
-
 <body>
     <div id='wrapper-container' class='page-wrapper'>
         <div class='row'>
@@ -179,7 +188,7 @@
                 socialButtonStyle: 'small'
             },
             tc_standard: {
-                allowedConnections: ['TC-User-Database', 'github', 'google-oauth2', 'wipro-adfs', 'Verified-User-Database'],
+                allowedConnections: ['TC-User-Database', 'github', 'google-oauth2', 'wipro-adfs', 'wipro-azuread', 'Verified-User-Database'],
                 theme: {
                     logo: 'https://i.imgur.com/IY6TVjY.png',
                     primaryColor: '#137d60'
@@ -198,7 +207,7 @@
                 }
             },
             aha: {
-                allowedConnections: ['TC-User-Database', 'github', 'google-oauth2', 'wipro-adfs', 'Verified-User-Database'],
+                allowedConnections: ['TC-User-Database', 'github', 'google-oauth2', 'wipro-adfs', 'wipro-azuread', 'Verified-User-Database'],
                 theme: {
                     logo: 'https://i.imgur.com/CEU3plH.png',
                     primaryColor: '#07a8f2'
@@ -386,22 +395,22 @@
             updateSignUp(regSource);
             mediaQuery.addListener(updateSignUp);
             try {
-                    const firstNameDiv =
-                        document.getElementById("1-firstName").parentNode.parentNode;
-                    const lastNameDiv =
-                        document.getElementById("1-lastName").parentNode.parentNode;
-                    const emailDiv = document.getElementById("1-email").parentNode.parentNode;
-                    emailDiv.parentNode.insertBefore(firstNameDiv, emailDiv);
-                    emailDiv.parentNode.insertBefore(lastNameDiv, emailDiv);
-                    try {
-                        document.getElementsByName("password")[0].placeholder = "Create a Password";
-                        //document.getElementById("1-country").value = "Select your country (current location)";
-                    } catch (e) {
-                        console.log("Error occured in changing placeholder text", e);
-                    }
+                const firstNameDiv =
+                    document.getElementById("1-firstName").parentNode.parentNode;
+                const lastNameDiv =
+                    document.getElementById("1-lastName").parentNode.parentNode;
+                const emailDiv = document.getElementById("1-email").parentNode.parentNode;
+                emailDiv.parentNode.insertBefore(firstNameDiv, emailDiv);
+                emailDiv.parentNode.insertBefore(lastNameDiv, emailDiv);
+                try {
+                    document.getElementsByName("password")[0].placeholder = "Create a Password";
+                    //document.getElementById("1-country").value = "Select your country (current location)";
                 } catch (e) {
-                    console.log("Error occured in form re-ordering", e);
+                    console.log("Error occured in changing placeholder text", e);
                 }
+            } catch (e) {
+                console.log("Error occured in form re-ordering", e);
+            }
         });
 
         lock.show();
@@ -472,11 +481,15 @@
 
     </script>
     <script>
-  !function(){var analytics=window.analytics=window.analytics||[];if(!analytics.initialize)if(analytics.invoked)window.console&&console.error&&console.error("Segment snippet included twice.");else{analytics.invoked=!0;analytics.methods=["trackSubmit","trackClick","trackLink","trackForm","pageview","identify","reset","group","track","ready","alias","debug","page","once","off","on","addSourceMiddleware","addIntegrationMiddleware","setAnonymousId","addDestinationMiddleware"];analytics.factory=function(e){return function(){var t=Array.prototype.slice.call(arguments);t.unshift(e);analytics.push(t);return analytics}};for(var e=0;e<analytics.methods.length;e++){var key=analytics.methods[e];analytics[key]=analytics.factory(key)}analytics.load=function(key,e){var t=document.createElement("script");t.type="text/javascript";t.async=!0;t.src="https://cdn.segment.com/analytics.js/v1/" + key + "/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(t,n);analytics._loadOptions=e};analytics._writeKey="ti8hUmZ1P9BJ73vUVM3CEe0iJCuvzMCY";analytics.SNIPPET_VERSION="4.13.2";
-  analytics.load("ti8hUmZ1P9BJ73vUVM3CEe0iJCuvzMCY");
-  analytics.page();
-  }}();
-</script>
+        !function () {
+            var analytics = window.analytics = window.analytics || []; if (!analytics.initialize) if (analytics.invoked) window.console && console.error && console.error("Segment snippet included twice."); else {
+                analytics.invoked = !0; analytics.methods = ["trackSubmit", "trackClick", "trackLink", "trackForm", "pageview", "identify", "reset", "group", "track", "ready", "alias", "debug", "page", "once", "off", "on", "addSourceMiddleware", "addIntegrationMiddleware", "setAnonymousId", "addDestinationMiddleware"]; analytics.factory = function (e) { return function () { var t = Array.prototype.slice.call(arguments); t.unshift(e); analytics.push(t); return analytics } }; for (var e = 0; e < analytics.methods.length; e++) { var key = analytics.methods[e]; analytics[key] = analytics.factory(key) } analytics.load = function (key, e) { var t = document.createElement("script"); t.type = "text/javascript"; t.async = !0; t.src = "https://cdn.segment.com/analytics.js/v1/" + key + "/analytics.min.js"; var n = document.getElementsByTagName("script")[0]; n.parentNode.insertBefore(t, n); analytics._loadOptions = e }; analytics._writeKey = "ti8hUmZ1P9BJ73vUVM3CEe0iJCuvzMCY"; analytics.SNIPPET_VERSION = "4.13.2";
+                analytics.load("ti8hUmZ1P9BJ73vUVM3CEe0iJCuvzMCY");
+                analytics.page();
+            }
+        }();
+    </script>
+
 </body>
 
 </html>
