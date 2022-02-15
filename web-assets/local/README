@@ -3,6 +3,9 @@ Open index.html on your browser to get the token locally, for reefreshing the to
 Please follow the following instructions to run get token locally - 
 
 1- Clone this git repo locally 
-2- cd tc-auth-lib/web-assets/local
-3- python3 -m http.server 5000 
-4- or php -S localhost:5000 
+2- Command "cd tc-auth-lib/web-assets/local"
+3- Command "python3 -m http.server 5000" 
+4- or Command "php -S localhost:5000" 
+5- Open http://localhost:5000 on your browser and hit "login" link.
+6- It'll take your https://topcoder-dev.com account credentials
+7- After successfully login, now access any topcoder frontend app locally in your browser, aprat from 5000 port.  
