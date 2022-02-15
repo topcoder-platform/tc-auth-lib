@@ -1,1 +1,8 @@
-Open index.html to get the token locally. 
+To run any topcoder frontend application locally, you need token for localhost domain. 
+Open index.html on your browser to get the token locally, for reefreshing the token keep the tab open.
+Please follow the following instructions to run get token locally - 
+
+1- Clone this git repo locally 
+2- cd tc-auth-lib/web-assets/local
+3- python3 -m http.server 5000 
+4- or php -S localhost:5000 
