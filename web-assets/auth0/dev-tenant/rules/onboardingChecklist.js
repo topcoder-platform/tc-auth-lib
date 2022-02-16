@@ -120,8 +120,8 @@ function (user, context, callback) {
                                 checklistTrait.onboarding_wizard.override === 'skip')
                             {
                                 return callback(null, user, context);
-                            } else if (checklistTrait.onboarding_wizard.override === 'retUrl') {
-                                override = 'retUrl';
+                            } else if (checklistTrait.onboarding_wizard.override === 'useRetUrl') {
+                                override = 'useRetUrl';
                             }
                         }
                     }
