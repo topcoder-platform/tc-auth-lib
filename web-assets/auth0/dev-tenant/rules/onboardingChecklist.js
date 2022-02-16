@@ -115,7 +115,7 @@ function (user, context, callback) {
             
                     for (let checklistTrait of onboardingChecklistTrait.data) {
                         if (checklistTrait.onboarding_wizard != null) {
-                            if ( /* checklistTrait.onboarding_wizard.status != null || */ // any valid status indicates user has already seen onboarding wizard and needn't be shown again.
+                            if ( checklistTrait.onboarding_wizard.status !== 'pending_at_user' || // any non pending_at_user status indicates OB was either seen or completed and can be skipped
                                 checklistTrait.onboarding_wizard.skip ||// for certain signup routes skip is set to true, and thus onboarding wizard needn't be shown
                                 checklistTrait.onboarding_wizard.override === 'skip')
                             {
