@@ -233,7 +233,7 @@ const authSetup = function () {
 
     const redirectToOnboardingWizard = function () {
         logger("redirect to onboarding wizard");
-        window.location = onboardingWizardUrl;
+        window.location = onboardingWizardUrl
     }
 
     const redirectToApp = function () {
@@ -319,7 +319,7 @@ const authSetup = function () {
                         logger('Need to persist appUrl', returnAppUrl)
                         setCookie('returnAfterOnboard', returnAppUrl) // TODO: use localStorage instead?
                     }
-                    redirectToOnboardingWizard();
+                    redirectToOnboardingWizard(returnAppUrl);
                 } 
                 else {
                     // session still active, but app calling login

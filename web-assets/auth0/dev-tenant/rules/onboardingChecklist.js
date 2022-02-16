@@ -125,7 +125,7 @@ function (user, context, callback) {
                             }
                         }
                     }
-        
+
                     const profileCompletedData = onboardingChecklistTrait.data.length > 0 ? onboardingChecklistTrait.data[0].profile_completed : null;
         
                     if (profileCompletedData) {
