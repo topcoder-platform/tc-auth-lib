@@ -47,6 +47,9 @@ const authSetup = function () {
     let returnAppUrl = handleSpecificReturnUrl(qs['retUrl'], 'retUrl');
     let appUrl = qs['appUrl'] || false;
 
+    console.log('returnAppUrl', returnAppUrl);
+    console.log('appUrl', appUrl);
+
     if (utmSource &&
         (utmSource != 'undefined') &&
         (enterpriseCustomers.indexOf(utmSource) > -1)) {
@@ -316,7 +319,7 @@ const authSetup = function () {
                 if (showOnboardingWizard) {
                     logger('Take user to onboarding wizard', showOnboardingWizard);
                     if (showOnboardingWizard === 'useRetUrl') {
-                        logger('Need to persist appUrl', returnAppUrl)
+                        logger('Need to persist appUrl', returnAppUrl, appUrl);
                         setCookie('returnAfterOnboard', returnAppUrl) // TODO: use localStorage instead?
                     }
                     redirectToOnboardingWizard(returnAppUrl);
