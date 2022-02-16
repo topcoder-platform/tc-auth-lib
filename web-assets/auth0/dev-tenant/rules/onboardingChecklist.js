@@ -105,21 +105,25 @@ function (user, context, callback) {
             
                     if (data.length === 0) {                        
                         // User doesn't have any traits with traitId onboarding_checklist and should be shown the onboarding wizard
-                        context.idToken[global.AUTH0_CLAIM_NAMESPACE + 'show_onboarding_wizard'] = true;
-                        console.log('rule:onboarding-checklist:Setting show_onboarding_wizard to true');
+                        context.idToken[global.AUTH0_CLAIM_NAMESPACE + 'onboarding_wizard'] = 'show';
+                        console.log('rule:onboarding-checklist:Setting onboarding_wizard to show');
                         return callback(null, user, context);
                     }
 
                     const onboardingChecklistTrait = data.filter((item) => item.traitId === 'onboarding_checklist')[0].traits;
+                    let override = 'show';
             
                     for (let checklistTrait of onboardingChecklistTrait.data) {
-                        if (
-                            checklistTrait.onboarding_wizard != null &&
-                            (checklistTrait.onboarding_wizard.status != null || // any valid status indicates user has already seen onboarding wizard and needn't be shown again.
-                                checklistTrait.onboarding_wizard.skip) // for certain signup routes skip is set to true, and thus onboarding wizard needn't be shown
-                            ) {
+                        if (checklistTrait.onboarding_wizard != null) {
+                            if ( /* checklistTrait.onboarding_wizard.status != null || */ // any valid status indicates user has already seen onboarding wizard and needn't be shown again.
+                                checklistTrait.onboarding_wizard.skip ||// for certain signup routes skip is set to true, and thus onboarding wizard needn't be shown
+                                checklistTrait.onboarding_wizard.override === 'skip')
+                            {
                                 return callback(null, user, context);
+                            } else if (checklistTrait.onboarding_wizard.override === 'retUrl') {
+                                override = 'retUrl';
                             }
+                        }
                     }
         
                     const profileCompletedData = onboardingChecklistTrait.data.length > 0 ? onboardingChecklistTrait.data[0].profile_completed : null;
@@ -137,8 +141,12 @@ function (user, context, callback) {
                     }
                     
                     // All checks failed - indicating user newly registered and needs to be shown the onboarding wizard
-                    console.log('rule:onboarding-checklist: set show_onboarding_wizard');
-                    context.idToken[global.AUTH0_CLAIM_NAMESPACE + 'show_onboarding_wizard'] = true;
+                    console.log('rule:onboarding-checklist: set onboarding_wizard ' + override);
+                    
+                    context.idToken[global.AUTH0_CLAIM_NAMESPACE + 'onboarding_wizard'] = override;
+
+
+
                     return callback(null, user, context);
                 } catch (e) {
                     console.log("rule:onboarding-checklist:Error in fetching onboarding_checklist", e);            
