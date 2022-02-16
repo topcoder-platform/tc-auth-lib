@@ -272,7 +272,7 @@ const authSetup = function () {
             Object.keys(claims).forEach(key => {
                 logger('Checking key', key);
                 if (key.indexOf('onboarding_wizard') !== -1) {
-                    if (claims[key] === 'show' || claims[key] === 'override') {
+                    if (claims[key] === 'show' || claims[key] === 'useRetUrl') {
                         showOnboardingWizard = claims[key];
                     }
                 }
