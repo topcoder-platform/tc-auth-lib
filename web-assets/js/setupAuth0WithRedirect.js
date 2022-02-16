@@ -315,7 +315,7 @@ const authSetup = function () {
 
                 if (showOnboardingWizard) {
                     logger('Take user to onboarding wizard', showOnboardingWizard);
-                    if (showOnboardingWizard === 'retUrl') {
+                    if (showOnboardingWizard === 'useRetUrl') {
                         logger('Need to persist appUrl', returnAppUrl)
                         setCookie('returnAfterOnboard', returnAppUrl) // TODO: use localStorage instead?
                     }
