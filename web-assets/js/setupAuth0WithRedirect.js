@@ -233,7 +233,7 @@ const authSetup = function () {
 
     const redirectToOnboardingWizard = function () {
         logger("redirect to onboarding wizard");
-        window.location = onboardingWizardUrl;
+        window.location = onboardingWizardUrl
     }
 
     const redirectToApp = function () {
@@ -271,9 +271,9 @@ const authSetup = function () {
             let showOnboardingWizard = false;
             Object.keys(claims).forEach(key => {
                 logger('Checking key', key);
-                if (key.indexOf('show_onboarding_wizard') !== -1) {
-                    if (claims[key]) {
-                        showOnboardingWizard = true;
+                if (key.indexOf('onboarding_wizard') !== -1) {
+                    if (claims[key] === 'show' || claims[key] === 'useRetUrl') {
+                        showOnboardingWizard = claims[key];
                     }
                 }
             });
@@ -314,9 +314,13 @@ const authSetup = function () {
                 }
 
                 if (showOnboardingWizard) {
-                    logger('Take user to onboarding wizard');
-                    redirectToOnboardingWizard();
-                } else {    
+                    logger('Take user to onboarding wizard', showOnboardingWizard);
+                    if (showOnboardingWizard === 'useRetUrl') {
+                        setCookie('returnAfterOnboard', qs['appUrl'] || qs['retUrl'])
+                    }
+                    redirectToOnboardingWizard(returnAppUrl);
+                } 
+                else {
                     // session still active, but app calling login
                     if (!appUrl && returnAppUrl) {
                         appUrl = returnAppUrl
