@@ -47,6 +47,9 @@ const authSetup = function () {
     let returnAppUrl = handleSpecificReturnUrl(qs['retUrl'], 'retUrl');
     let appUrl = qs['appUrl'] || false;
 
+    console.log('returnAppUrl', returnAppUrl);
+    console.log('appUrl', appUrl);
+
     if (utmSource &&
         (utmSource != 'undefined') &&
         (enterpriseCustomers.indexOf(utmSource) > -1)) {
@@ -272,7 +275,7 @@ const authSetup = function () {
             Object.keys(claims).forEach(key => {
                 logger('Checking key', key);
                 if (key.indexOf('onboarding_wizard') !== -1) {
-                    if (claims[key] === 'show' || claims[key] === 'override') {
+                    if (claims[key] === 'show' || claims[key] === 'useRetUrl') {
                         showOnboardingWizard = claims[key];
                     }
                 }
@@ -315,9 +318,8 @@ const authSetup = function () {
 
                 if (showOnboardingWizard) {
                     logger('Take user to onboarding wizard', showOnboardingWizard);
-                    if (showOnboardingWizard === 'retUrl') {
-                        logger('Need to persist appUrl', returnAppUrl)
-                        setCookie('returnAfterOnboard', returnAppUrl) // TODO: use localStorage instead?
+                    if (showOnboardingWizard === 'useRetUrl') {
+                        setCookie('returnAfterOnboard', qs['appUrl'] || qs['retUrl'])
                     }
                     redirectToOnboardingWizard(returnAppUrl);
                 } 
