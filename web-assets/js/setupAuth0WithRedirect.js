@@ -47,9 +47,6 @@ const authSetup = function () {
     let returnAppUrl = handleSpecificReturnUrl(qs['retUrl'], 'retUrl');
     let appUrl = qs['appUrl'] || false;
 
-    console.log('returnAppUrl', returnAppUrl);
-    console.log('appUrl', appUrl);
-
     if (utmSource &&
         (utmSource != 'undefined') &&
         (enterpriseCustomers.indexOf(utmSource) > -1)) {
