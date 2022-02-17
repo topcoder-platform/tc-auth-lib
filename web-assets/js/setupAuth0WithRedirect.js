@@ -319,7 +319,7 @@ const authSetup = function () {
                 if (showOnboardingWizard) {
                     logger('Take user to onboarding wizard', showOnboardingWizard);
                     if (showOnboardingWizard === 'useRetUrl') {
-                        setCookie('returnAfterOnboard', qs['appUrl'] || qs['retUrl']) // TODO: use localStorage instead?
+                        setCookie('returnAfterOnboard', qs['appUrl'] || qs['retUrl'])
                     }
                     redirectToOnboardingWizard(returnAppUrl);
                 } 
