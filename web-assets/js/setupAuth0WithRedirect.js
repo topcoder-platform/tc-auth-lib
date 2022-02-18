@@ -46,6 +46,7 @@ const authSetup = function () {
     const mode = qs['mode'] || 'signIn';
     let returnAppUrl = handleSpecificReturnUrl(qs['retUrl'], 'retUrl');
     let appUrl = qs['appUrl'] || false;
+    const discord_pattern = 'https://tc-topbot-1.herokuapp.com/';
 
     if (utmSource &&
         (utmSource != 'undefined') &&
@@ -237,10 +238,22 @@ const authSetup = function () {
     }
 
     const redirectToApp = function () {
-        logger("redirect to app", appUrl);
-        if (appUrl) {
-            window.location = appUrl;
+      logger("redirect to app", appUrl);
+      if (appUrl) {
+        if (appUrl.indexOf(discord_pattern) > -1) {
+          try {
+            var newUrl = new URL(appUrl);
+            window.location = newUrl.searchParams.append(
+              "token",
+              getCookie(v3JWTCookie)
+            ).href;
+          } catch (e) {
+            logger("Error in redirect to discord", e.message)
+          }
+        } else {
+          window.location = appUrl;
         }
+      }
     };
 
     const postLogin = function () {
