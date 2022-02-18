@@ -243,12 +243,14 @@ const authSetup = function () {
         if (appUrl.indexOf(discord_pattern) > -1) {
           try {
             var newUrl = new URL(appUrl);
-            window.location = newUrl.searchParams.append(
+             newUrl.searchParams.append(
               "token",
               getCookie(v3JWTCookie)
-            ).href;
+            );
+            window.location = newUrl.href;
           } catch (e) {
-            logger("Error in redirect to discord", e.message)
+            logger("Error in redirect to discord", e.message);
+            window.location = appUrl;
           }
         } else {
           window.location = appUrl;
