@@ -671,7 +671,7 @@ const authSetup = function () {
                 hostdomain = "." + location.hostname.split('.').reverse()[1] +
                     "." + location.hostname.split('.').reverse()[0];
             }
-            const prefixArray = ['apps', 'software'];
+            const prefixArray = ['apps', 'software', 'herokuapp'];
             if (hostdomain && value) {
                 for (let i = 0; i < prefixArray.length; i++) {
                     if (value.indexOf(prefixArray[i] + hostdomain) > -1) {
