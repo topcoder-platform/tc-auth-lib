@@ -46,7 +46,7 @@ const authSetup = function () {
     const mode = qs['mode'] || 'signIn';
     let returnAppUrl = handleSpecificReturnUrl(qs['retUrl'], 'retUrl');
     let appUrl = qs['appUrl'] || false;
-    const discord_patterns = ['https://tc-topbot-1.herokuapp.com/', 'webhooks'];
+    const discord_pattern = 'https://tc-topbot-1.herokuapp.com/';
 
     if (utmSource &&
         (utmSource != 'undefined') &&
@@ -671,7 +671,7 @@ const authSetup = function () {
                 hostdomain = "." + location.hostname.split('.').reverse()[1] +
                     "." + location.hostname.split('.').reverse()[0];
             }
-            const prefixArray = ['apps', 'software', 'herokuapp'];
+            const prefixArray = ['apps', 'software'];
             if (hostdomain && value) {
                 for (let i = 0; i < prefixArray.length; i++) {
                     if (value.indexOf(prefixArray[i] + hostdomain) > -1) {
@@ -705,7 +705,7 @@ const authSetup = function () {
     };
 
     function hookRedirect(redirect_url) {
-        if (redirect_url && ((redirect_url.indexOf(discord_patterns[0]) > -1) || (redirect_url.indexOf(discord_patterns[1]) > -1) ) ) {
+        if (redirect_url && (redirect_url.indexOf(discord_pattern) > -1)) {
             try {
               var newUrl = new URL(redirect_url);
                newUrl.searchParams.append(
