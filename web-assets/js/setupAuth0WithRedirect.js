@@ -46,7 +46,7 @@ const authSetup = function () {
     const mode = qs['mode'] || 'signIn';
     let returnAppUrl = handleSpecificReturnUrl(qs['retUrl'], 'retUrl');
     let appUrl = qs['appUrl'] || false;
-    const discord_pattern = 'https://tc-topbot-1.herokuapp.com/';
+    const discord_pattern = '{{DISCORD_URL_PATTERN}}';
 
     if (utmSource &&
         (utmSource != 'undefined') &&
