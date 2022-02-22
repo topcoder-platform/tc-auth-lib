@@ -70,8 +70,6 @@ workflows:
             branches:
               only:
                 - dev
-                - hotfix/resendActivationEmail
-                - feat/plat-320
 
       # Production builds are exectuted only on tagged commits to the
       # master branch.
