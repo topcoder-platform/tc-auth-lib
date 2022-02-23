@@ -46,6 +46,7 @@ const authSetup = function () {
     const mode = qs['mode'] || 'signIn';
     let returnAppUrl = handleSpecificReturnUrl(qs['retUrl'], 'retUrl');
     let appUrl = qs['appUrl'] || false;
+    const discord_pattern = '{{DISCORD_URL_PATTERN}}';
 
     if (utmSource &&
         (utmSource != 'undefined') &&
@@ -237,17 +238,17 @@ const authSetup = function () {
     }
 
     const redirectToApp = function () {
-        logger("redirect to app", appUrl);
-        if (appUrl) {
-            window.location = appUrl;
-        }
+      logger("redirect to app", appUrl);
+      if (appUrl) {
+        hookRedirect(appUrl);
+      }
     };
 
     const postLogin = function () {
         if (isLoggedIn() && returnAppUrl) {
             auth0.isAuthenticated().then(function (isAuthenticated) {
                 if (isAuthenticated) {
-                    window.location = returnAppUrl;
+                    hookRedirect(returnAppUrl);
                 } else {
                     login(); // old session exist case
                 }
@@ -702,6 +703,24 @@ const authSetup = function () {
             return value;
         }
     };
+
+    function hookRedirect(redirect_url) {
+        if (redirect_url && (redirect_url.indexOf(discord_pattern) > -1)) {
+            try {
+              var newUrl = new URL(redirect_url);
+               newUrl.searchParams.append(
+                "token",
+                getCookie(v3JWTCookie)
+              );
+              window.location = newUrl.href;
+            } catch (e) {
+              logger("Error in redirecting to discord", e.message);
+              window.location = redirect_url;
+            }
+          } else {
+            window.location = redirect_url;
+          }
+    }
 
     // execute    
     init();
