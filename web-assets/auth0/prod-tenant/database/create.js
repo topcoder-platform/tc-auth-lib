@@ -24,15 +24,15 @@
   const msg = 'Please implement the Create script for this database connection ' +
     'at https://manage.auth0.com/#/connections/database';
   return callback(new Error(msg)); */
-function create(user, callback) {
+  function create(user, callback) {
 
     var countryObj = JSON.parse(user.user_metadata.country);
-    var regSource = user.user_metadata.regSource;
-    var utmSource = user.user_metadata.utmSource;
-    var utmMedium = user.user_metadata.utmMedium;
-    var utmCampaign = user.user_metadata.utmCampaign;
+    var regSource = user.user_metadata.reg_source;
+    var utmSource = user.user_metadata.utm_source;
+    var utmMedium = user.user_metadata.utm_medium;
+    var utmCampaign = user.user_metadata.utm_campaign;
     var retUrl = user.user_metadata.returnUrl;
-    var afterActivationURL = retUrl ? retUrl : "https://platform."+configuration.DOMAIN+"/onboard";
+    var afterActivationURL = retUrl != null ? retUrl : "https://" + configuration.DOMAIN + "/home";
     if (regSource === configuration.REG_BUSINESS) {
       afterActivationURL = "https://connect."+configuration.DOMAIN;
     }
@@ -95,6 +95,8 @@ function create(user, callback) {
              return callback(new ValidationError(code,error_message));
         }
         //if (response.statusCode === 401) return callback();
+        
+        
         callback(null);
     }); //end post request 
     //callback(null);
