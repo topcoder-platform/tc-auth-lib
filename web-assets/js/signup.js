@@ -67,10 +67,10 @@ $(document).ready(function () {
           }
           $('#signup').attr('action', formAction);
           $("#state").val(qs["state"]);
-          $("#regSource").val(qs["regSource"]);
-          $("#utmSource").val(qs["utmSource"]);
-          $("#utmMedium").val(qs["utmMedium"]);
-          $("#utmCampaign").val(qs["utmCampaign"]);
+          $("#regSource").val(qs["reg_source"]);
+          $("#utmSource").val(qs["utm_source"]);
+          $("#utmMedium").val(qs["utm_medium"]);
+          $("#utmCampaign").val(qs["utm_campaign"]);
           $("#returnUrl").val(qs["returnUrl"]);
           $("#signup").submit();
           submit_flag = false;
