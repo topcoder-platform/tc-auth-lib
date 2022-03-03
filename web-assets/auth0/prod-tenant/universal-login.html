@@ -82,10 +82,10 @@
         var languageDictionary;
         var language;
         var optionsObj = Array();
-        var regSource = config.extraParams.regSource || null;
-        var utmSource = config.extraParams.utmSource || null;
-        var utmMedium = config.extraParams.utmMedium || null;
-        var utmCampaign = config.extraParams.utmCampaign || null;
+        var regSource = config.extraParams.reg_source || null;
+        var utmSource = config.extraParams.utm_source || null;
+        var utmMedium = config.extraParams.utm_medium || null;
+        var utmCampaign = config.extraParams.utm_campaign || null;
         var retUrl = config.extraParams.returnUrl || null;
         var loginMode = config.extraParams.mode || 'signIn';
 
@@ -289,7 +289,7 @@
                 additionalSignUpFields: [
                     {
                         type: "hidden",
-                        name: "regSource",
+                        name: "reg_source",
                         value: regSource
                     },
                     {
@@ -299,17 +299,17 @@
                     },
                     {
                         type: "hidden",
-                        name: "utmSource",
+                        name: "utm_source",
                         value: utmSource
                     },
                     {
                         type: "hidden",
-                        name: "utmMedium",
+                        name: "utm_medium",
                         value: utmMedium
                     },
                     {
                         type: "hidden",
-                        name: "utmCampaign",
+                        name: "utm_campaign",
                         value: utmCampaign
                     },
                     {

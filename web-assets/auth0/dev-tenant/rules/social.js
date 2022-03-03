@@ -33,21 +33,21 @@ function (user, context, callback) {
             let isoAlpha2Code = _.get(context, "request.geoip.country_code");
             let isoAlpha3Code = _.get(context, "request.geoip.country_code3");
             let countryCode = _.get(context, "request.geoip.country_name");
-            let regSource = _.get(context, "request.query.regSource", null);
-            let utmSource = _.get(context, "request.query.utmSource", null);
-            let utmMedium = _.get(context, "request.query.utmMedium", null);
-            let utmCampaign = _.get(context, "request.query.utmCampaign", null);
+            let regSource = _.get(context, "request.query.reg_source", null);
+            let utmSource = _.get(context, "request.query.utm_source", null);
+            let utmMedium = _.get(context, "request.query.utm_medium", null);
+            let utmCampaign = _.get(context, "request.query.utm_campaign", null);
             let retUrl = _.get(context, "request.query.returnUrl", null);
 
             //console.log("resource", regSource, _.get(context, "request.query"));
 
             const userHandleRedirectUrl = configuration.CUSTOM_PAGES_BASE_URL +
-                "/signup.html?regSource=" + regSource +
+                "/signup.html?reg_source=" + regSource +
                 "&firstName=" + encodeURIComponent(firstName) +
                 "&lastName=" + encodeURIComponent(lastName) +
-                "&utmSource=" + encodeURIComponent(utmSource) +
-                "&utmMedium=" + encodeURIComponent(utmMedium) +
-                "&utmCampaign=" + encodeURIComponent(utmCampaign) +
+                "&utm_source=" + encodeURIComponent(utmSource) +
+                "&utm_medium=" + encodeURIComponent(utmMedium) +
+                "&utm_campaign=" + encodeURIComponent(utmCampaign) +
                 "&formAction=" + registrationCompletetUrl +
                 "&returnUrl=" + retUrl;
 
@@ -88,12 +88,12 @@ function (user, context, callback) {
                                 isoAlpha2Code = _.get(countryObj, "alpha2", isoAlpha2Code);
                                 isoAlpha3Code = _.get(countryObj, "alpha3", isoAlpha3Code);
                             }
-                            regSource = _.get(context, "request.query.source", regSource);
+                            regSource = _.get(context, "request.query.reg_source", regSource);
                             firstName = _.get(context, "request.query.firstName", firstName);
                             lastName = _.get(context, "request.query.lastName", lastName);
-                            utmSource = _.get(context, "request.query.source", utmSource);
-                            utmMedium = _.get(context, "request.query.utmMedium", utmMedium);
-                            utmCampaign = _.get(context, "request.query.utmCampaign", utmCampaign);
+                            utmSource = _.get(context, "request.query.utm_source", utmSource);
+                            utmMedium = _.get(context, "request.query.utm_medium", utmMedium);
+                            utmCampaign = _.get(context, "request.query.utm_campaign", utmCampaign);
                             retUrl = _.get(context, "request.query.returnUrl", retUrl);
                             console.log("------HHHHHH-----", context.request);
                             afterActivationURL = retUrl ? retUrl : afterActivationURL;

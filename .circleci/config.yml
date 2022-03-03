@@ -70,6 +70,7 @@ workflows:
             branches:
               only:
                 - dev
+                - jira-plat-742
 
       # Production builds are exectuted only on tagged commits to the
       # master branch.
