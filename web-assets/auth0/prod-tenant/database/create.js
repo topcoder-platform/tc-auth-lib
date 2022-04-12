@@ -59,7 +59,6 @@
             "afterActivationURL": encodeURIComponent(afterActivationURL)
         }
     };
-    console.log("SignUp....", user, data);
     request.post({
         url: "https://api."+configuration.DOMAIN+"/v3/users",
         json: data
