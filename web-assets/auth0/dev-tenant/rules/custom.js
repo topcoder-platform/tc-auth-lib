@@ -47,7 +47,7 @@ function (user, context, callback) {
               let tcsso = res.result.content.regSource || '';
 
               // block wipro/topgear contractor user
-              const topgearBlockMessage = 'Topgear can be accessed only by Wipro Employees. If you are a Wipro employee and not able to access, drop an email to ask.topgear@wipro.com with the error message';
+              const topgearBlockMessage = 'Topgear can be accessed only by Wipro Employees. If you are a Wipro employee and not able to access, drop an email to <a href="mailto:ask.topgear@wipro.com"> ask.topgear@wipro.com </a> with the error message.Back to application ';
               if (roles.indexOf(configuration.TOPGEAR_CONTRACTOR_ROLE) > -1) {
                 return callback(topgearBlockMessage, user, context);
               }
