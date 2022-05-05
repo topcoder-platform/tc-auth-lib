@@ -634,9 +634,9 @@ const authSetup = function () {
     function showLoginError(message, linkUrl) {
         try {
             document.getElementById("page-title-heading").innerText = "Alert";
-            var messageElement = document.createElement("span");
-            messageElement.appendChild(document.createTextNode(message));
-            document.getElementById("loading_message_p").innerHTML = messageElement.innerText + " <a href=" + linkUrl + ">click here</a>";
+            var messageElement = document.createElement("textarea");
+            messageElement.innerHTML = message;
+            document.getElementById("loading_message_p").innerHTML = messageElement.value + " <a href=" + linkUrl + ">click here</a>";
         } catch (err) {
             logger("Error in changing loading message: ", err.message)
         }
