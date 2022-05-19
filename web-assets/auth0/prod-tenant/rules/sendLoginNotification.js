@@ -1,5 +1,5 @@
 function (user, context, callback) {
-    if (context.clientID === configuration.CLIENT_ACCOUNTS_LOGIN && context.connection != null) {
+    if (context.clientID === configuration.CLIENT_ACCOUNTS_LOGIN && context.request.query.mode == 'signIn') {
         console.log("rule:login-notification:enter");
         
        if (context.redirect) {
@@ -20,8 +20,8 @@ function (user, context, callback) {
         const axios = require('axios@0.19.2');
         const payload = {
             timestamp: new Date(),
-            event: context.request.query.prompt == 'none' ? 'logout' : 'login',
             handle,
+            event: 'login',
             status: 'success'
         };
 
