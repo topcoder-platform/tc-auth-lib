@@ -21,7 +21,7 @@ function (user, context, callback) {
         const axios = require('axios@0.19.2');
         const payload = {
             timestamp: new Date(),
-            event: context.request.query.prompt == 'login' ? 'login' : 'logout',
+            event: context.request.query.prompt == 'none' ? 'logout' : 'login',
             handle,
             status: 'success'
         };
