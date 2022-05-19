@@ -1,6 +1,7 @@
 function (user, context, callback) {
     if (context.clientID === configuration.CLIENT_ACCOUNTS_LOGIN) {
         console.log("rule:login-notification:enter");
+        console.log('rule:login-notification:context', context);
         
        if (context.redirect) {
             console.log("rule:login-notification:exiting due to context being a redirect");
@@ -19,10 +20,12 @@ function (user, context, callback) {
          */
         const axios = require('axios@0.19.2');
         const payload = {
-            event: 'login',
+            timestamp: new Date(),
+            event: context.request.query.prompt == 'login' ? 'login' : 'logout',
             handle,
             status: 'success'
-        }
+        };
+
         const config = {
             method: 'POST',
             url: configuration.ZAPIER_CATCH_WEBHOOK,
@@ -31,16 +34,17 @@ function (user, context, callback) {
             },
             data: JSON.stringify(payload)
 
-        }
+        };
+
         axios(config)
         .then(_ => {
-            console.log('rule:login-notification:successfully Zapped!')
+            console.log('rule:login-notification:successfully Zapped!');
             return callback(null, user, context);
         })
         .catch(requestError => {
-            console.log('rule:login-notification:failed to write to Zap with error', requestError.response.status)
+            console.log('rule:login-notification:failed to write to Zap with error', requestError.response.status);
             return callback(null, user, context);
-        })
+        });
 
     } else {
         return callback(null, user, context);
