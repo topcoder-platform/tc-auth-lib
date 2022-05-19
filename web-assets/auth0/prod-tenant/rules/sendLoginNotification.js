@@ -22,7 +22,6 @@ function (user, context, callback) {
             timestamp: new Date(),
             event: context.type === 'slo' ? 'logout' : 'login',
             handle,
-            request: context.request,
             status: 'success'
         };
 
