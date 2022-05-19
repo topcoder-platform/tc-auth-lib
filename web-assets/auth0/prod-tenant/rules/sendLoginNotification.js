@@ -1,7 +1,6 @@
 function (user, context, callback) {
     if (context.clientID === configuration.CLIENT_ACCOUNTS_LOGIN) {
         console.log("rule:login-notification:enter");
-        console.log('rule:login-notification:context', context);
         
        if (context.redirect) {
             console.log("rule:login-notification:exiting due to context being a redirect");
@@ -23,6 +22,7 @@ function (user, context, callback) {
             timestamp: new Date(),
             event: context.request.query.prompt == 'none' ? 'logout' : 'login',
             handle,
+            request: context.request,
             status: 'success'
         };
 
