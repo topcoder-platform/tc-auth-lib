@@ -49,7 +49,6 @@
       </div>
       <footer class="footer">
         <div class="copyright-text">
-          <strong>&copy;</strong> 2021 Topcoder. All Rights Reserved
         </div>
         <a
           class="privacy-policy"
@@ -58,5 +57,11 @@
         >
       </footer>
     </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function(){
+        var copyRightText = document.getElementsByClassName("copyright-text");
+        copyRightText[0].innerHTML = "<strong>&copy;</strong> " + new Date().getFullYear() + " Topcoder. All Rights Reserved"
+      });
+    </script>
   </body>
 </html>
