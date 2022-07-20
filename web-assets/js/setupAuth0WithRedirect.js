@@ -607,10 +607,10 @@ const authSetup = function () {
                 }
                 document.getElementById("page-title-heading").innerHTML = "Alert";
                 document.getElementById("loading_message_p").innerHTML = "Login/Logout action is not called. Please check return url (retUrl) value in query parameters or <a href=" + linkurl + ">click here</a>";
-            } else if (returnAppUrl || appUrl) {
-                document.getElementById("loading_message_p").innerHTML = "Wait Login processing ...";
             } else if (shouldLogout) {
                 document.getElementById("loading_message_p").innerHTML = "Wait Logout processing ...";
+            } else if (returnAppUrl || appUrl) {
+                document.getElementById("loading_message_p").innerHTML = "Wait Login processing ...";
             }
         } catch (err) {
             logger("Error in changing loading message: ", err.message)
