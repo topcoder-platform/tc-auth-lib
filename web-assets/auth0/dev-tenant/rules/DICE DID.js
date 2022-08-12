@@ -21,7 +21,7 @@ function (user, context, callback) {
                 // User was redirected to the /continue endpoint
                 console.log("rule:DICE DID:User was redirected to the /continue endpoint");
                 if (context.request.query.diceVerificationStatus === 'false') {
-                    return callback('Login Error: Whoops! Something went wrong. Please connect to DICE Platform Admin <a href="mailto:info@diceid.com">dice.wallet@wipro.com</a>.<br> Back to application ', user, context);
+                    return callback('Login Error: Credentials verification is failed.<br>Please contact with support <a href="mailto:support@topcoder.com">support@topcoder.com</a>.<br> Back to application ', user, context);
                 } else if (context.request.query.otp) {
                     request.post({
                         url: 'https://api.' + configuration.DOMAIN + '/v3/users/checkOtp',
@@ -82,8 +82,14 @@ function (user, context, callback) {
                             return callback('Login Error: Whoops! Something went wrong.', user, context);
                         }
                         console.log("rule:DICE DID: redirecting to OTP page");
+                        const hostName = _.get(context, "request.hostname", null);
+                        const otpCompletetUrl = "https://" + hostName + "/continue";
+                        const retUrl = _.get(context, "request.query.returnUrl", null);
+                        const otpRedirectUrl = configuration.CUSTOM_PAGES_BASE_URL +
+                            "/otp.html?formAction=" + otpCompletetUrl +
+                            "&returnUrl=" + retUrl;
                         context.redirect = {
-                            url: `https://accounts-auth0.${configuration.DOMAIN}/check_email.html`
+                            url: otpRedirectUrl
                         };
                         return callback(null, user, context);
                     });

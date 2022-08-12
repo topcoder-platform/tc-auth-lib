@@ -31,8 +31,12 @@ function (user, context, callback) {
                 }
 
                 let res = JSON.parse(body);
+                // Assign MFA flags to user objects - PLAT-1420
+                user.mfa_enabled = res.result.content.mfaEnabled;
+                user.mfa_verified = res.result.content.mfaVerified;
                 // TODO need to double sure about multiple result or no result 
                 let userId = res.result.content.id;
+                user.userId = userId;
                 let handle = res.result.content.handle;
                 let roles = res.result.content.roles.map(function (role) {
                     return role.roleName;
@@ -42,11 +46,11 @@ function (user, context, callback) {
                 // TEMP
                 let tcsso = res.result.content.regSource || '';
 
-              // block wipro/topgear contractor user
-              const topgearBlockMessage = 'Topgear can be accessed only by Wipro Employees. If you are a Wipro employee and not able to access, drop an email to <a href="mailto:ask.topgear@wipro.com"> ask.topgear@wipro.com </a> with the error message.Back to application ';
-              if (roles.indexOf(configuration.TOPGEAR_CONTRACTOR_ROLE) > -1) {
-                return callback(topgearBlockMessage, user, context);
-              }
+                // block wipro/topgear contractor user
+                const topgearBlockMessage = 'Topgear can be accessed only by Wipro Employees. If you are a Wipro employee and not able to access, drop an email to <a href="mailto:ask.topgear@wipro.com"> ask.topgear@wipro.com </a> with the error message.Back to application ';
+                if (roles.indexOf(configuration.TOPGEAR_CONTRACTOR_ROLE) > -1) {
+                    return callback(topgearBlockMessage, user, context);
+                }
 
                 context.idToken[global.AUTH0_CLAIM_NAMESPACE + 'roles'] = roles;
                 context.idToken[global.AUTH0_CLAIM_NAMESPACE + 'userId'] = userId;
@@ -55,14 +59,14 @@ function (user, context, callback) {
                 context.idToken[global.AUTH0_CLAIM_NAMESPACE + 'tcsso'] = tcsso;
                 context.idToken[global.AUTH0_CLAIM_NAMESPACE + 'active'] = userStatus;
                 context.idToken.nickname = handle;
-              
-              if (!userStatus) {
-                   context.redirect = {
-      								url: `https://accounts-auth0.${configuration.DOMAIN}/check_email.html`
-    						    };
-                  return callback(null, user, context);
+
+                if (!userStatus) {
+                    context.redirect = {
+                        url: `https://accounts-auth0.${configuration.DOMAIN}/check_email.html`
+                    };
+                    return callback(null, user, context);
                 }
-              
+
                 //console.log(user, context);
                 return callback(null, user, context);
             }
