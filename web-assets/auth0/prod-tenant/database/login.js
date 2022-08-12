@@ -1,6 +1,6 @@
 function login(handleOrEmail, password, callback) {
-request.post({
-    url:  "https://api."+configuration.DOMAIN+"/v3/users/login",
+  request.post({
+    url: "https://api." + configuration.DOMAIN + "/v3/users/login",
     form: {
       handleOrEmail: handleOrEmail,
       password: password
@@ -12,16 +12,19 @@ request.post({
     if (err) return callback(err);
     if (response.statusCode === 401) return callback();
     var user = JSON.parse(body);
-    user.result.content.roles = user.result.content.roles.map(function(role) {
+    user.result.content.roles = user.result.content.roles.map(function (role) {
       return role.roleName;
     });
 
-    callback(null,   {
+    callback(null, {
       user_id: user.result.content.id,
       nickname: user.result.content.handle,
       email: user.result.content.email,
       roles: user.result.content.roles,
       email_verified: user.result.content.emailActive,
+      created_at: user.result.content.createdAt,
+      mfa_enabled: user.result.content.mfaEnabled,
+      mfa_verified: user.result.content.mfaVerified
     });
   });
 }

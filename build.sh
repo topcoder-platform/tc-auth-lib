@@ -15,6 +15,10 @@ perl -pi -e "s/\{\{AUTH0DOMAIN\}\}/$AUTH0DOMAIN/g" $SIGNUPFILENAME
 CHECKEMAIL="./web-assets/static-pages/check_email.html"
 perl -pi -e "s/\{\{DOMAIN\}\}/$DOMAIN/g" $CHECKEMAIL
 
+OTPFILENAME="./web-assets/js/otp.js"
+perl -pi -e "s/\{\{DOMAIN\}\}/$DOMAIN/g" $OTPFILENAME
+perl -pi -e "s/\{\{AUTH0DOMAIN\}\}/$AUTH0DOMAIN/g" $OTPFILENAME
+
 mkdir dist
 cp -rv ./web-assets/css/* ./dist/
 cp -rv ./web-assets/js/* ./dist/
