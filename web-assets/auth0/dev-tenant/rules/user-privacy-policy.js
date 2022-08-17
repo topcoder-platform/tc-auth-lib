@@ -1,7 +1,7 @@
 function (user, context, callback) {
     if (context.clientID === configuration.CLIENT_ACCOUNTS_LOGIN) { // client/application specific
         console.log("rule:user-privacy-policy:enter");
-
+        // configuration.M2M_CLIENT_I vgXLK3lICyra8wQonokc7NCJr4UrHmk4 
         const _ = require('lodash');
 
         const loginCount = _.get(context, "stats.loginsCount");
@@ -29,7 +29,7 @@ function (user, context, callback) {
             return callback(null, user, context);
         }
 
-        if (loginCount < 3) {
+        if (loginCount < 10) {
             const getToken = function (tokenCB) {
                 if (global.M2MToken) {
                     console.log('rule:user-privacy-policy:a M2M token is present');
@@ -43,7 +43,7 @@ function (user, context, callback) {
                         tokenCB(null, global.M2MToken);
                         return;
                     }
-                } 
+                }
                 console.log('rule:user-privacy-policy:fetching fresh m2m token');
                 request.post({
                     url: `https://auth0proxy.${configuration.DOMAIN}/token`,
@@ -100,8 +100,10 @@ function (user, context, callback) {
                     callTermApi(token);
                 }
             });
-        } // if login count 
-
-    } // if end  
-    return callback(null, user, context);
+        } else {
+            return callback(null, user, context);
+        }
+    } else {
+        return callback(null, user, context);
+    }
 }

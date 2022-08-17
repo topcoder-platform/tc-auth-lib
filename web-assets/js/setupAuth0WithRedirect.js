@@ -597,9 +597,9 @@ const authSetup = function () {
     }
 
     function changeWindowMessage() {
+        try {
+            if ((!returnAppUrl && !appUrl) || ((returnAppUrl == 'undefined') && (appUrl == 'undefined'))) {
 
-        if ((!returnAppUrl && !appUrl) || ((returnAppUrl == 'undefined') && (appUrl == 'undefined'))) {
-            try {
                 var hdomain = location.hostname.split('.').reverse()[1];
                 var linkurl = "http://" + window.location.host + "/?logout=true&retUrl=http://" + window.location.host;
                 if (hdomain) {
@@ -607,9 +607,13 @@ const authSetup = function () {
                 }
                 document.getElementById("page-title-heading").innerHTML = "Alert";
                 document.getElementById("loading_message_p").innerHTML = "Login/Logout action is not called. Please check return url (retUrl) value in query parameters or <a href=" + linkurl + ">click here</a>";
-            } catch (err) {
-                logger("Error in changing loading message: ", err.message)
+            } else if (shouldLogout) {
+                document.getElementById("loading_message_p").innerHTML = "Wait Logout processing ...";
+            } else if (returnAppUrl || appUrl) {
+                document.getElementById("loading_message_p").innerHTML = "Wait Login processing ...";
             }
+        } catch (err) {
+            logger("Error in changing loading message: ", err.message)
         }
     }
 
