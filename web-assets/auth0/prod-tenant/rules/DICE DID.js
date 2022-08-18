@@ -1,4 +1,4 @@
-function (user, context, callback) {
+function DICE(user, context, callback) {
     if (context.clientID === configuration.CLIENT_ACCOUNTS_LOGIN) {
         console.log("rule:DICE DID:enter");
         if (context.redirect) {
@@ -20,27 +20,13 @@ function (user, context, callback) {
                 console.log("rule:DICE DID:User was redirected to the /continue endpoint");
                 if (context.request.query.diceVerificationStatus === 'false') {
                     return callback('Login Error: Credentials verification is failed.<br>Please contact with support <a href="mailto:support@topcoder.com">support@topcoder.com</a>.<br> Back to application ', user, context);
-                } else if (context.request.query.otp) {
-                    request.post({
-                        url: 'https://api.' + configuration.DOMAIN + '/v3/users/checkOtp',
-                        json: {
-                            "param": {
-                                "userId": user.userId,
-                                "otp": context.request.query.otp
-                            }
-                        }
-                    }, function (error, response, body) {
-                        if (error) return callback(error, user, context);
-                        if (response.statusCode !== 200) {
-                            return callback('Login Error: Whoops! Something went wrong.', user, context);
-                        }
-                        if (body.result.content.verified === true) {
-                            return callback(null, user, context);
-                        } else {
-                            return callback('Login Error: wrong OTP', user, context);
-                        }
-                    });
-                } else {
+                } else if (context.request.query.otherMethods || _.isEmpty(user.multifactor)) {
+                    context.multifactor = {
+                        provider: 'any',
+                        allowRememberBrowser: false
+                    };
+                    return callback(null, user, context);
+                } else if (context.request.query.code) {
                     const jwt_decode = require('jwt-decode');
                     request.post({
                         url: 'https://tc-vcauth.diceid.com/vc/connect/token',
@@ -63,35 +49,11 @@ function (user, context, callback) {
                         console.log("rule:DICE DID:credentials approved");
                         return callback(null, user, context);
                     });
+                } else {
+                    return callback('Login Error: Whoops! Something went wrong.', user, context);
                 }
             } else {
                 const maxRetry = 2;
-                const useOtp = function () {
-                    request.post({
-                        url: 'https://api.' + configuration.DOMAIN + '/v3/users/sendOtp',
-                        json: {
-                            "param": {
-                                "userId": user.userId
-                            }
-                        }
-                    }, function (error, response, body) {
-                        if (error) return callback(error, user, context);
-                        if (response.statusCode !== 200) {
-                            return callback('Login Error: Whoops! Something went wrong.', user, context);
-                        }
-                        console.log("rule:DICE DID: redirecting to OTP page");
-                        const hostName = _.get(context, "request.hostname", null);
-                        const otpCompletetUrl = "https://" + hostName + "/continue";
-                        const retUrl = _.get(context, "request.query.returnUrl", null);
-                        const otpRedirectUrl = configuration.CUSTOM_PAGES_BASE_URL +
-                            "/otp.html?formAction=" + otpCompletetUrl +
-                            "&returnUrl=" + retUrl;
-                        context.redirect = {
-                            url: otpRedirectUrl
-                        };
-                        return callback(null, user, context);
-                    });
-                };
                 const checkDiceHealth = function (attempt) {
                     console.log("rule:DICE DID:checking dice health, attempt:" + attempt);
                     request.get({
@@ -99,8 +61,12 @@ function (user, context, callback) {
                     }, function (error, response, body) {
                         if (error || response.statusCode !== 200) {
                             if (attempt >= maxRetry) {
-                                console.log("rule:DICE DID:dice services down, using otp flow...");
-                                useOtp();
+                                console.log("rule:DICE DID:dice services down, using other factors...");
+                                context.multifactor = {
+                                    provider: 'any',
+                                    allowRememberBrowser: false
+                                };
+                                return callback(null, user, context);
                             } else {
                                 checkDiceHealth(attempt + 1);
                             }
@@ -114,8 +80,12 @@ function (user, context, callback) {
                     });
                 };
                 if (!global.ENABLE_2FA) {
-                    console.log("rule:DICE DID:dice switch disabled, using otp flow...");
-                    useOtp();
+                    console.log("rule:DICE DID:dice switch disabled, using other factors...");
+                    context.multifactor = {
+                        provider: 'any',
+                        allowRememberBrowser: false
+                    };
+                    return callback(null, user, context);
                 } else {
                     checkDiceHealth(1);
                 }
