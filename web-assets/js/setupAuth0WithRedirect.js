@@ -127,7 +127,7 @@ const authSetup = function () {
                     let issuer = tokenJson.iss;
                     issuerHostname = extractHostname(issuer);
                 }
-                if (domain !== issuerHostname) {
+                if (issuerHostname && domain !== issuerHostname) {
                     domain = issuerHostname;
                     logger("reintialize auth0 for new domain..", domain);
                     createAuth0Client({
