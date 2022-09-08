@@ -182,9 +182,9 @@ const authSetup = function () {
                 });
                 //console.log(tcsso.includes(tcSSOCookie));
                 console.log("storing token");
-                setCookie(tcJWTCookie, idToken, cookieExpireIn);
-                setCookie(v3JWTCookie, idToken, cookieExpireIn);
-                setCookie(tcSSOCookie, tcsso, cookieExpireIn);
+                setCookie(tcJWTCookie, idToken, cookieExpireIn, true);
+                setCookie(v3JWTCookie, idToken, cookieExpireIn, true);
+                setCookie(tcSSOCookie, tcsso, cookieExpireIn, true);
             } else {
                 console.log("User not active");
                 host = registerSuccessUrl;
@@ -258,14 +258,19 @@ const authSetup = function () {
         return decodeURIComponent(escape(atob(output))) //polyfill https://github.com/davidchambers/Base64.js
     }
 
-    function setCookie(cname, cvalue, exMins) {
+    function setCookie(cname, cvalue, exMins, secure = false) {
         const cdomain = getHostDomain();
 
         let d = new Date();
         d.setTime(d.getTime() + (exMins * 60 * 1000));
 
         let expires = ";expires=" + d.toUTCString();
-        document.cookie = cname + "=" + cvalue + cdomain + expires + ";path=/";
+        let cookie = cname + "=" + cvalue + cdomain + expires + ";path=/";
+        if (secure) {
+            cookie += "; HttpOnly; Secure";
+        }
+
+        document.cookie = cookie;
     }
 
     function getCookie(name) {
