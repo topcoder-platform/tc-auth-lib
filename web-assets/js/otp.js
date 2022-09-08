@@ -20,12 +20,10 @@ $(document).ready(function () {
     $("#error").closest(".message").fadeOut();
     $("#error").html("");
     let formAction = qs["formAction"];
-    console.log(formAction)
     const opt1 = 'https://auth.{{DOMAIN}}/continue';
     const opt2 = 'https://{{AUTH0DOMAIN}}/continue';
     if (!formAction.startsWith(opt1) && !formAction.startsWith(opt2)) {
       // looks like XSS attack
-      console.log("err")
       formAction = "#";
     }
     $('#verifyOtp').attr('action', formAction);
@@ -34,6 +32,42 @@ $(document).ready(function () {
     $("#verifyOtp").submit();
     return false;
   });
+  const resendToken = qs["resendToken"];
+  const userId = qs["userId"];
+  if (resendToken && userId) {
+    const apiServerUrl = "https://api.{{DOMAIN}}.com/v3/users";
+    $("#resend").click(function () {
+      $.ajax({
+        type: "POST",
+        url: apiServerUrl + "/resendOtpEmail",
+        contentType: "application/json",
+        mimeType: "application/json",
+        data: JSON.stringify({
+          "param": {
+            userId, resendToken
+          }
+        }),
+        dataType: "json",
+        success: function (result) {
+          $("#notify").html("Email sent");
+          $("#notify").closest(".message").fadeIn();
+          $("#resend").hide();
+        },
+        error: function (error) {
+          if (error.responseJSON && error.responseJSON.result) {
+            $("#error").html(error.responseJSON.result.content);
+            $("#error").closest(".message").fadeIn();
+            $("#resend").hide();
+          } else {
+            $("#error").html("Unknown Error");
+            $("#error").closest(".message").fadeIn();
+          }
+        }
+      });
+    });
+  } else {
+    $("#resend").hide();
+  }
 
   /**
    * Script for field placeholder

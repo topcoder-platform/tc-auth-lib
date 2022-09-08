@@ -675,6 +675,14 @@ select::-ms-expand {
   width: 20px;
 }
 
+.messages .message.notify {
+  background-color: #079531b8;
+  color: #ffffff;
+}
+.messages .message.notify:before {
+  content: "\2713";
+}
+
 /** Desktop + tab - specific CSS **/
 @media (min-width: 768px) {
   .center-align-card .page-content {
