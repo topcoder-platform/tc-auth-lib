@@ -12,8 +12,9 @@ SIGNUPFILENAME="./web-assets/js/signup.js"
 perl -pi -e "s/\{\{DOMAIN\}\}/$DOMAIN/g" $SIGNUPFILENAME
 perl -pi -e "s/\{\{AUTH0DOMAIN\}\}/$AUTH0DOMAIN/g" $SIGNUPFILENAME
 
-CHECKEMAIL="./web-assets/static-pages/check_email.html"
+CHECKEMAIL="./web-assets/js/check_email.js"
 perl -pi -e "s/\{\{DOMAIN\}\}/$DOMAIN/g" $CHECKEMAIL
+perl -pi -e "s/\{\{AUTH0DOMAIN\}\}/$AUTH0DOMAIN/g" $CHECKEMAIL
 
 OTPFILENAME="./web-assets/js/otp.js"
 perl -pi -e "s/\{\{DOMAIN\}\}/$DOMAIN/g" $OTPFILENAME

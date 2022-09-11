@@ -295,6 +295,7 @@ select::-ms-expand {
   list-style: none;
   list-style-image: url(./images/arrow.svg);
   margin: 0px;
+  padding-left: 15px;
 }
 
 .checkemail-card.center-align-card .page-content .page-main .page-description ul li {
