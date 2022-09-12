@@ -21,7 +21,7 @@ $(document).ready(function () {
     formAction = "#";
     return false;
   }
-  const apiServerUrl = "https://api.{{DOMAIN}}.com/v3/users";
+  const apiServerUrl = "https://api.{{DOMAIN}}/v3/users";
   $("#continueBtn").click(function () {
     var otp = $("#otp").val();
     if (!otp) {

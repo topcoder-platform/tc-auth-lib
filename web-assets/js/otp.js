@@ -35,7 +35,7 @@ $(document).ready(function () {
   const resendToken = qs["resendToken"];
   const userId = qs["userId"];
   if (resendToken && userId) {
-    const apiServerUrl = "https://api.{{DOMAIN}}.com/v3/users";
+    const apiServerUrl = "https://api.{{DOMAIN}}/v3/users";
     $("#resend").click(function () {
       $.ajax({
         type: "POST",
