@@ -10,6 +10,18 @@ var qs = (function (a) {
 })(window.location.search.substr(1).split("&"));
 $(document).ready(function () {
   window.history.forward();
+  const resendToken = qs["resendToken"];
+  const canResend = qs["canResend"];
+  const userId = qs["userId"];
+  let formAction = qs["formAction"] || "#";
+  const opt1 = 'https://auth.{{DOMAIN}}/continue';
+  const opt2 = 'https://{{AUTH0DOMAIN}}/continue';
+  if (!formAction.startsWith(opt1) && !formAction.startsWith(opt2)) {
+    // looks like XSS attack
+    formAction = "#";
+    return false;
+  }
+  const apiServerUrl = "https://api.{{DOMAIN}}.com/v3/users";
   $("#continueBtn").click(function () {
     var otp = $("#otp").val();
     if (!otp) {
@@ -19,27 +31,44 @@ $(document).ready(function () {
     }
     $("#error").closest(".message").fadeOut();
     $("#error").html("");
-    let formAction = qs["formAction"];
-    const opt1 = 'https://auth.{{DOMAIN}}/continue';
-    const opt2 = 'https://{{AUTH0DOMAIN}}/continue';
-    if (!formAction.startsWith(opt1) && !formAction.startsWith(opt2)) {
-      // looks like XSS attack
-      formAction = "#";
-    }
-    $('#verifyOtp').attr('action', formAction);
-    $("#state").val(qs["state"]);
-    $("#returnUrl").val(qs["returnUrl"]);
-    $("#verifyOtp").submit();
+    $.ajax({
+      type: "PUT",
+      url: apiServerUrl + "/activate",
+      contentType: "application/json",
+      mimeType: "application/json",
+      data: JSON.stringify({
+        "param": {
+          userId, resendToken, otp
+        }
+      }),
+      dataType: "json",
+      success: function (result) {
+        $("#notify").html("Your account is activated");
+        $("#notify").closest(".message").fadeIn();
+        $("#resend-text").hide();
+        $('#verifyOtp').attr('action', formAction);
+        $("#state").val(qs["state"]);
+        $("#returnUrl").val(qs["returnUrl"]);
+        $("#otp").attr('disabled', 'disabled');
+        $("#verifyOtp").submit();
+      },
+      error: function (error) {
+        if (error.responseJSON && error.responseJSON.result) {
+          $("#error").html(error.responseJSON.result.content);
+          $("#error").closest(".message").fadeIn();
+        } else {
+          $("#error").html("Unknown Error");
+          $("#error").closest(".message").fadeIn();
+        }
+      }
+    });
     return false;
   });
-  const resendToken = qs["resendToken"];
-  const userId = qs["userId"];
-  if (resendToken && userId) {
-    const apiServerUrl = "https://api.{{DOMAIN}}.com/v3/users";
+  if (canResend) {
     $("#resend").click(function () {
       $.ajax({
         type: "POST",
-        url: apiServerUrl + "/resendOtpEmail",
+        url: apiServerUrl + "/resendActivationEmail",
         contentType: "application/json",
         mimeType: "application/json",
         data: JSON.stringify({
@@ -51,22 +80,23 @@ $(document).ready(function () {
         success: function (result) {
           $("#notify").html("Email sent");
           $("#notify").closest(".message").fadeIn();
-          $("#resend").hide();
+          $("#resend-text").hide();
         },
         error: function (error) {
           if (error.responseJSON && error.responseJSON.result) {
             $("#error").html(error.responseJSON.result.content);
             $("#error").closest(".message").fadeIn();
-            $("#resend").hide();
+            $("#resend-text").hide();
           } else {
             $("#error").html("Unknown Error");
             $("#error").closest(".message").fadeIn();
           }
         }
       });
+      return false;
     });
   } else {
-    $("#resend").hide();
+    $("#resend-text").hide();
   }
 
   /**

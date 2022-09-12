@@ -295,6 +295,7 @@ select::-ms-expand {
   list-style: none;
   list-style-image: url(./images/arrow.svg);
   margin: 0px;
+  padding-left: 15px;
 }
 
 .checkemail-card.center-align-card .page-content .page-main .page-description ul li {
@@ -673,6 +674,14 @@ select::-ms-expand {
   text-align: center;
   vertical-align: middle;
   width: 20px;
+}
+
+.messages .message.notify {
+  background-color: #079531b8;
+  color: #ffffff;
+}
+.messages .message.notify:before {
+  content: "\2713";
 }
 
 /** Desktop + tab - specific CSS **/
