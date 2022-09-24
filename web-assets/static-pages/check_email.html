@@ -10,12 +10,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Barlow&family=Barlow+Condensed:wght@500&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./check_email.css" />
   <script src="https://tc-public-static-files.topcoder.com/topcoder-auth/js/jquery-3.5.1.min.js"></script>
   <script type="text/javascript" src="check_email.js"></script>
 </head>
 
-<body class="center-align-card checkemail-card">
+<body>
+  <div class="mobile-header">
+    <img class="tc-logo" src="./images/logo.svg" alt="Check Email" width="104" height="89" />
+    <img class="tc-image" src="./images/topcoder.svg" alt="Check Email" width="104" height="89" />
+  </div>
   <!-- Page Wrapper -->
   <div class="page-wrapper">
     <!-- For ADA - Skip to Content Area -->
@@ -23,63 +27,43 @@
     <!-- Page Content Area -  Header + Main content -->
     <div class="page-content">
       <header class="header">
-        <img src="./images/email.png" alt="Check Email" width="104" height="89" />
+        <img class="header-icon" src="./images/email.png" alt="Check Email" width="104" height="89" />
+        <div class="header-text-container">
+          <div class="header-text">You're so close</div>
+          <div class="header-title">Check your email to activate your account</div>
+        </div>
       </header>
-      <main id="main" class="page-main">
-        <a id="contentarea" tabindex="-1"></a>
-        <h1 id="page-title-heading" class="page-title-heading">
-          Check your email to <br />activate your account
-        </h1>
-        <h2 id="page-subtitle-heading" class="page-subtitle-heading">
-          Welcome to the Topcoder Community!
-        </h2>
+      <form method="GET" class="main" id="verifyOtp" action="#">
         <div class="messages">
-          <div role="alert" class="message error">
-            <div id="error" class="message-content"></div>
-            <span class="close-error" tabindex="0">
-              <span class="clip-me">Close</span>
-            </span>
+          <div class="message-wrapper">
+            <div role="alert" class="message error">
+              <div class="message-icon">&#9888;</div>
+              <div id="error" class="message-content"></div>
+              <div class="close-error" tabindex="0">&#10006;</div>
+            </div>
           </div>
-          <div role="alert" class="message notify">
-            <div id="notify" class="message-content"></div>
-            <span class="close-error" tabindex="0">
-              <span class="clip-me">Close</span>
-            </span>
+          <div class="message-wrapper">
+            <div role="alert" class="message notify">
+              <div class="message-icon">&#10003;</div>
+              <div id="notify" class="message-content"></div>
+              <div class="close-error" tabindex="0">&#10006;</div>
+            </div>
           </div>
         </div>
-        <form method="GET" id="verifyOtp" action="#">
-          <input id="state" name="state" value="" type="hidden" />
-          <input id="returnUrl" name="returnUrl" value="" type="hidden" />
-          <div id="otpdiv" class="input-field active">
-            <label for="otp">One Time Password</label>
-            <input id="otp" name="otp" size="6" class="input-text" autocomplete="off" />
-          </div>
-          <div id="sb" class="action-wrapper">
-            <button type="submit" id="continueBtn" class="continue-btn" disabled="disabled">
-              Continue
-            </button>
-          </div>
-        </form>
-        <div class="page-description">
-          <ul>
-            <li><span>Don't see an email? Try spam just in case.
-                <span id="resend-text" style="position:static;">
-                  You can also request to have us
-                  <a href="#" id="resend">resend </a>
-                  the activation email.
-                </span>
-                If you still have any issues, you can always email <a
-                  href="mailto:support@topcoder.com">support@topcoder.com</a>.
-              </span>
-            </li>
-            <li><span>Latest Topcoder News<br /><a
-                  href="https://www.topcoder.com/blog/category/community-stories/?s=&so=&o=">Community Stories</a> / <a
-                  href="https://www.topcoder.com/blog/category/customer-success/?s=&so=&o=">Customer Success</a> /
-                <a href="https://www.topcoder.com/blog/category/future-of-work/?s=&so=&o=">Future of Work</a></span>
-            </li>
-          </ul>
-        </div>
-      </main>
+        <input id="state" name="state" value="" type="hidden" />
+        <input id="returnUrl" name="returnUrl" value="" type="hidden" />
+        <input id="otp" name="otp" size="6" class="input-text" autocomplete="off" placeholder="One Time Activation Code"
+          maxlength="6" />
+        <button type="submit" id="continueBtn" class="continue-btn" disabled="disabled">
+          Continue
+        </button>
+      </form>
+      <ul class="page-description">
+        <li>Don't see an email? Check your spam folder.</li>
+        <li id="resend-text">Still no luck? Request to have us <a href="#" id="resend">resend</a> your activation email.
+        </li>
+        <li>Any other issues? Contact <a href="mailto:support@topcoder.com">support@topcoder.com</a>.</li>
+      </ul>
     </div>
     <footer class="footer">
       <div class="copyright-text">

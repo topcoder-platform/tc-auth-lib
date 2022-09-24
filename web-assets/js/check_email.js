@@ -23,13 +23,14 @@ $(document).ready(function () {
   }
   const apiServerUrl = "https://api.{{DOMAIN}}/v3/users";
   $("#continueBtn").click(function () {
+    $(this).attr('disabled', 'disabled');
     var otp = $("#otp").val();
     if (!otp) {
       $("#error").html("Need Password");
-      $("#error").closest(".message").fadeIn();
+      $("#error").closest(".message-wrapper").fadeIn();
       return false;
     }
-    $("#error").closest(".message").fadeOut();
+    $("#error").closest(".message-wrapper").fadeOut();
     $("#error").html("");
     $.ajax({
       type: "PUT",
@@ -44,7 +45,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (result) {
         $("#notify").html("Your account is activated");
-        $("#notify").closest(".message").fadeIn();
+        $("#notify").closest(".message-wrapper").fadeIn();
         $("#resend-text").hide();
         $('#verifyOtp').attr('action', formAction);
         $("#state").val(qs["state"]);
@@ -55,11 +56,12 @@ $(document).ready(function () {
       error: function (error) {
         if (error.responseJSON && error.responseJSON.result) {
           $("#error").html(error.responseJSON.result.content);
-          $("#error").closest(".message").fadeIn();
+          $("#error").closest(".message-wrapper").fadeIn();
         } else {
           $("#error").html("Unknown Error");
-          $("#error").closest(".message").fadeIn();
+          $("#error").closest(".message-wrapper").fadeIn();
         }
+        $("#otp").val("");
       }
     });
     return false;
@@ -79,17 +81,17 @@ $(document).ready(function () {
         dataType: "json",
         success: function (result) {
           $("#notify").html("Email sent");
-          $("#notify").closest(".message").fadeIn();
+          $("#notify").closest(".message-wrapper").fadeIn();
           $("#resend-text").hide();
         },
         error: function (error) {
           if (error.responseJSON && error.responseJSON.result) {
             $("#error").html(error.responseJSON.result.content);
-            $("#error").closest(".message").fadeIn();
+            $("#error").closest(".message-wrapper").fadeIn();
             $("#resend-text").hide();
           } else {
             $("#error").html("Unknown Error");
-            $("#error").closest(".message").fadeIn();
+            $("#error").closest(".message-wrapper").fadeIn();
           }
         }
       });
@@ -99,52 +101,17 @@ $(document).ready(function () {
     $("#resend-text").hide();
   }
 
-  /**
-   * Script for field placeholder
-   **/
-  $(".messages .close-error").on("click", function () {
-    $(this).closest(".message").fadeOut();
+  $(".close-error").on("click", function () {
+    $(this).closest(".message-wrapper").fadeOut();
   });
-  var inputObj = $(".input-field .input-text"),
-    continueBtnDisable = false;
-  inputObj
-    .on("focus", function () {
-      $(this).parent().addClass("active focussed");
-    })
-    .on("blur", function () {
-      var parentObj = $(this).parent();
-      if ($(this).val() === "") {
-        parentObj.removeClass("active");
-      }
-      parentObj.removeClass("focussed");
-    })
-    .on("change keydown paste input", function () {
-      var disableStatus = false;
-      inputObj.each(function (index, element) {
-        if ($(element).val() === "") {
-          disableStatus = true;
-          return;
-        } else {
-          disableStatus = false;
-          return;
-        }
-      });
-      setContinueButtonDisabledStatus(disableStatus);
-    })
-    .each(function (index, element) {
-      var parentObj = $(element).parent();
-      if ($(element).val() !== "") {
-        parentObj.addClass("active");
-      } else {
-        parentObj.removeClass("active");
-      }
 
-      if ($(element).val() === "" && continueBtnDisable === false) {
-        continueBtnDisable = true;
-      }
-
-      setContinueButtonDisabledStatus(continueBtnDisable);
-    });
+  $("#otp").on("change keydown paste input", function () {
+    if ($(this).val() === "" || $(this).val().length < 6) {
+      setContinueButtonDisabledStatus(true)
+    } else {
+      setContinueButtonDisabledStatus(false)
+    }
+  });
 });
 function setContinueButtonDisabledStatus(status) {
   var continueBtnObj = $("#continueBtn");
