@@ -95,7 +95,7 @@ const autotab = (e, currentPosition, to) => {
 
 const submit = () => {
   let formAction = qs["formAction"] || "#";
-  const opt1 = 'https://auth.domain/continue';
+  const opt1 = 'https://auth.{{DOMAIN}}/continue';
   const opt2 = 'https://{{AUTH0DOMAIN}}/continue';
   if (!formAction.startsWith(opt1) && !formAction.startsWith(opt2)) {
       // looks like XSS attack
