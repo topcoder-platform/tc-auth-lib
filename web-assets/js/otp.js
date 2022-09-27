@@ -50,6 +50,12 @@ $(document).ready(function () {
   } else {
       $("#resend").hide();
   }
+  const errorMessage = qs["message"];
+  if (errorMessage) {
+    $("#error").html(errorMessage);
+    $("#error").closest(".message-wrapper").fadeIn();
+    $("#error").closest(".messages").fadeIn();
+  }
 
   $(".close-error").on("click", function () {
       $(this).closest(".message-wrapper").fadeOut();

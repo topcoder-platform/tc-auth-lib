@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Processing verfiable credentials</title>
+</head>
+
+<body>
+    <noscript> You need to enable JavaScript to run this app. </noscript>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/oidc-client/1.11.5/oidc-client.min.js"
+        integrity="sha512-pGtU1n/6GJ8fu6bjYVGIOT9Dphaw5IWPwVlqkpvVgqBxFkvdNbytUh0H8AP15NYF777P4D3XEeA/uDWFCpSQ1g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        const manager = new Oidc.UserManager({
+            authority: 'https://tc-vcauth-uat.diceid.com',
+            client_id: 'topcoder',
+            response_type: 'code',
+            scope: 'openid profile vc_authn',
+            redirect_uri: 'https://accounts-auth0.topcoder-dev.com/dice-verify-callback.html',
+            response_mode: 'query',
+            loadUserInfo: false,
+        });
+        manager.settings.metadata = {
+            issuer: 'https://tc-vcauth-uat.diceid.com',
+            jwks_uri: 'https://tc-vcauth-uat.diceid.com/.well-known/openid-configuration/jwks',
+            authorization_endpoint: 'https://tc-vcauth-uat.diceid.com/vc/connect/authorize?pres_req_conf_id=Topcoder_2FA_Validate_Cred',
+            token_endpoint: 'https://tc-vcauth-uat.diceid.com/vc/connect/token',
+            userinfo_endpoint: 'https://tc-vcauth-uat.diceid.com/connect/userinfo',
+            check_session_iframe: 'https://tc-vcauth-uat.diceid.com/vc/connect/checksession',
+            revocation_endpoint: 'https://tc-vcauth-uat.diceid.com/vc/connect/revocation',
+        };
+        manager.signinRedirect();
+    </script>
+</body>
+
+</html>
