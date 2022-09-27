@@ -139,6 +139,7 @@ input[type="number"] {
     display: flex;
     flex-direction: row;
     gap: 12px;
+    margin-bottom: 51px;
 }
 
 .digit-group input {
