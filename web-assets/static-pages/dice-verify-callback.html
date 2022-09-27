@@ -17,17 +17,20 @@
             loadUserInfo: false
         });
         userManager.settings.metadata = {
-            issuer: `https://tc-vcauth-uat.diceid.com`,
-            token_endpoint: `https://tc-vcauth-uat.diceid.com/vc/connect/token`
+            issuer: `https://{{DICE_AUTH}}.diceid.com`,
+            token_endpoint: `https://{{DICE_AUTH}}.diceid.com/vc/connect/token`
         };
         userManager.signinRedirectCallback().then(
             (user) => {
-                console.log(user)
-                window.parent.postMessage(user, 'https://accounts-auth0.topcoder-dev.com')
+                window.parent.postMessage({ type: 'DICE_VERIFICATION', success: true, user }, 'https://www.{{DOMAIN}}')
+                window.parent.postMessage({ type: 'DICE_VERIFICATION', success: true, user }, 'https://community-app.{{DOMAIN}}')
+                window.parent.postMessage({ type: 'DICE_VERIFICATION', success: true, user }, 'https://{{CA_SUB_1}}.{{DOMAIN}}')
             },
             (error) => {
                 console.log(error)
-                window.parent.postMessage({}, 'https://accounts-auth0.topcoder-dev.com')
+                window.parent.postMessage({ type: 'DICE_VERIFICATION', success: false }, 'https://www.{{DOMAIN}}')
+                window.parent.postMessage({ type: 'DICE_VERIFICATION', success: false }, 'https://community-app.{{DOMAIN}}')
+                window.parent.postMessage({ type: 'DICE_VERIFICATION', success: false }, 'https://{{CA_SUB_1}}.{{DOMAIN}}')
             }
         );
     </script>

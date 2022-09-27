@@ -30,19 +30,16 @@ $(document).ready(function () {
               success: function (result) {
                   $("#notify").html("Email sent");
                   $("#notify").closest(".message-wrapper").fadeIn();
-                  $("#notify").closest(".messages").fadeIn();
                   $("#resend").hide();
               },
               error: function (error) {
                   if (error.responseJSON && error.responseJSON.result) {
                       $("#error").html(error.responseJSON.result.content);
                       $("#error").closest(".message-wrapper").fadeIn();
-                      $("#error").closest(".messages").fadeIn();
                       $("#resend").hide();
                   } else {
                       $("#error").html("Unknown Error");
                       $("#error").closest(".message-wrapper").fadeIn();
-                      $("#error").closest(".messages").fadeIn();
                   }
               }
           });
@@ -54,12 +51,10 @@ $(document).ready(function () {
   if (errorMessage) {
     $("#error").html(errorMessage);
     $("#error").closest(".message-wrapper").fadeIn();
-    $("#error").closest(".messages").fadeIn();
   }
 
   $(".close-error").on("click", function () {
       $(this).closest(".message-wrapper").fadeOut();
-      $(this).closest(".messages").fadeOut();
   });
 });
 
@@ -132,6 +127,7 @@ const keydownHandler = (e, prefix, currentPosition) => {
       if (elem) {
           elem.focus();
           elem.select();
+          elem.value = "";
           e.preventDefault();
           return;
       }

@@ -53,7 +53,6 @@ input[type="number"] {
     flex-direction: column;
     align-items: center;
     padding: 42px 40px;
-    gap: 51px;
 }
 
 .signin-header {
@@ -62,6 +61,7 @@ input[type="number"] {
     align-items: center;
     padding: 0;
     gap: 8px;
+    margin-bottom: 51px;
 }
 
 .header-text {
@@ -83,6 +83,7 @@ input[type="number"] {
     line-height: 24px;
     color: #767676;
     padding: 12px;
+    margin-bottom: 51px;
 }
 
 .messages {
@@ -90,11 +91,11 @@ input[type="number"] {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    display: none;
 }
 
 .message-wrapper {
     display: none;
+    margin-bottom: 20px;
 }
 
 .message {

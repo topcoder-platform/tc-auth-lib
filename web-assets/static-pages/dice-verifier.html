@@ -13,22 +13,22 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
         const manager = new Oidc.UserManager({
-            authority: 'https://tc-vcauth-uat.diceid.com',
+            authority: 'https://{{DICE_AUTH}}.diceid.com',
             client_id: 'topcoder',
             response_type: 'code',
             scope: 'openid profile vc_authn',
-            redirect_uri: 'https://accounts-auth0.topcoder-dev.com/dice-verify-callback.html',
+            redirect_uri: 'https://accounts-auth0.{{DOMAIN}}/dice-verify-callback.html',
             response_mode: 'query',
             loadUserInfo: false,
         });
         manager.settings.metadata = {
-            issuer: 'https://tc-vcauth-uat.diceid.com',
-            jwks_uri: 'https://tc-vcauth-uat.diceid.com/.well-known/openid-configuration/jwks',
-            authorization_endpoint: 'https://tc-vcauth-uat.diceid.com/vc/connect/authorize?pres_req_conf_id=Topcoder_2FA_Validate_Cred',
-            token_endpoint: 'https://tc-vcauth-uat.diceid.com/vc/connect/token',
-            userinfo_endpoint: 'https://tc-vcauth-uat.diceid.com/connect/userinfo',
-            check_session_iframe: 'https://tc-vcauth-uat.diceid.com/vc/connect/checksession',
-            revocation_endpoint: 'https://tc-vcauth-uat.diceid.com/vc/connect/revocation',
+            issuer: 'https://{{DICE_AUTH}}.diceid.com',
+            jwks_uri: 'https://{{DICE_AUTH}}.diceid.com/.well-known/openid-configuration/jwks',
+            authorization_endpoint: 'https://{{DICE_AUTH}}.diceid.com/vc/connect/authorize?pres_req_conf_id=Topcoder_2FA_Validate_Cred',
+            token_endpoint: 'https://{{DICE_AUTH}}.diceid.com/vc/connect/token',
+            userinfo_endpoint: 'https://{{DICE_AUTH}}.diceid.com/connect/userinfo',
+            check_session_iframe: 'https://{{DICE_AUTH}}.diceid.com/vc/connect/checksession',
+            revocation_endpoint: 'https://{{DICE_AUTH}}.diceid.com/vc/connect/revocation',
         };
         manager.signinRedirect();
     </script>
