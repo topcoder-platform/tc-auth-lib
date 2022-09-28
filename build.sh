@@ -20,6 +20,9 @@ OTPFILENAME="./web-assets/js/otp.js"
 perl -pi -e "s/\{\{DOMAIN\}\}/$DOMAIN/g" $OTPFILENAME
 perl -pi -e "s/\{\{AUTH0DOMAIN\}\}/$AUTH0DOMAIN/g" $OTPFILENAME
 
+OTPPAGEFILE="./web-assets/static-pages/otp.html"
+perl -pi -e "s/\{\{GTM\}\}/$GTM/g" $OTPPAGEFILE
+
 DICECALLBACK="./web-assets/static-pages/dice-verify-callback.html"
 perl -pi -e "s/\{\{DOMAIN\}\}/$DOMAIN/g" $DICECALLBACK
 perl -pi -e "s/\{\{DICE_AUTH\}\}/$DICE_AUTH/g" $DICECALLBACK
