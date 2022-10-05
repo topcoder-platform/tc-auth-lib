@@ -36,7 +36,6 @@ function (user, context, callback) {
                 user.mfa_verified = res.result.content.mfaVerified;
                 // TODO need to double sure about multiple result or no result 
                 let userId = res.result.content.id;
-                user.userId = userId;
                 let handle = res.result.content.handle;
                 let roles = res.result.content.roles.map(function (role) {
                     return role.roleName;

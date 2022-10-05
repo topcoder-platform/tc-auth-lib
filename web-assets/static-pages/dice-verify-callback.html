@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Processing verfiable credentials</title>
+</head>
+
+<body style="text-align: center;padding-top: 57px;">
+    <noscript> You need to enable JavaScript to run this app. </noscript>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/oidc-client/1.11.5/oidc-client.min.js"
+        integrity="sha512-pGtU1n/6GJ8fu6bjYVGIOT9Dphaw5IWPwVlqkpvVgqBxFkvdNbytUh0H8AP15NYF777P4D3XEeA/uDWFCpSQ1g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        window.parent.postMessage({ type: 'DICE_VERIFICATION_START' }, 'https://www.{{DOMAIN}}')
+        window.parent.postMessage({ type: 'DICE_VERIFICATION_START' }, 'https://community-app.{{DOMAIN}}')
+        window.parent.postMessage({ type: 'DICE_VERIFICATION_START' }, 'https://{{CA_SUB_1}}.{{DOMAIN}}')
+        const userManager = new Oidc.UserManager({
+            response_type: "code",
+            response_mode: "query",
+            loadUserInfo: false
+        });
+        userManager.settings.metadata = {
+            issuer: `https://{{DICE_AUTH}}.diceid.com`,
+            token_endpoint: `https://{{DICE_AUTH}}.diceid.com/vc/connect/token`
+        };
+        userManager.signinRedirectCallback().then(
+            (user) => {
+                window.parent.postMessage({ type: 'DICE_VERIFICATION', success: true, user }, 'https://www.{{DOMAIN}}')
+                window.parent.postMessage({ type: 'DICE_VERIFICATION', success: true, user }, 'https://community-app.{{DOMAIN}}')
+                window.parent.postMessage({ type: 'DICE_VERIFICATION', success: true, user }, 'https://{{CA_SUB_1}}.{{DOMAIN}}')
+            },
+            (error) => {
+                console.log(error)
+                window.parent.postMessage({ type: 'DICE_VERIFICATION', success: false }, 'https://www.{{DOMAIN}}')
+                window.parent.postMessage({ type: 'DICE_VERIFICATION', success: false }, 'https://community-app.{{DOMAIN}}')
+                window.parent.postMessage({ type: 'DICE_VERIFICATION', success: false }, 'https://{{CA_SUB_1}}.{{DOMAIN}}')
+            }
+        );
+    </script>
+    <img src="./images/dicelogobig.png">
+</body>
+
+</html>

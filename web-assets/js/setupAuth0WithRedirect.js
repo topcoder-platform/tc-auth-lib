@@ -127,7 +127,7 @@ const authSetup = function () {
                     let issuer = tokenJson.iss;
                     issuerHostname = extractHostname(issuer);
                 }
-                if (domain !== issuerHostname) {
+                if (issuerHostname && domain !== issuerHostname) {
                     domain = issuerHostname;
                     logger("reintialize auth0 for new domain..", domain);
                     createAuth0Client({
@@ -302,13 +302,13 @@ const authSetup = function () {
                 try {
                     const exT = getCookieExpiry(idToken);
                     if (exT) {
-                        setDomainCookie(tcJWTCookie, idToken, exT);
-                        setDomainCookie(v3JWTCookie, idToken, exT);
-                        setDomainCookie(tcSSOCookie, tcsso, exT);
+                        setDomainCookie(tcJWTCookie, idToken, exT, true);
+                        setDomainCookie(v3JWTCookie, idToken, exT, true);
+                        setDomainCookie(tcSSOCookie, tcsso, exT, true);
                     } else {
-                        setCookie(tcJWTCookie, idToken, cookieExpireIn);
-                        setCookie(v3JWTCookie, idToken, cookieExpireIn);
-                        setCookie(tcSSOCookie, tcsso, cookieExpireIn);
+                        setCookie(tcJWTCookie, idToken, cookieExpireIn, true);
+                        setCookie(v3JWTCookie, idToken, cookieExpireIn, true);
+                        setCookie(tcSSOCookie, tcsso, cookieExpireIn, true);
                     }
                 } catch (e) {
                     logger('Error occured in fecthing token expiry time', e.message);
@@ -400,14 +400,18 @@ const authSetup = function () {
         return decodeURIComponent(escape(atob(output))); //polyfill https://github.com/davidchambers/Base64.js
     }
 
-    function setCookie(cname, cvalue, exMins) {
+    function setCookie(cname, cvalue, exMins, secure = false) {
         const cdomain = getHostDomain();
 
         let d = new Date();
         d.setTime(d.getTime() + (exMins * 60 * 1000));
 
         let expires = ";expires=" + d.toUTCString();
-        document.cookie = cname + "=" + cvalue + cdomain + expires + ";path=/";
+        let cookie = cname + "=" + cvalue + cdomain + expires + ";path=/";
+        if (secure) {
+            cookie += "; HttpOnly; Secure";
+        }
+        document.cookie = cookie;
     }
 
     function getCookie(name) {
@@ -518,13 +522,13 @@ const authSetup = function () {
                             try {
                                 const exT = getCookieExpiry(idToken);
                                 if (exT) {
-                                    setDomainCookie(tcJWTCookie, idToken, exT);
-                                    setDomainCookie(v3JWTCookie, idToken, exT);
-                                    setDomainCookie(tcSSOCookie, tcsso, exT);
+                                    setDomainCookie(tcJWTCookie, idToken, exT, true);
+                                    setDomainCookie(v3JWTCookie, idToken, exT, true);
+                                    setDomainCookie(tcSSOCookie, tcsso, exT, true);
                                 } else {
-                                    setCookie(tcJWTCookie, idToken, cookieExpireIn);
-                                    setCookie(v3JWTCookie, idToken, cookieExpireIn);
-                                    setCookie(tcSSOCookie, tcsso, cookieExpireIn);
+                                    setCookie(tcJWTCookie, idToken, cookieExpireIn, true);
+                                    setCookie(v3JWTCookie, idToken, cookieExpireIn, true);
+                                    setCookie(tcSSOCookie, tcsso, cookieExpireIn, true);
                                 }
                                 informIt(success);
                             } catch (e) {

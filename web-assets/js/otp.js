@@ -8,85 +8,170 @@ var qs = (function (a) {
   }
   return b;
 })(window.location.search.substr(1).split("&"));
+
 $(document).ready(function () {
   window.history.forward();
-  $("#continueBtn").click(function () {
-    var otp = $("#otp").val();
-    if (!otp) {
-      $("#error").html("Need Password");
-      $("#error").closest(".message").fadeIn();
-      return false;
-    }
-    $("#error").closest(".message").fadeOut();
-    $("#error").html("");
-    let formAction = qs["formAction"];
-    console.log(formAction)
-    const opt1 = 'https://auth.{{DOMAIN}}/continue';
-    const opt2 = 'https://{{AUTH0DOMAIN}}/continue';
-    if (!formAction.startsWith(opt1) && !formAction.startsWith(opt2)) {
-      // looks like XSS attack
-      console.log("err")
-      formAction = "#";
-    }
-    $('#verifyOtp').attr('action', formAction);
-    $("#state").val(qs["state"]);
-    $("#returnUrl").val(qs["returnUrl"]);
-    $("#verifyOtp").submit();
-    return false;
-  });
-
-  /**
-   * Script for field placeholder
-   **/
-  $(".messages .close-error").on("click", function () {
-    $(this).closest(".message").fadeOut();
-  });
-  var inputObj = $(".input-field .input-text"),
-    continueBtnDisable = false;
-  inputObj
-    .on("focus", function () {
-      $(this).parent().addClass("active focussed");
-    })
-    .on("blur", function () {
-      var parentObj = $(this).parent();
-      if ($(this).val() === "") {
-        parentObj.removeClass("active");
-      }
-      parentObj.removeClass("focussed");
-    })
-    .on("change keydown paste input", function () {
-      var disableStatus = false;
-      inputObj.each(function (index, element) {
-        if ($(element).val() === "") {
-          disableStatus = true;
-          return;
-        } else {
-          disableStatus = false;
-          return;
-        }
+  const resendToken = qs["resendToken"];
+  const userId = qs["userId"];
+  if (resendToken && userId) {
+      const apiServerUrl = "https://api.{{DOMAIN}}/v3/users";
+      $("#resend").click(function () {
+          $.ajax({
+              type: "POST",
+              url: apiServerUrl + "/resendOtpEmail",
+              contentType: "application/json",
+              mimeType: "application/json",
+              data: JSON.stringify({
+                  "param": {
+                      userId, resendToken
+                  }
+              }),
+              dataType: "json",
+              success: function (result) {
+                  $("#notify").html("Email sent");
+                  $("#notify").closest(".message-wrapper").fadeIn();
+                  $("#resend").hide();
+              },
+              error: function (error) {
+                  if (error.responseJSON && error.responseJSON.result) {
+                      $("#error").html(error.responseJSON.result.content);
+                      $("#error").closest(".message-wrapper").fadeIn();
+                      $("#resend").hide();
+                  } else {
+                      $("#error").html("Unknown Error");
+                      $("#error").closest(".message-wrapper").fadeIn();
+                  }
+              }
+          });
       });
-      setContinueButtonDisabledStatus(disableStatus);
-    })
-    .each(function (index, element) {
-      var parentObj = $(element).parent();
-      if ($(element).val() !== "") {
-        parentObj.addClass("active");
-      } else {
-        parentObj.removeClass("active");
-      }
-
-      if ($(element).val() === "" && continueBtnDisable === false) {
-        continueBtnDisable = true;
-      }
-
-      setContinueButtonDisabledStatus(continueBtnDisable);
-    });
-});
-function setContinueButtonDisabledStatus(status) {
-  var continueBtnObj = $("#continueBtn");
-  if (status) {
-    continueBtnObj.attr("disabled", true);
   } else {
-    continueBtnObj.removeAttr("disabled");
+      $("#resend").hide();
   }
+  const errorMessage = qs["message"];
+  if (errorMessage) {
+    $("#error").html(errorMessage);
+    $("#error").closest(".message-wrapper").fadeIn();
+  }
+
+  $(".close-error").on("click", function () {
+      $(this).closest(".message-wrapper").fadeOut();
+  });
+});
+
+let inputVal = [];
+
+const isKeyInput = (e) => {
+// exclude backspace, tab, shift, ctrl, alt, esc and arrow keys
+  return (
+      [8, 9, 16, 17, 18, 27, 37, 38, 39, 40, 46].indexOf(e.which) === -1
+  );
+};
+
+const isNumberInput = (e) => {
+  var charKey = e.key;
+  return !isNaN(charKey) || charKey.toLowerCase() === "backspace";
+};
+
+const autotab = (e, currentPosition, to) => {
+  const currentElement = e.currentTarget;
+  if (
+      isKeyInput(e) &&
+      currentElement.getAttribute &&
+      !e.ctrlKey &&
+      currentElement.value.length >=
+      currentElement.getAttribute("maxlength")
+  ) {
+      inputVal[currentPosition] = currentElement.value;
+      if (to) {
+          const elem = document.getElementById(to);
+          if (elem) {
+              elem.focus();
+              elem.select();
+          }
+      } else {
+          submit();
+      }
+  }
+};
+
+const submit = () => {
+  let formAction = qs["formAction"] || "#";
+  const opt1 = 'https://auth.{{DOMAIN}}/continue';
+  const opt2 = 'https://{{AUTH0DOMAIN}}/continue';
+  if (!formAction.startsWith(opt1) && !formAction.startsWith(opt2)) {
+      // looks like XSS attack
+      $('#verifyOtp').attr('action', '#');
+      return false;
+  }
+  $('#verifyOtp').attr('action', formAction);
+  $("#code1").attr('disabled', 'disabled');
+  $("#code2").attr('disabled', 'disabled');
+  $("#code3").attr('disabled', 'disabled');
+  $("#code4").attr('disabled', 'disabled');
+  $("#code5").attr('disabled', 'disabled');
+  $("#code6").attr('disabled', 'disabled');
+  var otp = `${$("#code1").val()}${$("#code2").val()}${$("#code3").val()}${$("#code4").val()}${$("#code5").val()}${$("#code6").val()}`;
+  $("#otp").val(otp);
+  $("#state").val(qs["state"]);
+  $("#returnUrl").val(qs["returnUrl"]);
+  $("#verifyOtp").submit();
 }
+
+const keydownHandler = (e, prefix, currentPosition) => {
+  const currentElement = e.currentTarget;
+  if (e.which === 8 && currentElement.value.length === 0) {
+      // go to previous input when backspace is pressed
+      const elem = document.getElementById(
+      `${prefix}${currentPosition - 1}`
+      );
+      if (elem) {
+          elem.focus();
+          elem.select();
+          elem.value = "";
+          e.preventDefault();
+          return;
+      }
+  }
+  // only allows numbers (prevents e, +, - on input number type)
+  if (
+      // currentElement.type === "number" &&
+      e.which === 69 ||
+      e.which === 187 ||
+      e.which === 189 ||
+      e.which === 190 ||
+      !isNumberInput(e)
+  ) {
+      e.preventDefault();
+      return;
+  }
+  const elem = document.getElementById(
+  `${prefix}${currentPosition - 1}`
+  );
+  if (elem && !elem.value) {
+      e.preventDefault();
+      return;
+  }
+};
+
+const pasteHandler = (e, prefix, currentPosition) => {
+  const clipboardData = e.clipboardData || window.clipboardData;
+  const pastedData = clipboardData.getData("Text");
+  let inputPos = currentPosition;
+  let strIndex = 0;
+  let elem;
+  do {
+      elem = document.getElementById(`${prefix}${inputPos}`);
+      if (elem && pastedData[strIndex]) {
+          elem.value = pastedData[strIndex];
+          elem.dispatchEvent(new Event("input"));
+          if (inputPos === 6) {
+              submit();
+          }
+          e.preventDefault();
+      } else {
+          break;
+      }
+      strIndex++;
+      inputPos++;
+  } while (elem && strIndex < pastedData.length);
+};
