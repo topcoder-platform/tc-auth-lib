@@ -59,34 +59,12 @@
             <input id="state" name="state" value="" type="hidden" />
             <input id="returnUrl" name="returnUrl" value="" type="hidden" />
             <input id="otp" name="otp" value="" type="hidden" />
-            <input type="number" inputmode="numeric" pattern="\d" title="Numeric"
-              onKeyPress="if(this.value.length===1) return false;" id="code1" class="text-center w-8 xxs:w-12 mx-1"
-              maxlength="1" onPaste="pasteHandler(event, 'code', 1)" onKeydown="keydownHandler(event, 'code', 1)"
-              onKeyup="autotab(event, 1, 'code2')" required />
-            <input type="number" inputmode="numeric" pattern="\d" title="Numeric"
-              onKeyPress="if(this.value.length===1) return false;" id="code2" class="text-center w-8 xxs:w-12 mx-1"
-              maxlength="1" onPaste="pasteHandler(event, 'code', 2)" onKeydown="keydownHandler(event, 'code', 2)"
-              onKeyup="autotab(event, 2, 'code3')" required />
-
-            <input type="number" inputmode="numeric" pattern="\d" title="Numeric"
-              onKeyPress="if(this.value.length===1) return false;" id="code3" class="text-center w-8 xxs:w-12 mx-1"
-              maxlength="1" onPaste="pasteHandler(event, 'code', 3)" onKeydown="keydownHandler(event, 'code', 3)"
-              onKeyup="autotab(event, 3, 'code4')" required />
-
-            <input type="number" inputmode="numeric" pattern="\d" title="Numeric"
-              onKeyPress="if(this.value.length===1) return false;" id="code4" class="text-center w-8 xxs:w-12 mx-1"
-              maxlength="1" onPaste="pasteHandler(event, 'code', 4)" onKeydown="keydownHandler(event, 'code', 4)"
-              onKeyup="autotab(event, 4, 'code5')" required />
-
-            <input type="number" inputmode="numeric" pattern="\d" title="Numeric"
-              onKeyPress="if(this.value.length===1) return false;" id="code5" class="text-center w-8 xxs:w-12 mx-1"
-              maxlength="1" onPaste="pasteHandler(event, 'code', 5)" onKeydown="keydownHandler(event, 'code', 5)"
-              onKeyup="autotab(event, 5, 'code6')" required />
-
-            <input type="number" inputmode="numeric" pattern="\d" title="Numeric"
-              onKeyPress="if(this.value.length===1) return false;" id="code6" class="text-center w-8 xxs:w-12 mx-1"
-              maxlength="1" onPaste="pasteHandler(event, 'code', 6)" onKeydown="keydownHandler(event, 'code', 6)"
-              onKeyup="autotab(event, 6, '')" required />
+            <input type="text" id="code1" class="otpcode" maxlength="1" />
+            <input type="text" id="code2" class="otpcode" maxlength="1" />
+            <input type="text" id="code3" class="otpcode" maxlength="1" />
+            <input type="text" id="code4" class="otpcode" maxlength="1" />
+            <input type="text" id="code5" class="otpcode" maxlength="1" />
+            <input type="text" id="code6" class="otpcode" maxlength="1" />
           </form>
           <a href="#" id="resend" class="resend-link">Resend the 6 digit code</a>
         </div>
