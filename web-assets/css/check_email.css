@@ -239,7 +239,7 @@ a:hover {
     margin-right: 8px;
 }
 
-@media (max-width: 375px) {
+@media (max-width: 480px) {
     body {
         margin-top: 0;
     }
