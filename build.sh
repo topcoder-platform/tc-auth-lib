@@ -27,6 +27,7 @@ DICECALLBACK="./web-assets/static-pages/dice-verify-callback.html"
 perl -pi -e "s/\{\{DOMAIN\}\}/$DOMAIN/g" $DICECALLBACK
 perl -pi -e "s/\{\{DICE_AUTH\}\}/$DICE_AUTH/g" $DICECALLBACK
 perl -pi -e "s/\{\{CA_SUB_1\}\}/$CA_SUB_1/g" $DICECALLBACK
+perl -pi -e "s/\{\{CA_SUB_2\}\}/$CA_SUB_2/g" $DICECALLBACK
 
 DICEVERIFIER="./web-assets/static-pages/dice-verifier.html"
 perl -pi -e "s/\{\{DOMAIN\}\}/$DOMAIN/g" $DICEVERIFIER
