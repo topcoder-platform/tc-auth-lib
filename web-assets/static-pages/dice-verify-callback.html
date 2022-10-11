@@ -14,6 +14,7 @@
         window.parent.postMessage({ type: 'DICE_VERIFICATION_START' }, 'https://www.{{DOMAIN}}')
         window.parent.postMessage({ type: 'DICE_VERIFICATION_START' }, 'https://community-app.{{DOMAIN}}')
         window.parent.postMessage({ type: 'DICE_VERIFICATION_START' }, 'https://{{CA_SUB_1}}.{{DOMAIN}}')
+        window.parent.postMessage({ type: 'DICE_VERIFICATION_START' }, 'https://{{CA_SUB_2}}.{{DOMAIN}}')
         const userManager = new Oidc.UserManager({
             response_type: "code",
             response_mode: "query",
@@ -28,12 +29,14 @@
                 window.parent.postMessage({ type: 'DICE_VERIFICATION', success: true, user }, 'https://www.{{DOMAIN}}')
                 window.parent.postMessage({ type: 'DICE_VERIFICATION', success: true, user }, 'https://community-app.{{DOMAIN}}')
                 window.parent.postMessage({ type: 'DICE_VERIFICATION', success: true, user }, 'https://{{CA_SUB_1}}.{{DOMAIN}}')
+                window.parent.postMessage({ type: 'DICE_VERIFICATION', success: true, user }, 'https://{{CA_SUB_2}}.{{DOMAIN}}')
             },
             (error) => {
                 console.log(error)
                 window.parent.postMessage({ type: 'DICE_VERIFICATION', success: false }, 'https://www.{{DOMAIN}}')
                 window.parent.postMessage({ type: 'DICE_VERIFICATION', success: false }, 'https://community-app.{{DOMAIN}}')
                 window.parent.postMessage({ type: 'DICE_VERIFICATION', success: false }, 'https://{{CA_SUB_1}}.{{DOMAIN}}')
+                window.parent.postMessage({ type: 'DICE_VERIFICATION', success: false }, 'https://{{CA_SUB_2}}.{{DOMAIN}}')
             }
         );
     </script>
