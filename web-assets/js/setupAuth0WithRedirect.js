@@ -639,11 +639,17 @@ const authSetup = function () {
         return hostname;
     }
 
+    function htmlEncode(str){
+        return String(str).replace(/[^\w. ]/gi, function(c){
+          return '&#'+c.charCodeAt(0)+';';
+        });
+      }
+
     function showLoginError(message, linkUrl) {
         try {
             document.getElementById("page-title-heading").innerText = "Alert";
             var messageElement = document.createElement("textarea");
-            messageElement.innerHTML = message;
+            messageElement.innerHTML = htmlEncode(message);
             document.getElementById("loading_message_p").innerHTML = messageElement.value + " <a href=" + linkUrl + ">click here</a>";
         } catch (err) {
             logger("Error in changing loading message: ", err.message)
