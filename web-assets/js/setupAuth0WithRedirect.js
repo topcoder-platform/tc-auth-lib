@@ -422,7 +422,10 @@ const authSetup = function () {
 
     // XSS rules
     const encode = function(str) {
-        return str.replace(/[\x26\x0A\<>'"]/g,function(str){return"&#"+str.charCodeAt(0)+";"})
+        str = str.replace(/[\x26\x0A\<>'"]/g,function(str){return"&#"+str.charCodeAt(0)+";"})
+        return String(str).replace(/[^\w. ]/gi, function(c){
+            return '&#'+c.charCodeAt(0)+';';
+          });
     }
     // end XSS rules
 
@@ -639,17 +642,11 @@ const authSetup = function () {
         return hostname;
     }
 
-    function htmlEncode(str){
-        return String(str).replace(/[^\w. ]/gi, function(c){
-          return '&#'+c.charCodeAt(0)+';';
-        });
-      }
-
     function showLoginError(message, linkUrl) {
         try {
             document.getElementById("page-title-heading").innerText = "Alert";
             var messageElement = document.createElement("textarea");
-            messageElement.innerHTML = htmlEncode(message);
+            messageElement.innerHTML = message;
             document.getElementById("loading_message_p").innerHTML = messageElement.value + " <a href=" + linkUrl + ">click here</a>";
         } catch (err) {
             logger("Error in changing loading message: ", err.message)
