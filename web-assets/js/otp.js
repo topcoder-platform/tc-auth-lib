@@ -1,13 +1,20 @@
-var qs = (function (a) {
+const qs = (function (a) {
   if (a == "") return {};
-  var b = {};
-  for (var i = 0; i < a.length; ++i) {
-    var p = a[i].split("=", 2);
+  let b = {};
+  for (let i = 0; i < a.length; ++i) {
+    let p = a[i].split("=", 2);
     if (p.length == 1) b[p[0]] = "";
     else b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
   }
   return b;
 })(window.location.search.substr(1).split("&"));
+
+const encode = function (str) {
+  str = str.replace(/[\x26\x0A\<>'"]/g, function (str) { return "&#" + str.charCodeAt(0) + ";" })
+  return String(str).replace(/[^\w. ]/gi, function (c) {
+    return '&#' + c.charCodeAt(0) + ';';
+  });
+}
 
 $(document).ready(function () {
   window.history.forward();
@@ -57,7 +64,7 @@ $(document).ready(function () {
   }
   const errorMessage = qs["message"];
   if (errorMessage) {
-    $("#error").html(errorMessage);
+    $("#error").html(encode(errorMessage));
     $("#error").closest(".message-wrapper").fadeIn();
   }
 
