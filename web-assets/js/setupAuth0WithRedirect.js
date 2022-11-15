@@ -422,7 +422,10 @@ const authSetup = function () {
 
     // XSS rules
     const encode = function(str) {
-        return str.replace(/[\x26\x0A\<>'"]/g,function(str){return"&#"+str.charCodeAt(0)+";"})
+        str = str.replace(/[\x26\x0A\<>'"]/g,function(str){return"&#"+str.charCodeAt(0)+";"})
+        return String(str).replace(/[^\w. ]/gi, function(c){
+            return '&#'+c.charCodeAt(0)+';';
+          });
     }
     // end XSS rules
 

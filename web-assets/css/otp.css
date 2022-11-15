@@ -48,8 +48,11 @@ body {
     flex-direction: column;
     align-items: center;
     padding: 0;
-    gap: 8px;
     margin-bottom: 51px;
+}
+
+.topcoder-logo {
+    margin-bottom: 8px;
 }
 
 .header-text {
@@ -78,7 +81,6 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 12px;
 }
 
 .message-wrapper {
@@ -126,20 +128,23 @@ body {
 .digit-group {
     display: flex;
     flex-direction: row;
-    gap: 12px;
     margin-bottom: 51px;
 }
 
+.digit-group :not(:last-child) {
+    margin-right: 12px;
+}
+
 .digit-group input {
-    width: 44px;
-    height: 40px;
+    width: 38px;
+    height: 36px;
     background-color: #FFFFFF;
     border: 1px solid #AAAAAA;
     line-height: 22px;
     text-align: center;
     font-size: 14px;
     font-weight: 400;
-    color: #767676;
+    color: #2A2A2A;
     border-radius: 4px;
 }
 
@@ -184,14 +189,57 @@ body {
     background-clip: text;
 }
 
+@media (min-width: 1157px) {
+    .info-mobile {
+        display: none;
+    }
+}
+
 @media (max-width: 1156px) {
+    body {
+        background-color: #ffffff;
+    }
+
+    .page-wrapper {
+        margin-top: 0;
+    }
+
     .row {
         background: white;
-        width: 500px;
+        width: 375px;
         min-height: auto;
+    }
+
+    .left-column {
+        width: 375px;
     }
 
     .logo-column {
         display: none;
+    }
+
+    .signin-column {
+        padding: 0px 32px 48px 32px;
+    }
+
+    .signin-header {
+        padding-top: 110px;
+        margin-bottom: 88px;
+    }
+
+    .info {
+        padding: 112px 0 0 0;
+        margin-bottom: 34px;
+        font-size: 14px;
+        line-height: 20px;
+    }
+
+    .digit-group {
+        margin-bottom: 34px;
+    }
+
+    .digit-group input {
+        width: 35px;
+        height: 36px;
     }
 }
