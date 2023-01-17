@@ -51,7 +51,7 @@ jobs:
       APPNAME: "tc-auth-lib"    
     steps: *builddeploy_steps
 
-  "build-dev":
+  "build-qa":
     <<: *defaults
     environment:
       DEPLOY_ENV: "QA"
