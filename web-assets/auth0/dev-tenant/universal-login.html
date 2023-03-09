@@ -89,6 +89,13 @@
         var languageDictionary;
         var language;
         var optionsObj = Array();
+        var primaryRoleOptionsObj = [{
+            label: 'Topcoder Talent',
+            value: 'Topcoder Talent'
+        }, {
+            label: 'Topcoder Customer',
+            value: 'Topcoder Customer'
+        }];
         var regSource = config.extraParams.reg_source || null;
         var utmSource = config.extraParams.utm_source || null;
         var utmMedium = config.extraParams.utm_medium || null;
@@ -165,7 +172,6 @@
             var name = item.name;
             optionsObj.push({ label: name, value: value });
         });
-
 
         let lockConfigs = {
             auth0_template: {
@@ -291,6 +297,14 @@
                                 hint: "Must have 2 or more chars, blank spaces not allowed" // optional
                             };
                         }
+                    },
+                    {
+                        type: "select",
+                        name: "primaryRole",
+                        placeholder: "Select your Primary Role",
+                        options: primaryRoleOptionsObj,
+                        // The following properties are optional
+                        prefill: "Topcoder Talent"
                     },
                     {
                         type: "select",
