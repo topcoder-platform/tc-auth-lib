@@ -24,6 +24,13 @@ function (user, context, callback) {
         const handle = context.idToken[global.AUTH0_CLAIM_NAMESPACE + 'handle'];
         console.log("rule:onboarding-checklist: fetch onboarding_checklist for email/handle: ", user.email, handle);
 
+        const roles = context.idToken[global.AUTH0_CLAIM_NAMESPACE + 'roles']
+
+        if (roles && roles.includes('Topcoder Customer')) {
+            console.log("rule:onboarding-checklist:exiting due to user being a customer.");
+            return callback(null, user, context);
+        }
+
         if (handle == null) {
             console.log("rule:onboarding-checklist: exiting due to handle being null.");
             return callback(null, user, context);
