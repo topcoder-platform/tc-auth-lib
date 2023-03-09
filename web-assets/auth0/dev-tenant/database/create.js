@@ -52,6 +52,7 @@ function create(user, callback) {
         isoAlpha3Code: countryObj.alpha3,
         isoAlpha2Code: countryObj.alpha2,
       },
+      primaryRole: user.user_metadata.primaryRole,
       regSource: regSource,
       utmSource: utmSource,
       utmMedium: utmMedium,

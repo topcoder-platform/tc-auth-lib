@@ -89,7 +89,7 @@
         var languageDictionary;
         var language;
         var optionsObj = Array();
-        var primaryRoleOptionsObj = [{
+      	var primaryRoleOptionsObj = [{
             label: 'Topcoder Talent',
             value: 'Topcoder Talent'
         }, {
@@ -117,7 +117,8 @@
                 title: "Topcoder Login",
                 error: {
                     login: {
-                        'lock.fallback': "We're sorry, something went wrong when attempting to log in."
+                        'lock.fallback': "We're sorry, something went wrong when attempting to log in.",
+                      	'deactivated_account': "Account is deactivated"
                     },
                     signUp: {
                         "lock.fallback": "We're sorry, something went wrong when attempting to sign up.",
@@ -129,10 +130,11 @@
                         "user_exists": "The user already exists."
                     }
                 },
+                title: 'Topcoder Login',
                 emailInputPlaceholder: 'Email',
                 passwordInputPlaceholder: 'Password',
                 signUpTerms: 'Yes, I understand and agree to the <a href="https://www.topcoder.com/policy/privacy-policy" target="_new"">Privacy Policy</a> and <a href="https://www.topcoder.com/policy/terms-and-conditions"  target="_new">Terms</a> of Topcoder.',
-                signUpTitle: 'Join Topcoder (testing)',
+                signUpTitle: 'Join Topcoder',
                 signUpLabel: 'Sign Up',
                 signUpSubmitLabel: 'Sign Up',
                 signUpWithLabel: '%s',
@@ -171,6 +173,7 @@
             var name = item.name;
             optionsObj.push({ label: name, value: value });
         });
+
 
         let lockConfigs = {
             auth0_template: {
@@ -297,18 +300,18 @@
                             };
                         }
                     },
-                    {
+                  	{
                         type: "select",
                         name: "primaryRole",
                         placeholder: "Select your Primary Role",
                         options: primaryRoleOptionsObj,
-                        // The following properties are optional
-                        prefill: "Topcoder Talent"
+                      	fieldLabel: 'The role you select maybe changed in your Profile Settings.',
+                      	fieldPlaceholder: 'Talent join to learn, complete, connect and find freelance gig work. Customers join to launch challenges, find freelancers, and get work done.'
                     },
                     {
                         type: "select",
                         name: "country",
-                        placeholder: "Location", // "Select your country (current location)",
+                        placeholder: "Select your country (current location)",
                         options: optionsObj,
                         // The following properties are optional
                         prefill: "us"
