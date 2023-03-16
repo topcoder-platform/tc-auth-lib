@@ -1,9 +1,9 @@
 function (user, context, callback) {
     if (context.clientID === configuration.CLIENT_ACCOUNTS_LOGIN) {
-        console.log("rule:onboarding-checklist:enter");
+        //console.log("rule:onboarding-checklist:enter");
         
        if (context.redirect) {
-            console.log("rule:onboarding-checklist:exiting due to context being a redirect");
+            //console.log("rule:onboarding-checklist:exiting due to context being a redirect");
             return callback(null, user, context);
         }
 
@@ -13,19 +13,26 @@ function (user, context, callback) {
         const isSocial = _.get(user, "identities[0].isSocial");
         const connection = _.get(user, "identities[0].connection");
 
-        console.log("rule:onboarding-checklist: isSocial/connection", isSocial + "/" + connection);
-        console.log("rule:onboarding-checklist: WIPRO_SS_AZURE_AD_CONNECTION_NAME", configuration.WIPRO_SSO_AZURE_AD_CONNECTION_NAME);
+        //console.log("rule:onboarding-checklist: isSocial/connection", isSocial + "/" + connection);
+        //console.log("rule:onboarding-checklist: WIPRO_SS_AZURE_AD_CONNECTION_NAME", configuration.WIPRO_SSO_AZURE_AD_CONNECTION_NAME);
 
         if (_.includes([configuration.WIPRO_SSO_AZURE_AD_CONNECTION_NAME], connection)) {
-            console.log("rule:onboarding-checklist:exiting due to user being an enterprise user.");
+            //console.log("rule:onboarding-checklist:exiting due to user being an enterprise user.");
             return callback(null, user, context);
         }
 
         const handle = context.idToken[global.AUTH0_CLAIM_NAMESPACE + 'handle'];
-        console.log("rule:onboarding-checklist: fetch onboarding_checklist for email/handle: ", user.email, handle);
+        //console.log("rule:onboarding-checklist: fetch onboarding_checklist for email/handle: ", user.email, handle);
 
-        if (handle == null) {
-            console.log("rule:onboarding-checklist: exiting due to handle being null.");
+        if (handle === null) {
+            //console.log("rule:onboarding-checklist: exiting due to handle being null.");
+            return callback(null, user, context);
+        }
+
+        const roles = context.idToken[global.AUTH0_CLAIM_NAMESPACE + 'roles'];
+
+        if (roles && roles.includes('Topcoder Customer')) {
+            console.log("rule:onboarding-checklist:exiting due to user being a customer.");
             return callback(null, user, context);
         }
 
@@ -36,7 +43,7 @@ function (user, context, callback) {
             // For users created before thresholdDate, we don't want to check onboarding_checklist
             // This is because older profiles might not have onboarding_checklist data and they don't need to see the onboarding_wizard
             if (createdAt && !thresholdDate.isBefore(moment(createdAt))) {
-                console.log("rule:onboarding-checklist: user created before threshold date. Not checking onboarding_checklist.");
+                //console.log("rule:onboarding-checklist: user created before threshold date. Not checking onboarding_checklist.");
                 return callback(null, user, context);
             }
         } catch (err) {
@@ -48,18 +55,18 @@ function (user, context, callback) {
          */
         const getToken = function(callback) {
             if (global.M2MToken) {
-                console.log('rule:onboarding-checklist:M2M token is available');
+                //console.log('rule:onboarding-checklist:M2M token is available');
                 const jwt = require('jsonwebtoken');                
                 const decoded = jwt.decode(global.M2MToken);
                 const exp = moment.unix(decoded.exp);
 
                 if (exp > new Date()) {
-                    console.log('rule:onboarding-checklist:M2M token is valid. Reusing...');
+                    //console.log('rule:onboarding-checklist:M2M token is valid. Reusing...');
                     return callback(null, global.M2MToken);
                 }
             }
 
-            console.log('rule:onboarding-checklist:Fetching new M2M token');
+            //console.log('rule:onboarding-checklist:Fetching new M2M token');
             request.post({
                 url: `https://auth0proxy.${configuration.DOMAIN}/token`,
                 headers: 'content-type: application/json',
@@ -76,14 +83,14 @@ function (user, context, callback) {
                 }
 
                 global.M2MToken = body.access_token;
-                console.log('rule:onboarding-checklist:setting the M2MToken globally', global.M2MToken);
+                //console.log('rule:onboarding-checklist:setting the M2MToken globally', global.M2MToken);
                 return callback(null, global.M2MToken);
             });
         };
 
         getToken(function(err, token) {
             if (err) {
-                console.log('rule:onboarding-checklist:failed to fetch M2M token.');
+                //console.log('rule:onboarding-checklist:failed to fetch M2M token.');
                 return callback(null, user, context);
             }
             global.AUTH0_CLAIM_NAMESPACE = "https://" + configuration.DOMAIN + "/";
@@ -114,7 +121,7 @@ function (user, context, callback) {
                     let override = 'show';
             
                     for (let checklistTrait of onboardingChecklistTrait.data) {
-                        if (checklistTrait.onboarding_wizard != null) {
+                        if (checklistTrait.onboarding_wizard !== null) {
                             if ( checklistTrait.onboarding_wizard.status !== 'pending_at_user' || // any non pending_at_user status indicates OB was either seen or completed and can be skipped
                                 checklistTrait.onboarding_wizard.skip ||// for certain signup routes skip is set to true, and thus onboarding wizard needn't be shown
                                 checklistTrait.onboarding_wizard.override === 'skip')

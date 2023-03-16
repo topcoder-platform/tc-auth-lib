@@ -50,6 +50,7 @@
                 "isoAlpha3Code": countryObj.alpha3,
                 "isoAlpha2Code": countryObj.alpha2
             },
+            "primaryRole": user.user_metadata.primaryRole,
             "regSource": regSource,
             "utmSource": utmSource,
             "utmMedium": utmMedium,
@@ -59,6 +60,7 @@
             "afterActivationURL": encodeURIComponent(afterActivationURL)
         }
     };
+//    console.log("SignUp....", user, data);
     request.post({
         url: "https://api."+configuration.DOMAIN+"/v3/users",
         json: data
@@ -66,9 +68,9 @@
         //https://github.com/mikeal/request#requestoptions-callback
     }, function (err, response, body) {
 
-        console.log(err);
-        console.log(response.statusCode);
-        console.log(body);
+        // console.log(err);
+        // console.log(response.statusCode);
+        // console.log(body);
 
         if (err) return callback(err);
 

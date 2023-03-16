@@ -21,133 +21,66 @@
   //     callback(new ValidationError("user_exists", "my error message"));
   // 3. Something went wrong while trying to reach your database
   //     callback(new Error("my error message"));
-
   const msg = 'Please implement the Create script for this database connection ' +
     'at https://manage.auth0.com/#/connections/database';
   return callback(new Error(msg)); */
-function create(user, callback) {
-  //console.log("landed here...................................");
-  var countryObj = JSON.parse(user.user_metadata.country);
-  var regSource = user.user_metadata.reg_source;
-  var utmSource = user.user_metadata.utm_source;
-  var utmMedium = user.user_metadata.utm_medium;
-  var utmCampaign = user.user_metadata.utm_campaign;
-  var retUrl = user.user_metadata.returnUrl;
-  var afterActivationURL =
-    retUrl !== null ? retUrl : "https://" + configuration.DOMAIN + "/home";
-  if (regSource === configuration.REG_BUSINESS) {
-    afterActivationURL = "https://connect." + configuration.DOMAIN;
-  }
-  var data = {
-    param: {
-      handle: user.username,
-      email: user.email,
-      credential: {
-        password: user.password,
-      },
-      firstName: user.user_metadata.firstName,
-      lastName: user.user_metadata.lastName,
-      country: {
-        code: countryObj.code,
-        isoAlpha3Code: countryObj.alpha3,
-        isoAlpha2Code: countryObj.alpha2,
-      },
-      regSource: regSource,
-      utmSource: utmSource,
-      utmMedium: utmMedium,
-      utmCampaign: utmCampaign,
-    },
-    options: {
-      afterActivationURL: encodeURIComponent(afterActivationURL),
-    },
-  };
-  //console.log("SignUp....", user, data);
-  request.post(
-    {
-      url: "https://api." + configuration.DOMAIN + "/v3/users",
-      json: data,
-      //for more options check:
-      //https://github.com/mikeal/request#requestoptions-callback
-    },
-    function (err, response, body) {
-      // console.log(err);
-      // console.log(response.statusCode);
-      // console.log(body.result.content);
+  function create(user, callback) {
 
-      if (err) return callback(err);
-      console.log(body.result.content);
-      if (response.statusCode !== 200) {
-        //return callback(new ValidationError("lock.fallback",body.result.content));
-        const error_message = body.result.content;
-        let code = "lock.fallback";
-
-        if (error_message.search("Handle may not contain a space") !== -1) {
-          code = "handle_invalid_space";
-        } else if (
-          error_message.search(
-            "Length of Handle in character should be between 2 and 15"
-          ) !== -1
-        ) {
-          code = "handle_invalid_length";
-        } else if (
-          error_message.search(
-            "Please choose another handle, not starting with admin"
-          ) !== -1
-        ) {
-          code = "handle_invalid_startwith_admin";
-        } else if (
-          error_message.search(
-            "Handle may contain only letters, numbers and"
-          ) !== -1
-        ) {
-          code = "handle_invalid_constains_forbidden_char";
-        } else if (
-          error_message.search("Handle may not contain only punctuation") !== -1
-        ) {
-          code = "handle_invalid_conatins_only_punctuation";
-        } else if (error_message.search("The user already exists") !== -1) {
-          code = "user_exists";
-        } else if (error_message.search("has already been taken") !== -1) {
-          code = "user_exists";
-        }
-
-        return callback(new ValidationError(code, error_message));
-
-        //return callback(new Error(body.result.content));
-      }
-      //if (response.statusCode === 401) return callback();
-      /* const Analytics = require('analytics-node');
-        const _ = require('lodash');
-        var analytics = new Analytics('bkPtWMUMTYDhww2zsJluzxtdhtmSsyd9');
-        analytics.identify({
-            anonymousId: 'signup',
-            traits: {
-                user: _.omit(user, ['credential', 'password'])
-            }
-        });
-        analytics.track({
-            anonymousId: 'BXWXUWnilVUPdN01t2Se29Tw2ZYNGZvH',
-            event: 'signUp',
-            properties: _.omit(user, ['credential', 'password'])
-        });*/
-      /* const ua = require('universal-analytics');
-        let visitor = ua('UA-6340959-1');        
-        visitor.pageview("/signup").send();
-        var eParams = {
-  				ec: "utmCode",
-  				ea: "tracking",
-  				el: "tracking",
-          cn: utmCampaign,
-          cm: utmMedium,
-          cs: utmSource,
-  				dp: "/signup"
-				};
-
-       visitor.event(eParams).send(); */
-      callback(null);
+    var countryObj = JSON.parse(user.user_metadata.country);
+    var regSource = user.user_metadata.regSource;
+    var utmSource = user.user_metadata.utmSource;
+    var utmMedium = user.user_metadata.utmMedium;
+    var utmCampaign = user.user_metadata.utmCampaign;
+    var retUrl = user.user_metadata.returnUrl;
+    var afterActivationURL = retUrl ? retUrl : "https://www."+configuration.DOMAIN+"/start";
+    if (regSource === configuration.REG_BUSINESS) {
+      afterActivationURL = "https://connect."+configuration.DOMAIN;
     }
-  ); //end post request
-  //callback(null);
+    var data = {
+        "param": {
+            "handle": user.username,
+            "email": user.email,
+            "credential": {
+                "password": user.password
+            },
+            "firstName": user.user_metadata.firstName,
+            "lastName": user.user_metadata.lastName,
+            "country": {
+                "code": countryObj.code,
+                "isoAlpha3Code": countryObj.alpha3,
+                "isoAlpha2Code": countryObj.alpha2
+            },
+	          "primaryRole": user.user_metadata.primaryRole,
+            "regSource": regSource,
+            "utmSource": utmSource,
+            "utmMedium": utmMedium,
+            "utmCampaign": utmCampaign,
+        },
+        "options": {
+            "afterActivationURL": encodeURIComponent(afterActivationURL)
+        }
+    };
+    console.log("SignUp....", user, data);
+    request.post({
+        url: "http://api."+configuration.DOMAIN+"/v3/users",
+        json: data
+        //for more options check:
+        //https://github.com/mikeal/request#requestoptions-callback
+    }, function (err, response, body) {
+
+        console.log(err);
+        console.log(response.statusCode);
+        console.log(body);
+
+        if (err) return callback(err);
+
+        if (response.statusCode !== 200) {
+            return callback(new ValidationError('user_exists', body.result.content));
+        }
+        //if (response.statusCode === 401) return callback();
+        callback(null);
+    }); //end post request 
+    //callback(null);
 }
 
 //}
