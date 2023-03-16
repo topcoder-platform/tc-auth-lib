@@ -1,8 +1,8 @@
-function (user, context, callback) {
+function OnboardingChecklist(user, context, callback) {
     if (context.clientID === configuration.CLIENT_ACCOUNTS_LOGIN) {
         console.log("rule:onboarding-checklist:enter");
-        
-       if (context.redirect) {
+
+        if (context.redirect) {
             console.log("rule:onboarding-checklist:exiting due to context being a redirect");
             return callback(null, user, context);
         }
@@ -24,15 +24,15 @@ function (user, context, callback) {
         const handle = context.idToken[global.AUTH0_CLAIM_NAMESPACE + 'handle'];
         console.log("rule:onboarding-checklist: fetch onboarding_checklist for email/handle: ", user.email, handle);
 
-        const roles = context.idToken[global.AUTH0_CLAIM_NAMESPACE + 'roles']
+        if (handle === null) {
+            console.log("rule:onboarding-checklist: exiting due to handle being null.");
+            return callback(null, user, context);
+        }
+      
+      	const roles = context.idToken[global.AUTH0_CLAIM_NAMESPACE + 'roles'];
 
         if (roles && roles.includes('Topcoder Customer')) {
             console.log("rule:onboarding-checklist:exiting due to user being a customer.");
-            return callback(null, user, context);
-        }
-
-        if (handle == null) {
-            console.log("rule:onboarding-checklist: exiting due to handle being null.");
             return callback(null, user, context);
         }
 
@@ -49,14 +49,14 @@ function (user, context, callback) {
         } catch (err) {
             console.log("rule:onboarding-checklist: failed to compare userCreationDate", createdAt, " with threshold. Error", err);
         }
-      
+
         /**
          * Returns M2M token needed to fetch onboarding_checklist
          */
-        const getToken = function(callback) {
+        const getToken = function (callback) {
             if (global.M2MToken) {
                 console.log('rule:onboarding-checklist:M2M token is available');
-                const jwt = require('jsonwebtoken');                
+                const jwt = require('jsonwebtoken');
                 const decoded = jwt.decode(global.M2MToken);
                 const exp = moment.unix(decoded.exp);
 
@@ -79,7 +79,7 @@ function (user, context, callback) {
                 }
             }, function (err, response, body) {
                 if (err) {
-                    return callback(err);                        
+                    return callback(err);
                 }
 
                 global.M2MToken = body.access_token;
@@ -88,14 +88,14 @@ function (user, context, callback) {
             });
         };
 
-        getToken(function(err, token) {
+        getToken(function (err, token) {
             if (err) {
                 console.log('rule:onboarding-checklist:failed to fetch M2M token.');
                 return callback(null, user, context);
             }
             global.AUTH0_CLAIM_NAMESPACE = "https://" + configuration.DOMAIN + "/";
             const axios = require('axios@0.19.2');
-        
+
             const options = {
                 method: 'GET',
                 url: `https://api.${configuration.DOMAIN}/v5/members/${handle}/traits?traitIds=onboarding_checklist`,
@@ -103,66 +103,65 @@ function (user, context, callback) {
                     Authorization: `Bearer ${token}`
                 }
             };
-            
+
             // Fetch onboarding_checklist using v5 member Api.
             axios(options)
-            .then(result => {
-                try {
-                    const data = result.data;
-            
-                    if (data.length === 0) {                        
-                        // User doesn't have any traits with traitId onboarding_checklist and should be shown the onboarding wizard
-                        context.idToken[global.AUTH0_CLAIM_NAMESPACE + 'onboarding_wizard'] = 'show';
-                        console.log('rule:onboarding-checklist:Setting onboarding_wizard to show');
-                        return callback(null, user, context);
-                    }
+                .then(result => {
+                    try {
+                        const data = result.data;
 
-                    const onboardingChecklistTrait = data.filter((item) => item.traitId === 'onboarding_checklist')[0].traits;
-                    let override = 'show';
-            
-                    for (let checklistTrait of onboardingChecklistTrait.data) {
-                        if (checklistTrait.onboarding_wizard != null) {
-                            if ( checklistTrait.onboarding_wizard.status !== 'pending_at_user' || // any non pending_at_user status indicates OB was either seen or completed and can be skipped
-                                checklistTrait.onboarding_wizard.skip ||// for certain signup routes skip is set to true, and thus onboarding wizard needn't be shown
-                                checklistTrait.onboarding_wizard.override === 'skip')
-                            {
-                                return callback(null, user, context);
-                            } else if (checklistTrait.onboarding_wizard.override === 'useRetUrl') {
-                                override = 'useRetUrl';
-                            }
-                        }
-                    }
-
-                    const profileCompletedData = onboardingChecklistTrait.data.length > 0 ? onboardingChecklistTrait.data[0].profile_completed : null;
-        
-                    if (profileCompletedData) {
-                        if (profileCompletedData.status === "completed") {
+                        if (data.length === 0) {
+                            // User doesn't have any traits with traitId onboarding_checklist and should be shown the onboarding wizard
+                            context.idToken[global.AUTH0_CLAIM_NAMESPACE + 'onboarding_wizard'] = 'show';
+                            console.log('rule:onboarding-checklist:Setting onboarding_wizard to show');
                             return callback(null, user, context);
                         }
-                    
-                        for (const item in profileCompletedData.metadata) {
-                            if (profileCompletedData.metadata[item]) {
-                                return callback(null, user, context);
+
+                        const onboardingChecklistTrait = data.filter((item) => item.traitId === 'onboarding_checklist')[0].traits;
+                        let override = 'show';
+
+                        for (let checklistTrait of onboardingChecklistTrait.data) {
+                            if (checklistTrait.onboarding_wizard !== null) {
+                                if (checklistTrait.onboarding_wizard.status !== 'pending_at_user' || // any non pending_at_user status indicates OB was either seen or completed and can be skipped
+                                    checklistTrait.onboarding_wizard.skip ||// for certain signup routes skip is set to true, and thus onboarding wizard needn't be shown
+                                    checklistTrait.onboarding_wizard.override === 'skip') {
+                                    return callback(null, user, context);
+                                } else if (checklistTrait.onboarding_wizard.override === 'useRetUrl') {
+                                    override = 'useRetUrl';
+                                }
                             }
                         }
+
+                        const profileCompletedData = onboardingChecklistTrait.data.length > 0 ? onboardingChecklistTrait.data[0].profile_completed : null;
+
+                        if (profileCompletedData) {
+                            if (profileCompletedData.status === "completed") {
+                                return callback(null, user, context);
+                            }
+
+                            for (const item in profileCompletedData.metadata) {
+                                if (profileCompletedData.metadata[item]) {
+                                    return callback(null, user, context);
+                                }
+                            }
+                        }
+
+                        // All checks failed - indicating user newly registered and needs to be shown the onboarding wizard
+                        console.log('rule:onboarding-checklist: set onboarding_wizard ' + override);
+
+                        context.idToken[global.AUTH0_CLAIM_NAMESPACE + 'onboarding_wizard'] = override;
+
+
+
+                        return callback(null, user, context);
+                    } catch (e) {
+                        console.log("rule:onboarding-checklist:Error in fetching onboarding_checklist", e);
+                        return callback(null, user, context);
                     }
-                    
-                    // All checks failed - indicating user newly registered and needs to be shown the onboarding wizard
-                    console.log('rule:onboarding-checklist: set onboarding_wizard ' + override);
-                    
-                    context.idToken[global.AUTH0_CLAIM_NAMESPACE + 'onboarding_wizard'] = override;
-
-
-
+                }).catch(requestError => {
+                    console.log("rule:onboarding-checklist:Failed fetching onboarding_checklist with error", requestError.response.status);
                     return callback(null, user, context);
-                } catch (e) {
-                    console.log("rule:onboarding-checklist:Error in fetching onboarding_checklist", e);            
-                    return callback(null, user, context);
-                }
-            }).catch(requestError => {
-                console.log("rule:onboarding-checklist:Failed fetching onboarding_checklist with error", requestError.response.status);
-                return callback(null, user, context);
-            });
+                });
         });
     } else {
         return callback(null, user, context);
