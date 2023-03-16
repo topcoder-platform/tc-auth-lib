@@ -82,6 +82,13 @@
         var languageDictionary;
         var language;
         var optionsObj = Array();
+        var primaryRoleOptionsObj = [{
+            label: 'Talent - join as a community member',
+            value: 'Topcoder Talent'
+        }, {
+            label: 'Customer - join to get work done',
+            value: 'Topcoder Customer'
+        }];
         var regSource = config.extraParams.reg_source || null;
         var utmSource = config.extraParams.utm_source || null;
         var utmMedium = config.extraParams.utm_medium || null;
@@ -104,7 +111,8 @@
                 title: "Topcoder Login",
                 error: {
                     login: {
-                        'lock.fallback': "We're sorry, something went wrong when attempting to log in."
+                        'lock.fallback': "We're sorry, something went wrong when attempting to log in.",
+                      	'deactivated_account': "Account is deactivated"
                     },
                     signUp: {
                         "lock.fallback": "We're sorry, something went wrong when attempting to sign up.",
@@ -188,7 +196,7 @@
                 socialButtonStyle: 'small'
             },
             tc_standard: {
-                allowedConnections: ['TC-User-Database', 'github', 'google-oauth2', 'wipro-adfs', 'wipro-azuread', 'Verified-User-Database'],
+                allowedConnections: ['TC-User-Database', 'github', 'google-oauth2', 'wipro-adfs', 'wipro-azuread', 'Verified-User-Database','TopcoderProductionGoogleWorkspace'],
                 theme: {
                     logo: 'https://i.imgur.com/IY6TVjY.png',
                     primaryColor: '#137d60'
@@ -331,6 +339,14 @@
                                 hint: "Must have 2 or more chars, blank spaces not allowed" // optional
                             };
                         }
+                    },
+                    {
+                        type: "select",
+                        name: "primaryRole",
+                        placeholder: "Select your role",
+                        options: primaryRoleOptionsObj,
+                      	fieldLabel: 'The role you select maybe changed in your Profile Settings.',
+                      	fieldPlaceholder: 'Talent join to learn, complete, connect and find freelance gig work. Customers join to launch challenges, find freelancers, and get work done.'
                     },
                     {
                         type: "select",
