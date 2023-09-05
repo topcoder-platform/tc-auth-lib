@@ -638,7 +638,7 @@ const authSetup = function () {
         getHostDomain() +
         "; expires=" +
         expiryDate.toUTCString() +
-        "; Secure; SameSite=Strict; path=/";
+        "; Secure; SameSite=Lax; path=/";
     }
 
     function clearCookie(name) {
