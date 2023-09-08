@@ -703,7 +703,7 @@ const authSetup = function () {
               window.location = redirect_url;
             }
           } else {
-            window.location.replace(decodeURIComponent(redirect_url));
+            window.location.replace(encodeURI(decodeURIComponent(redirect_url)));
           }
     }
 
