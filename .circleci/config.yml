@@ -71,8 +71,7 @@ workflows:
             branches:
               only:
                 - dev
-                - feature/primary-role
-                - account-settings-app
+                - CORE-44
 
       # Production builds are exectuted only on tagged commits to the
       # master branch.
