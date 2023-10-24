@@ -9,84 +9,105 @@ const qs = (function (a) {
   return b;
 })(window.location.search.substr(1).split("&"));
 
-const handleQR = function () {
-  var obj = {
-    AUTH_BASE_URL: "https://console-api-dev.diceid.com/v1/oidc",
-    VCAUTH_CLIENT_ID: "1cefd7e9-3f11-4028-acf8-0a5d1a9fe7d0",
-    WEBAPP_URL: "http://localhost:3000/",
-    VCAUTH_CONFIG_ID: "75559037-306c-4b08-b4d4-8ee03c3e9895",
-    REDIRECT_URI: "http://localhost:3000/verification-callback.html",
+$(document).ready(function () {
+  const redirectUri = qs["redirect_uri"];
+  const state = qs["state"];
+  const conf = qs["conf"];
+
+  const diceConf = JSON.parse(atob(conf));
+
+  const callbackParams = {
+    state,
   };
-  createSignIn(obj)
+
+  const redirect = () => {
+    window.location.href = redirectUri + "?" + $.param(callbackParams);
+  };
+
+  $("#btn-other-way").on("click", () => {
+    callbackParams.otherMethods = true;
+    redirect();
+  });
+
+  const switchToMessage = () => {
+    $("#signin-body").hide();
+    $("#signin-message").css("display", "flex");
+  };
+
+  const switchToQR = () => {
+    $("#signin-message").hide();
+    $("#signin-body").css("display", "flex");
+  };
+
   const listener = (evt) => {
-    console.log(JSON.stringify(evt.data));
     switch (evt.data.type) {
       case "qrReceived": {
-        document.getElementById("myIframe").src = evt.data.data;
+        $("#myIframe").attr("src", evt.data.data);
         break;
       }
       case "onLoginTemplate": {
-        document.getElementById("signin-body").style.display = "none";
-        document.getElementById("signin-message").style.display = "flex";
-        console.log(evt.data.data.id_token)
+        switchToMessage();
+        if (evt.data.diceVerificationStatus === "false") {
+          callbackParams.diceVerificationStatus = false;
+          redirect();
+        }
+        break;
+      }
+      case "onLoginTemplateSuccess": {
+        switchToMessage();
+        callbackParams.diceVerificationStatus = true;
+        callbackParams.diceToken = evt.data.data.id_token;
+        redirect();
+        break;
+      }
+      case "onLoginTemplateError": {
+        switchToQR();
+        createSignIn();
         break;
       }
     }
   };
-  window.addEventListener("message", listener);
-};
 
-const createSignIn = function (obj) {
-  var REDIRECT_URI = window.origin + '/verification-callback.html';
-  window.sessionStorage.setItem('connectionlessVCAuthUrl', obj.AUTH_BASE_URL);
-  var Constants = {
-    stsAuthority: "".concat(obj.AUTH_BASE_URL, "/"),
-    clientId: "".concat(obj.VCAUTH_CLIENT_ID),
-    clientRoot: "".concat(obj.WEBAPP_URL),
-    clientScope: "openid profile vc_authn",
-    apiRoot: "https://demo.identityserver.io/api/"
-  };
-  var settings = {
-    authority: Constants.stsAuthority,
-    client_id: Constants.clientId,
-    redirect_uri: "".concat(REDIRECT_URI),
-    silent_redirect_uri: "".concat(Constants.clientRoot, "silent-callback.html"),
-    post_logout_redirect_uri: "".concat(Constants.clientRoot),
-    response_type: "code",
-    scope: Constants.clientScope,
-    loadUserInfo: false
-  };
-  var userManager = new window.Oidc.UserManager(settings);
-  userManager.settings.metadata = {
-    issuer: "".concat(obj.AUTH_BASE_URL, "/"),
-    jwks_uri: "".concat(obj.AUTH_BASE_URL, "/.well-known/openid-configuration/jwks"),
-    authorization_endpoint: "".concat(obj.AUTH_BASE_URL, "/vc/connect/authorize?pres_req_conf_id=").concat(obj.VCAUTH_CONFIG_ID),
-    token_endpoint: "".concat(obj.AUTH_BASE_URL, "/vc/connect/token"),
-    userinfo_endpoint: "".concat(obj.AUTH_BASE_URL, "/connect/userinfo"),
-    //end_session_endpoint: `${obj.AUTH_BASE_URL}/vc/connect/endsession`,
-    check_session_iframe: "".concat(obj.AUTH_BASE_URL, "/vc/connect/checksession"),
-    revocation_endpoint: "".concat(obj.AUTH_BASE_URL, "/vc/connect/revocation")
-  };
-  userManager.createSigninRequest().then(function (response) {
-    console.log("Response URl: " + response.url);
-    window.postMessage({
-      type: 'qrReceived',
-      data: response.url
+  const createSignIn = (obj) => {
+    const authBaseUrl = "" + obj.AUTH_BASE_URL + "/";
+    window.sessionStorage.setItem(
+      "connectionlessVCAuthUrl",
+      `${obj.AUTH_BASE_URL}`
+    );
+    const userManager = new window.Oidc.UserManager({
+      authority: authBaseUrl,
+      client_id: "" + obj.VCAUTH_CLIENT_ID,
+      redirect_uri: window.origin + "/dice-login-callback.html",
+      response_type: "code",
+      response_mode: "query",
+      scope: "openid profile vc_authn",
+      loadUserInfo: false,
     });
-  }, function (error) {
-    console.log(error);
-  });
-  return "Hello";
-}
+    userManager.settings.metadata = {
+      issuer: authBaseUrl,
+      jwks_uri: authBaseUrl + ".well-known/openid-configuration/jwks",
+      authorization_endpoint:
+        authBaseUrl +
+        "vc/connect/authorize?pres_req_conf_id=" +
+        obj.VCAUTH_CONFIG_ID,
+      token_endpoint: authBaseUrl + "vc/connect/token",
+      userinfo_endpoint: authBaseUrl + "connect/userinfo",
+      check_session_iframe: authBaseUrl + "vc/connect/checksession",
+      revocation_endpoint: authBaseUrl + "vc/connect/revocation",
+    };
+    userManager.createSigninRequest().then(
+      function (response) {
+        window.postMessage({
+          type: "qrReceived",
+          url: response.url,
+        });
+      },
+      function (error) {
+        console.log(error);
+      }
+    );
+  };
 
-$(document).ready(function () {
-  const redirectUri = qs["redirect_uri"]
-  const state = qs["state"]
-  $('#btn-other-way').on("click", function () {
-    window.location.href = redirectUri + "?otherMethods=true&state=" + state
-  })
-  handleQR()
-  $('#myIframe').on("load", function () {
-    console.log($('#myIframe').html())
-  })
-})
+  window.addEventListener("message", listener);
+  createSignIn(diceConf);
+});
