@@ -42,7 +42,7 @@ $(document).ready(function () {
   const listener = (evt) => {
     switch (evt.data.type) {
       case "qrReceived": {
-        $("#myIframe").attr("src", evt.data.data);
+        $("#myIframe").attr("src", evt.data.url);
         break;
       }
       case "onLoginTemplate": {
@@ -56,7 +56,7 @@ $(document).ready(function () {
       case "onLoginTemplateSuccess": {
         switchToMessage();
         callbackParams.diceVerificationStatus = true;
-        callbackParams.diceToken = evt.data.data.id_token;
+        callbackParams.diceToken = evt.data.user.id_token;
         redirect();
         break;
       }
