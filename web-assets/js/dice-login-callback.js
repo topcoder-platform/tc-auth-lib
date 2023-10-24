@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const vcAuthUrl = sessionStorage.getItem("connectionlessVCAuthUrl");
     userManager.settings.metadata = {
       issuer: `${vcAuthUrl}`,
-      token_endpoint: `${issuer}/vc/connect/token`,
+      token_endpoint: `${vcAuthUrl}/vc/connect/token`,
     };
     userManager
       .signinRedirectCallback()
