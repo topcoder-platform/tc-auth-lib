@@ -69,14 +69,14 @@ $(document).ready(function () {
   };
 
   const createSignIn = (obj) => {
-    const authBaseUrl = "" + obj.AUTH_BASE_URL + "/";
+    const authBaseUrl = `${obj.vcauthUrl}/`;
     window.sessionStorage.setItem(
       "connectionlessVCAuthUrl",
-      `${obj.AUTH_BASE_URL}`
+      `${obj.vcauthUrl}`
     );
     const userManager = new window.Oidc.UserManager({
       authority: authBaseUrl,
-      client_id: "" + obj.VCAUTH_CLIENT_ID,
+      client_id: `${obj.clientId}`,
       redirect_uri: window.origin + "/dice-login-callback.html",
       response_type: "code",
       response_mode: "query",
@@ -87,9 +87,7 @@ $(document).ready(function () {
       issuer: authBaseUrl,
       jwks_uri: authBaseUrl + ".well-known/openid-configuration/jwks",
       authorization_endpoint:
-        authBaseUrl +
-        "vc/connect/authorize?pres_req_conf_id=" +
-        obj.VCAUTH_CONFIG_ID,
+        authBaseUrl + "vc/connect/authorize?pres_req_conf_id=" + obj.configId,
       token_endpoint: authBaseUrl + "vc/connect/token",
       userinfo_endpoint: authBaseUrl + "connect/userinfo",
       check_session_iframe: authBaseUrl + "vc/connect/checksession",
