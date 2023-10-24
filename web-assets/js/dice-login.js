@@ -62,7 +62,7 @@ $(document).ready(function () {
       }
       case "onLoginTemplateError": {
         switchToQR();
-        createSignIn();
+        createSignIn(diceConf);
         break;
       }
     }
