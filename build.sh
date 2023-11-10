@@ -33,6 +33,9 @@ DICEVERIFIER="./web-assets/static-pages/dice-verifier.html"
 perl -pi -e "s/\{\{DOMAIN\}\}/$DOMAIN/g" $DICEVERIFIER
 perl -pi -e "s/\{\{DICE_AUTH\}\}/$DICE_AUTH/g" $DICEVERIFIER
 
+INDEXPAGE="./web-assets/static-pages/index.html"
+perl -pi -e "s/\{\{DOMAIN\}\}/$DOMAIN/g" $INDEXPAGE
+
 mkdir dist
 cp -rv ./web-assets/css/* ./dist/
 cp -rv ./web-assets/js/* ./dist/

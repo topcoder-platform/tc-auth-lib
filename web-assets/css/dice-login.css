@@ -1,0 +1,293 @@
+html {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #c8c9cc;
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.page-wrapper {
+  margin-top: 60px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: clamp(70px, 5%, 70px);
+  padding: 0;
+  text-align: center;
+}
+
+.row {
+  background-image: url(https://tc-public-static-files.topcoder.com/topcoder-auth/images/member-signin.png);
+  min-height: 820px;
+  height: clamp(820px, 100%, 820px);
+  border-radius: 10px 10px;
+  width: 1140px;
+  background-repeat: no-repeat;
+  background-position: top right;
+  background-color: white;
+  display: inline-block;
+}
+
+.left-column {
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+  height: 820px;
+}
+
+.signin-column {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  padding: 42px 40px;
+}
+
+.signin-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0;
+  margin-bottom: 48px;
+}
+
+.topcoder-logo {
+  margin-bottom: 8px;
+}
+
+.header-text {
+  font-family: "Barlow Condensed";
+  font-weight: 500;
+  font-size: 26px;
+  line-height: 28px;
+  text-transform: uppercase;
+}
+
+.message {
+  display: none;
+  padding: 16px 0;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-self: stretch;
+  border-radius: 4px;
+  border: 1px solid #137d60;
+  background-color: #e0faf3;
+}
+
+.check-circle {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 10px;
+}
+
+.message-title {
+  color: #137d60;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 26px;
+}
+
+.message-redirect {
+  color: #137d60;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+}
+
+.signin-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+  justify-content: flex-start;
+  margin-bottom: 41px;
+}
+
+.black {
+  color: #2a2a2a;
+  font-weight: 700;
+}
+
+.info {
+  padding: 12px;
+  margin-bottom: 23px;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: #767676;
+}
+
+.qrCodeContainer {
+  margin-bottom: 24px;
+  padding: 0;
+}
+
+.responsive-iframe {
+  width: 306px;
+  height: 340px;
+  border: none;
+  overflow: hidden;
+}
+
+.btn-other-way {
+  display: flex;
+  padding: 12px 20px 12px 24px;
+  justify-content: center;
+  align-items: center;
+  width: 372px;
+  height: 20px;
+  border: 2px solid #137d60;
+  border-radius: 50px;
+  cursor: pointer;
+}
+
+.btn-other-way-text {
+  color: #137d60;
+  font-size: 16px;
+  font-weight: 700;
+  margin-right: 4px;
+}
+
+.btn-other-way-image {
+  width: 22px;
+  height: 22px;
+}
+
+.signin-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: end;
+  flex: 1;
+}
+
+.dice-logo {
+  width: 113px;
+  height: 41px;
+  margin-bottom: 9px;
+}
+
+.powered {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  color: #767676;
+}
+
+.logo-column {
+  display: block;
+  padding: 53px 0px 0px 500px;
+  position: absolute;
+  top: 60px;
+  width: 640px;
+  color: white;
+  font-weight: 500;
+  font-family: "Barlow Condensed", sans-serif;
+}
+
+.header {
+  font-size: 26px;
+  letter-spacing: 1px;
+  line-height: 28px;
+  text-align: center;
+  font-weight: normal;
+  text-transform: uppercase;
+  padding-bottom: 3px;
+}
+
+.title {
+  font-weight: 500;
+  font-size: 54px;
+  line-height: 52px;
+  background: linear-gradient(265.38deg, #ffc43d 1.99%, #ef476f 98.19%);
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -moz-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@media (min-width: 1157px) {
+  .info-text-mobile {
+    display: none;
+  }
+}
+
+@media (max-width: 1156px) {
+  body {
+    background-color: #ffffff;
+  }
+
+  .page-wrapper {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .row {
+    background: white;
+    width: 375px;
+    min-height: auto;
+  }
+
+  .left-column {
+    width: 375px;
+  }
+
+  .logo-column {
+    display: none;
+  }
+
+  .signin-column {
+    padding: 0px 32px 48px 32px;
+  }
+
+  .signin-header {
+    padding-top: 30px;
+    margin-bottom: 42px;
+  }
+
+  .check-circle {
+    width: 32px;
+    height: 32px;
+  }
+
+  .message-title {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 20px;
+  }
+
+  .message-redirect {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+  }
+
+  .signin-body {
+    justify-content: flex-end;
+  }
+
+  .info {
+    padding: 12px 0 0 0;
+    margin-bottom: 42px;
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .info-text {
+    display: none;
+  }
+
+  .btn-other-way {
+    width: 263px;
+  }
+}

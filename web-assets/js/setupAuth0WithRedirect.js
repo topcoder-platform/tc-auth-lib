@@ -25,14 +25,13 @@ const authSetup = function () {
 
     let domain = 'auth.{{DOMAIN}}';
     
-    const onboardingWizardUrl = 'https://platform.{{DOMAIN}}/onboard';
+    const onboardingWizardUrl = 'https://onboarding.{{DOMAIN}}/';
     const clientId = '{{AUTH0_CLIENT_ID}}';
     const useLocalStorage = false;
     const useRefreshTokens = false;
     const v3JWTCookie = 'v3jwt';
     const tcJWTCookie = 'tcjwt';
     const tcSSOCookie = 'tcsso';
-    const cookieExpireIn = 12 * 60; // 12 hrs
     const refreshTokenInterval = 30000; // in milliseconds
     const refreshTokenOffset = 65; // in seconds  
     const shouldLogout = qs['logout'];
@@ -215,16 +214,16 @@ const authSetup = function () {
 
     const clearAllCookies = function () {
         // TODO  
-        setCookie(tcJWTCookie, "", -1);
-        setCookie(v3JWTCookie, "", -1);
-        setCookie(tcSSOCookie, "", -1);
+        clearCookie(tcJWTCookie);
+        clearCookie(v3JWTCookie);
+        clearCookie(tcSSOCookie);
 
         // to clear any old session
-        setCookie('auth0Jwt', "", -1);
-        setCookie('zendeskJwt', "", -1);
-        setCookie('auth0Refresh', "", -1);
+        clearCookie('auth0Jwt');
+        clearCookie('zendeskJwt');
+        clearCookie('auth0Refresh');
         // for scorecard
-        setCookie('JSESSIONID', "", -1);
+        clearCookie('JSESSIONID');
     }
 
     const isLoggedIn = function () {
@@ -300,16 +299,10 @@ const authSetup = function () {
                 });
                 logger('Storing token...', true);
                 try {
-                    const exT = getCookieExpiry(idToken);
-                    if (exT) {
-                        setDomainCookie(tcJWTCookie, idToken, exT, true);
-                        setDomainCookie(v3JWTCookie, idToken, exT, true);
-                        setDomainCookie(tcSSOCookie, tcsso, exT, true);
-                    } else {
-                        setCookie(tcJWTCookie, idToken, cookieExpireIn, true);
-                        setCookie(v3JWTCookie, idToken, cookieExpireIn, true);
-                        setCookie(tcSSOCookie, tcsso, cookieExpireIn, true);
-                    }
+                    const expiryDate = getTokenExpirationDate(idToken)
+                    setDomainCookie(tcJWTCookie, idToken, expiryDate);
+                    setDomainCookie(v3JWTCookie, idToken, expiryDate);
+                    setDomainCookie(tcSSOCookie, tcsso, expiryDate);
                 } catch (e) {
                     logger('Error occured in fecthing token expiry time', e.message);
                 }
@@ -317,7 +310,7 @@ const authSetup = function () {
                 if (showOnboardingWizard) {
                     logger('Take user to onboarding wizard', showOnboardingWizard);
                     if (showOnboardingWizard === 'useRetUrl') {
-                        setCookie('returnAfterOnboard', qs['appUrl'] || qs['retUrl'])
+                        setDomainCookie('returnAfterOnboard', qs['appUrl'] || qs['retUrl']);
                     }
                     redirectToOnboardingWizard(returnAppUrl);
                 } 
@@ -400,20 +393,6 @@ const authSetup = function () {
         return decodeURIComponent(escape(atob(output))); //polyfill https://github.com/davidchambers/Base64.js
     }
 
-    function setCookie(cname, cvalue, exMins, secure = false) {
-        const cdomain = getHostDomain();
-
-        let d = new Date();
-        d.setTime(d.getTime() + (exMins * 60 * 1000));
-
-        let expires = ";expires=" + d.toUTCString();
-        let cookie = cname + "=" + cvalue + cdomain + expires + ";path=/";
-        if (secure) {
-            cookie += "; HttpOnly; Secure";
-        }
-        document.cookie = cookie;
-    }
-
     function getCookie(name) {
         const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
         return v ? v[2] : undefined;
@@ -430,13 +409,13 @@ const authSetup = function () {
     // end XSS rules
 
     function getHostDomain() {
-        let hostDomain = "";
-        if (location.hostname !== 'localhost') {
-            hostDomain = ";domain=." +
-                location.hostname.split('.').reverse()[1] +
-                "." + location.hostname.split('.').reverse()[0];
-        }
-        return hostDomain;
+      const hostname = window.location.hostname;
+      const parts = hostname.split(".");
+      if (parts.length >= 2) {
+        return "; domain=." + parts.slice(-2).join(".");
+      } else {
+        return "";
+      }
     }
 
     function correctOldUrl() {
@@ -523,16 +502,10 @@ const authSetup = function () {
                             });
                             logger('Storing refreshed token...', true);
                             try {
-                                const exT = getCookieExpiry(idToken);
-                                if (exT) {
-                                    setDomainCookie(tcJWTCookie, idToken, exT, true);
-                                    setDomainCookie(v3JWTCookie, idToken, exT, true);
-                                    setDomainCookie(tcSSOCookie, tcsso, exT, true);
-                                } else {
-                                    setCookie(tcJWTCookie, idToken, cookieExpireIn, true);
-                                    setCookie(v3JWTCookie, idToken, cookieExpireIn, true);
-                                    setCookie(tcSSOCookie, tcsso, cookieExpireIn, true);
-                                }
+                                const expiryDate = getTokenExpirationDate(idToken)
+                                setDomainCookie(tcJWTCookie, idToken, expiryDate);
+                                setDomainCookie(v3JWTCookie, idToken, expiryDate);
+                                setDomainCookie(tcSSOCookie, tcsso, expiryDate);
                                 informIt(success);
                             } catch (e) {
                                 logger('Error occured in fecthing token expiry time', e.message);
@@ -653,26 +626,27 @@ const authSetup = function () {
         }
     }
 
-    function getCookieExpiry(token) {
-        const d = getTokenExpirationDate(token)
-        if (d === null) {
-            return false;
-        }
-        const diff = d.valueOf() - (new Date().valueOf()); //in millseconds
-        if (diff > 0) {
-            return diff; // in milliseconds
-        }
-        return false;
+    function setDomainCookie(cname, cvalue, expiryDate) {
+      if (expiryDate == null) {
+        expiryDate = new Date();
+        expiryDate.setHours(expiryDate.getHours() + 12);
+      }
+      document.cookie =
+        cname +
+        "=" +
+        cvalue +
+        getHostDomain() +
+        "; expires=" +
+        expiryDate.toUTCString() +
+        "; Secure; SameSite=Lax; path=/";
     }
 
-    function setDomainCookie(cname, cvalue, exMilliSeconds) {
-        const cdomain = getHostDomain();
-
-        let d = new Date();
-        d.setTime(d.getTime() + exMilliSeconds);
-
-        let expires = ";expires=" + d.toUTCString();
-        document.cookie = cname + "=" + cvalue + cdomain + expires + ";path=/";
+    function clearCookie(name) {
+      document.cookie =
+        name +
+        "=" +
+        getHostDomain() +
+        "; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     }
 
     function handleSpecificReturnUrl(value, param) {
@@ -729,7 +703,7 @@ const authSetup = function () {
               window.location = redirect_url;
             }
           } else {
-            window.location = redirect_url;
+            window.location.replace(decodeURIComponent(redirect_url));
           }
     }
 
