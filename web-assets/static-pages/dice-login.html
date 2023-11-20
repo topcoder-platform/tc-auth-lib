@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Sign In with Topcoder</title>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="shortcut icon" type="image/png" href="https://www.topcoder.com/favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow&family=Barlow+Condensed:wght@500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="./dice-login.css" />
+  <script src="https://tc-public-static-files.topcoder.com/topcoder-auth/js/jquery-3.5.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/oidc-client/1.11.5/oidc-client.min.js"
+    integrity="sha512-pGtU1n/6GJ8fu6bjYVGIOT9Dphaw5IWPwVlqkpvVgqBxFkvdNbytUh0H8AP15NYF777P4D3XEeA/uDWFCpSQ1g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script type="text/javascript" src="./dice-login.js"></script>
+</head>
+
+<body>
+  <div class="page-wrapper">
+    <div class="row">
+      <div class="left-column">
+        <div class="signin-column">
+          <div class="signin-header">
+            <img class="topcoder-logo" src="./images/topcoderlogo-black.png">
+            <div class="header-text">Topcoder login</div>
+          </div>
+          <div id="signin-message" class="message">
+            <img class="check-circle" src="./images/check-circle.svg">
+            <div class="message-title">Your credentials are being verified</div>
+            <div class="message-redirect">Redirecting, please wait...</div>
+          </div>
+          <div id="signin-body" class="signin-body">
+            <div class="info">
+              <div class="info-text">
+                Please open DICE ID and scan the QR code to initiate<br>
+                the <span class="black">Verifiable Credential</span> exchange
+              </div>
+              <div class="info-text-mobile">Click the below button to initiate<br>
+                the <span class="black">Verifiable Credential</span> exchange through the<br>
+                DICE ID app.
+              </div>
+            </div>
+            <div class="qrCodeContainer">
+              <iframe id="myIframe" class="responsive-iframe"></iframe>
+            </div>
+            <div id="btn-other-way" class="btn-other-way">
+              <div class="btn-other-way-text">SIGN IN ANOTHER WAY</div>
+              <img class="btn-other-way-image" src="./images/checkmark.svg" />
+            </div>
+          </div>
+          <div class="signin-footer">
+            <img class="dice-logo" src="./images/dice-logo-black.png" />
+            <div class="powered">Powered by DICE ID</div>
+          </div>
+        </div>
+      </div>
+      <div class="logo-column">
+        <div class="header">community</div>
+        <div class="title">WELCOME BACK!</div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
