@@ -14,8 +14,8 @@ $(document).ready(function () {
   const canResend = qs["canResend"];
   const userId = qs["userId"];
   let formAction = qs["formAction"] || "#";
-  const opt1 = "https://auth.{{DOMAIN}}/continue";
-  const opt2 = "https://{{AUTH0DOMAIN}}/continue";
+  const opt1 = 'https://auth.{{DOMAIN}}/continue';
+  const opt2 = 'https://{{AUTH0DOMAIN}}/continue';
   if (!formAction.startsWith(opt1) && !formAction.startsWith(opt2)) {
     // looks like XSS attack
     formAction = "#";
@@ -23,7 +23,7 @@ $(document).ready(function () {
   }
   const apiServerUrl = "https://api.{{DOMAIN}}/v3/users";
   $("#continueBtn").click(function () {
-    $(this).attr("disabled", "disabled");
+    $(this).attr('disabled', 'disabled');
     var otp = $("#otp").val();
     if (!otp) {
       $("#error").html("Need Password");
@@ -38,28 +38,19 @@ $(document).ready(function () {
       contentType: "application/json",
       mimeType: "application/json",
       data: JSON.stringify({
-        param: {
-          userId,
-          resendToken,
-          otp,
-        },
+        "param": {
+          userId, resendToken, otp
+        }
       }),
       dataType: "json",
       success: function (result) {
         $("#notify").html("Your account is activated");
         $("#notify").closest(".message-wrapper").fadeIn();
         $("#resend-text").hide();
-        $("#verifyOtp").attr("action", formAction);
+        $('#verifyOtp').attr('action', formAction);
         $("#state").val(qs["state"]);
         $("#returnUrl").val(qs["returnUrl"]);
-        $("#otp").attr("disabled", "disabled");
-
-        // debug form submission before submitting
-        console.log("submitting form", formAction, $("#verifyOtp").serialize());
-        document.addEventListener("securitypolicyviolation", (e) => {
-          console.log("securitypolicyviolation", e);
-        });
-
+        $("#otp").attr('disabled', 'disabled');
         $("#verifyOtp").submit();
       },
       error: function (error) {
@@ -71,7 +62,7 @@ $(document).ready(function () {
           $("#error").closest(".message-wrapper").fadeIn();
         }
         $("#otp").val("");
-      },
+      }
     });
     return false;
   });
@@ -83,10 +74,9 @@ $(document).ready(function () {
         contentType: "application/json",
         mimeType: "application/json",
         data: JSON.stringify({
-          param: {
-            userId,
-            resendToken,
-          },
+          "param": {
+            userId, resendToken
+          }
         }),
         dataType: "json",
         success: function (result) {
@@ -103,7 +93,7 @@ $(document).ready(function () {
             $("#error").html("Unknown Error");
             $("#error").closest(".message-wrapper").fadeIn();
           }
-        },
+        }
       });
       return false;
     });
@@ -117,9 +107,9 @@ $(document).ready(function () {
 
   $("#otp").on("change keydown paste input", function () {
     if ($(this).val() === "" || $(this).val().length < 6) {
-      setContinueButtonDisabledStatus(true);
+      setContinueButtonDisabledStatus(true)
     } else {
-      setContinueButtonDisabledStatus(false);
+      setContinueButtonDisabledStatus(false)
     }
   });
 });
