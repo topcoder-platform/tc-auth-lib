@@ -59,7 +59,6 @@ const authSetup = function () {
               hostname === domain || hostname.endsWith('.' + domain)
             );
         
-            // Prevent "javascript:" or "data:" scheme
             const isSafeScheme = ['http:', 'https:'].includes(parsedUrl.protocol);
         
             return isTrustedUrl && isSafeScheme;
