@@ -82,6 +82,7 @@ workflows:
               only:
                 - dev
                 - CORE-44
+                - pm-1037
 
       # Development builds are executed on "develop" branch only.
       - "build-qa":
