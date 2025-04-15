@@ -68,7 +68,7 @@ const authSetup = function () {
     }
 
     const init = function () {
-        if (!urlValidator(returnAppUrl)) {
+        if ((!!returnAppUrl && !urlValidator(returnAppUrl)) || (!!appUrl && !urlValidator(appUrl))) {
             return;
         }
         correctOldUrl();
