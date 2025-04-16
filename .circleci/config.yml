@@ -5,6 +5,13 @@ defaults: &defaults
 install_dependency: &install_dependency
   name: Installation of build and deployment dependencies.
   command: |
+    if grep -q "dl.google.com/linux/chrome/deb" /etc/apt/sources.list /etc/apt/sources.list.d/* 2>/dev/null; then
+      echo "Fixing Google Chrome repo GPG key..."
+      curl -fsSL https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /usr/share/keyrings/google-linux-signing-keyring.gpg
+      echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-linux-signing-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list > /dev/null
+    else
+      echo "Chrome repo not present, skipping fix."
+    fi
     sudo apt update
     sudo apt install jq python3-pip file
     sudo pip3 install awscli --upgrade
