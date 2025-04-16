@@ -39,7 +39,7 @@ const authSetup = function () {
     const utmSource = qs['utm_source'];
     const loggerMode = "dev";
     const IframeLogoutRequestType = "LOGOUT_REQUEST";
-    const trustedDomains = ['www.topcoder.com', 'www.topcoder-dev.com', 'topcoder-dev.com', 'topcoder.com'];
+    const trustedDomains = ['www.topcoder.com', 'www.topcoder-dev.com', 'topcoder-dev.com', 'topcoder.com', 'wipro.com'];
 
 
     var auth0 = null;

@@ -61,7 +61,7 @@ const authSetup = function () {
     var callRefreshTokenFun = null;
     var host = window.location.protocol + "//" + window.location.host
     const registerSuccessUrl = host + '/check_email.html';
-    const trustedDomains = ['www.topcoder.com', 'www.topcoder-dev.com', 'topcoder-dev.com', 'topcoder.com'];
+    const trustedDomains = ['www.topcoder.com', 'www.topcoder-dev.com', 'topcoder-dev.com', 'topcoder.com', 'wipro.com'];
 
     const urlValidator = function (url) {
         try {
