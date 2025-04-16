@@ -61,8 +61,30 @@ const authSetup = function () {
     var callRefreshTokenFun = null;
     var host = window.location.protocol + "//" + window.location.host
     const registerSuccessUrl = host + '/check_email.html';
+    const trustedDomains = ['www.topcoder.com', 'www.topcoder-dev.com', 'topcoder-dev.com', 'topcoder.com', 'wipro.com'];
+
+    const urlValidator = function (url) {
+        try {
+            const decodedUrl = decodeURIComponent(url);
+            const parsedUrl = new URL(decodedUrl);
+            const hostname = parsedUrl.hostname.toLowerCase();
+
+            const isTrustedUrl = trustedDomains.some(domain =>
+              hostname === domain || hostname.endsWith('.' + domain)
+            );
+
+            const isSafeScheme = ['http:', 'https:'].includes(parsedUrl.protocol);
+
+            return isTrustedUrl && isSafeScheme;
+        } catch (e) {
+            return false;
+        }
+    }
 
     const init = function () {
+        if ((!!returnAppUrl && !urlValidator(returnAppUrl)) || (!!appUrl && !urlValidator(appUrl))) {
+            return;
+        }
         correctOldUrl();
         changeWindowMessage();
         createAuth0Client({
