@@ -39,7 +39,7 @@ const authSetup = function () {
     const utmSource = qs['utm_source'];
     const loggerMode = "dev";
     const IframeLogoutRequestType = "LOGOUT_REQUEST";
-
+    const trustedDomains = ['www.topcoder.com', 'www.topcoder-dev.com', 'topcoder-dev.com', 'topcoder.com', 'wipro.com'];
 
     var auth0 = null;
     var isAuthenticated = false;
@@ -48,7 +48,28 @@ const authSetup = function () {
     var host = window.location.protocol + "//" + window.location.host
     const registerSuccessUrl = host + '/register_success.html';
 
+    const urlValidator = function (url) {
+        try {
+            const decodedUrl = decodeURIComponent(url);
+            const parsedUrl = new URL(decodedUrl);
+            const hostname = parsedUrl.hostname.toLowerCase();
+
+            const isTrustedUrl = trustedDomains.some(domain =>
+              hostname === domain || hostname.endsWith('.' + domain)
+            );
+
+            const isSafeScheme = ['http:', 'https:'].includes(parsedUrl.protocol);
+
+            return isTrustedUrl && isSafeScheme;
+        } catch (e) {
+            return false;
+        }
+    }
+
     const init = function () {
+        if ((!!returnAppUrl && !urlValidator(returnAppUrl)) || (!!appUrl && !urlValidator(appUrl))) {
+            return;
+        }
         correctOldUrl();
         createAuth0Client({
             domain: domain,
