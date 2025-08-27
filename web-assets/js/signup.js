@@ -1,5 +1,5 @@
 
-var apiServerUrl = "https://api.{{DOMAIN}}/v3/users";
+var apiServerUrl = "https://api.{{DOMAIN}}/v6/users";
 var submit_flag = true;
 var qs = (function (a) {
   if (a == "") return {};
