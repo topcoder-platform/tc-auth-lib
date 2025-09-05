@@ -47,15 +47,14 @@ $(document).ready(function () {
       xhrFields: {
         withCredentials: true,
       },
+      dataType: 'json',
       success: function (result) {
-        if (
-          result.result.status === 200 &&
-          !result.result.content.valid
-        ) {
-          $("#error").html("Error: " + result.result.content.reason);
+        if (result && result.valid === false) {
+          $("#error").html("Error: Invalid or unavailable handle");
           $("#error").closest(".message").fadeIn();
+          return;
         }
-        if (result.result.status === 200 && result.result.content.valid && submit_flag) {
+        if (result && result.valid && submit_flag) {
           $("#error").closest(".message").fadeOut();
           $("#error").html("");
           let formAction = qs["formAction"];
