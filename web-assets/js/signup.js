@@ -49,7 +49,7 @@ $(document).ready(function () {
       },
       dataType: 'json',
       success: function (result) {
-        if (result && result.valid === false) {
+        if (result && result.statusCode === 409) {
           $("#error").html("Error: Invalid or unavailable handle");
           $("#error").closest(".message").fadeIn();
           return;
