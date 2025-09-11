@@ -50,11 +50,6 @@ $(document).ready(function () {
       dataType: 'json',
       success: function (result) {
         console.log(JSON.stringify(result));
-        if (result && result.statusCode === 409) {
-          $("#error").html(result.message);
-          $("#error").closest(".message").fadeIn();
-          return;
-        }
         if (result && result.valid && submit_flag) {
           $("#error").closest(".message").fadeOut();
           $("#error").html("");
@@ -77,13 +72,33 @@ $(document).ready(function () {
           //setContinueButtonDisabledStatus(true);
         }
       }, 
-      error: function (result) {
-        console.log(JSON.stringify(result));
-        if (result && result.statusCode === 409) {
-          $("#error").html(result.message);
-          $("#error").closest(".message").fadeIn();
-          return;
+      error: function (jqXHR) {
+        // Try to extract server-provided message from JSON body
+        var message = null;
+        try {
+          if (jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.message) {
+            message = jqXHR.responseJSON.message;
+          } else if (jqXHR && jqXHR.responseText) {
+            var parsed = JSON.parse(jqXHR.responseText);
+            if (parsed && parsed.message) {
+              message = parsed.message;
+            }
+          }
+        } catch (e) {
+          // fall through to default message
         }
+
+        if (!message) {
+          // Provide a sensible fallback when no message is available
+          if (jqXHR && jqXHR.status === 409) {
+            message = "Handle is already taken.";
+          } else {
+            message = "An error occurred. Please try again.";
+          }
+        }
+
+        $("#error").html(message);
+        $("#error").closest(".message").fadeIn();
       }
     });
     return false;
