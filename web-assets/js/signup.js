@@ -76,7 +76,15 @@ $(document).ready(function () {
           submit_flag = false;
           //setContinueButtonDisabledStatus(true);
         }
-      },
+      }, 
+      error: function (result) {
+        console.log(JSON.stringify(result));
+        if (result && result.statusCode === 409) {
+          $("#error").html(result.message);
+          $("#error").closest(".message").fadeIn();
+          return;
+        }
+      }
     });
     return false;
   });
