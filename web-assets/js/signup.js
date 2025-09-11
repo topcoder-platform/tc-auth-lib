@@ -49,8 +49,9 @@ $(document).ready(function () {
       },
       dataType: 'json',
       success: function (result) {
+        console.log(JSON.stringify(result));
         if (result && result.statusCode === 409) {
-          $("#error").html("Error: Invalid or unavailable handle");
+          $("#error").html(result.message);
           $("#error").closest(".message").fadeIn();
           return;
         }
