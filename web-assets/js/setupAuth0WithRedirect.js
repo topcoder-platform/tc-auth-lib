@@ -25,11 +25,8 @@ const authSetup = function () {
 
     let domain = 'auth.{{DOMAIN}}';
     
-    //TODO - Set this back during transition to v6
-    //const onboardingWizardUrl = 'https://onboarding.{{DOMAIN}}/';
-    
-    const onboardingWizardUrl = 'https://onboarding-v6.topcoder-dev.com/onboarding/';
-    
+    const onboardingWizardUrl = 'https://onboarding.{{DOMAIN}}/';
+  
     const clientId = '{{AUTH0_CLIENT_ID}}';
     const useLocalStorage = false;
     const useRefreshTokens = false;
