@@ -26,6 +26,7 @@ const authSetup = function () {
     let domain = 'auth.{{DOMAIN}}';
     
     const onboardingWizardUrl = 'https://onboarding.{{DOMAIN}}/';
+  
     const clientId = '{{AUTH0_CLIENT_ID}}';
     const useLocalStorage = false;
     const useRefreshTokens = false;

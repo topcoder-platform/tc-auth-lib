@@ -1,5 +1,5 @@
 
-var apiServerUrl = "https://api.{{DOMAIN}}/v3/users";
+var apiServerUrl = "https://api.{{DOMAIN}}/v6/users";
 var submit_flag = true;
 var qs = (function (a) {
   if (a == "") return {};
@@ -47,15 +47,10 @@ $(document).ready(function () {
       xhrFields: {
         withCredentials: true,
       },
+      dataType: 'json',
       success: function (result) {
-        if (
-          result.result.status === 200 &&
-          !result.result.content.valid
-        ) {
-          $("#error").html("Error: " + result.result.content.reason);
-          $("#error").closest(".message").fadeIn();
-        }
-        if (result.result.status === 200 && result.result.content.valid && submit_flag) {
+        console.log(JSON.stringify(result));
+        if (result && result.valid && submit_flag) {
           $("#error").closest(".message").fadeOut();
           $("#error").html("");
           let formAction = qs["formAction"];
@@ -76,7 +71,35 @@ $(document).ready(function () {
           submit_flag = false;
           //setContinueButtonDisabledStatus(true);
         }
-      },
+      }, 
+      error: function (jqXHR) {
+        // Try to extract server-provided message from JSON body
+        var message = null;
+        try {
+          if (jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.message) {
+            message = jqXHR.responseJSON.message;
+          } else if (jqXHR && jqXHR.responseText) {
+            var parsed = JSON.parse(jqXHR.responseText);
+            if (parsed && parsed.message) {
+              message = parsed.message;
+            }
+          }
+        } catch (e) {
+          // fall through to default message
+        }
+
+        if (!message) {
+          // Provide a sensible fallback when no message is available
+          if (jqXHR && jqXHR.status === 409) {
+            message = "Handle is already taken.";
+          } else {
+            message = "An error occurred. Please try again.";
+          }
+        }
+
+        $("#error").html(message);
+        $("#error").closest(".message").fadeIn();
+      }
     });
     return false;
   });
