@@ -189,7 +189,9 @@ const authSetup = function () {
             } catch (e) {
                 logger("Error in refresh token function ", e.message)
             }
-
+        }
+        else {
+            logger('Token is still valid.');
         }
     };
 
