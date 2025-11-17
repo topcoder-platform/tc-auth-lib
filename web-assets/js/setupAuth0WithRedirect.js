@@ -30,7 +30,6 @@ const authSetup = function () {
     const clientId = '{{AUTH0_CLIENT_ID}}';
     const useLocalStorage = false;
     const useRefreshTokens = false;
-    const v3JWTCookie = 'v3jwt';
     const tcJWTCookie = 'tcjwt';
     const tcSSOCookie = 'tcsso';
     const refreshTokenInterval = 30000; // in milliseconds
@@ -139,7 +138,7 @@ const authSetup = function () {
     const refreshToken = function () {
         let d = new Date();
         logger('checking token status at: ', `${d.getHours()}::${d.getMinutes()}::${d.getSeconds()} `);
-        var token = getCookie(v3JWTCookie);
+        var token = getCookie(tcJWTCookie);
         if (!token || isTokenExpired(token)) {
             logger('refreshing token... at: ', `${d.getHours()}::${d.getMinutes()}::${d.getSeconds()} `);
             try {
@@ -238,7 +237,6 @@ const authSetup = function () {
     const clearAllCookies = function () {
         // TODO  
         clearCookie(tcJWTCookie);
-        clearCookie(v3JWTCookie);
         clearCookie(tcSSOCookie);
 
         // to clear any old session
@@ -250,7 +248,7 @@ const authSetup = function () {
     }
 
     const isLoggedIn = function () {
-        var token = getCookie(v3JWTCookie);
+        var token = getCookie(tcJWTCookie);
         return token ? !isTokenExpired(token) : false;
     };
 
@@ -324,7 +322,6 @@ const authSetup = function () {
                 try {
                     const expiryDate = getTokenExpirationDate(idToken)
                     setDomainCookie(tcJWTCookie, idToken, expiryDate);
-                    setDomainCookie(v3JWTCookie, idToken, expiryDate);
                     setDomainCookie(tcSSOCookie, tcsso, expiryDate);
                 } catch (e) {
                     logger('Error occured in fecthing token expiry time', e.message);
@@ -491,7 +488,7 @@ const authSetup = function () {
             }
         }
         if (e.data && e.data.type && e.data.type === "REFRESH_TOKEN") {
-            const token = getCookie(v3JWTCookie);
+            const token = getCookie(tcJWTCookie);
             const failed = {
                 type: "FAILURE"
             };
@@ -527,7 +524,6 @@ const authSetup = function () {
                             try {
                                 const expiryDate = getTokenExpirationDate(idToken)
                                 setDomainCookie(tcJWTCookie, idToken, expiryDate);
-                                setDomainCookie(v3JWTCookie, idToken, expiryDate);
                                 setDomainCookie(tcSSOCookie, tcsso, expiryDate);
                                 informIt(success);
                             } catch (e) {
@@ -718,7 +714,7 @@ const authSetup = function () {
               var newUrl = new URL(redirect_url);
                newUrl.searchParams.append(
                 "token",
-                getCookie(v3JWTCookie)
+                getCookie(tcJWTCookie)
               );
               window.location = newUrl.href;
             } catch (e) {
