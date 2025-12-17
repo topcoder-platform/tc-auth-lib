@@ -204,6 +204,7 @@ var countryObjs = [
     { alpha2: 'ZA', alpha3: 'ZAF', code: 710, numericString: '710', name: 'South Africa' },
     { alpha2: 'GS', alpha3: 'SGS', code: 239, numericString: '239', name: 'South Georgia and the South Sandwich Islands' },
     { alpha2: 'ES', alpha3: 'ESP', code: 724, numericString: '724', name: 'Spain' },
+    { alpha2: 'LK', alpha3: 'LKA', code: 144, numericString: '144', name: 'Sri Lanka' },
     { alpha2: 'SR', alpha3: 'SUR', code: 740, numericString: '740', name: 'Suriname' },
     { alpha2: 'SJ', alpha3: 'SJM', code: 744, numericString: '744', name: 'Svalbard and Jan Mayen' },
     { alpha2: 'SZ', alpha3: 'SWZ', code: 748, numericString: '748', name: 'Swaziland' },
