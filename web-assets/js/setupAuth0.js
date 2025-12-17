@@ -27,7 +27,6 @@ const authSetup = function () {
     const clientId = 'BXWXUWnilVUPdN01t2Se29Tw2ZYNGZvH';
     const useLocalStorage = false;
     const useRefreshTokens = false;
-    const v3JWTCookie = 'v3jwt';
     const tcJWTCookie = 'tcjwt';
     const tcSSOCookie = 'tcsso';
     const cookieExpireIn = 12 * 60; // 12 hrs
@@ -157,7 +156,6 @@ const authSetup = function () {
         });
         // TODO  
         setCookie(tcJWTCookie, "", -1);
-        setCookie(v3JWTCookie, "", -1);
         setCookie(tcSSOCookie, "", -1);
     };
 
@@ -204,7 +202,6 @@ const authSetup = function () {
                 //console.log(tcsso.includes(tcSSOCookie));
                 console.log("storing token");
                 setCookie(tcJWTCookie, idToken, cookieExpireIn, true);
-                setCookie(v3JWTCookie, idToken, cookieExpireIn, true);
                 setCookie(tcSSOCookie, tcsso, cookieExpireIn, true);
             } else {
                 console.log("User not active");

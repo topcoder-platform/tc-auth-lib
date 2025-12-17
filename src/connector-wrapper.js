@@ -36,11 +36,11 @@ const proxyCall = function () {
   }
 
   function request() {
-    const token = getToken('v3jwt')
+    const token = getToken('tcjwt')
     // 65 is offset in seconds, before expiry
     if (token && !isTokenExpired(token, 65)) {
       return new Promise((resolve, reject) => {
-        token ? resolve({ token: token }) : reject("v3jwt cookie not found")
+        token ? resolve({ token: token }) : reject("tcjwt cookie not found")
       })
     } else {
       return new Promise((resolve, reject) => {
@@ -49,7 +49,7 @@ const proxyCall = function () {
           if (safeFormat) {
             window.removeEventListener('message', receiveMessage)
             if (e.data.type === "SUCCESS") {
-              getToken('v3jwt') ? resolve({ token: getToken('v3jwt') }) : reject("v3jwt cookie not found")
+              getToken('tcjwt') ? resolve({ token: getToken('tcjwt') }) : reject("tcjwt cookie not found")
             } else {
               reject("unable to get refesh token")
             }
@@ -84,6 +84,5 @@ export function getFreshToken() {
   return proxyCall()
     .then(data => data.token)
 }
-
 
 
