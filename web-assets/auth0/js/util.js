@@ -244,21 +244,19 @@ var countryObjs = [
     { alpha2: 'ZW', alpha3: 'ZWE', code: 716, numericString: '716', name: 'Zimbabwe' }
 ];
 
-// For Auth0 Lock-based signup pages, prefer the backend signup error text
+// For Auth0 Lock-based signup pages, prefer backend signup text
 // (for example /dbconnections/signup validation messages) over lock.fallback.
 (function () {
-    if (typeof window === 'undefined' || !window.Auth0Lock || !window.Auth0Lock.prototype) {
+    if (typeof window === 'undefined') {
         return;
     }
 
-    var Auth0LockCtor = window.Auth0Lock;
-    if (Auth0LockCtor.prototype.__tcSignupErrorPatchApplied) {
-        return;
-    }
-
-    var originalShow = Auth0LockCtor.prototype.show;
-    if (typeof originalShow !== 'function') {
-        return;
+    function safeLog(label, payload) {
+        try {
+            console.error('[tc-auth-lib] ' + label, payload);
+        } catch (e) {
+            // no-op
+        }
     }
 
     function getText(value) {
@@ -276,7 +274,8 @@ var countryObjs = [
 
         var message = getText(payload.description) ||
             getText(payload.message) ||
-            getText(payload.error_description);
+            getText(payload.error_description) ||
+            getText(payload.msg);
         if (message) {
             return message;
         }
@@ -285,10 +284,25 @@ var countryObjs = [
             return getText(payload.result.content);
         }
 
+        if (payload.response && payload.response.body) {
+            message = extractMessage(payload.response.body);
+            if (message) {
+                return message;
+            }
+        }
+
+        if (payload.original) {
+            message = extractMessage(payload.original);
+            if (message) {
+                return message;
+            }
+        }
+
         if (payload.error && typeof payload.error === 'object') {
-            return getText(payload.error.description) ||
-                getText(payload.error.message) ||
-                getText(payload.error.error_description);
+            message = extractMessage(payload.error);
+            if (message) {
+                return message;
+            }
         }
 
         if (getText(payload.error)) {
@@ -298,35 +312,61 @@ var countryObjs = [
         return null;
     }
 
-    function extractSignupErrorMessage(error) {
-        var message = extractMessage(error);
-        if (message) {
-            return message;
-        }
+    function isGenericSignupMessage(text) {
+        var normalized = String(text || '').toLowerCase().replace(/\s+/g, ' ').trim();
+        return normalized.indexOf("we're sorry, something went wrong when attempting to sign up") !== -1 ||
+            normalized.indexOf('were sorry, something went wrong when attempting to sign up') !== -1;
+    }
 
-        if (error && error.original) {
-            message = extractMessage(error.original);
-            if (message) {
-                return message;
-            }
-
-            if (error.original.response && error.original.response.body) {
-                return extractMessage(error.original.response.body);
-            }
-        }
-
-        return null;
+    function getLockErrorNodes() {
+        return document.querySelectorAll('.auth0-lock-error-msg');
     }
 
     function setLockErrorMessage(message) {
-        var errorMessageNodes = document.querySelectorAll('.auth0-lock-error-msg');
-        if (!errorMessageNodes || !errorMessageNodes.length) {
+        var nodes = getLockErrorNodes();
+        if (!nodes || !nodes.length) {
+            return false;
+        }
+
+        for (var i = 0; i < nodes.length; i += 1) {
+            nodes[i].textContent = message;
+        }
+
+        return true;
+    }
+
+    var lastBackendSignupMessage = null;
+
+    function replaceGenericLockMessageFromCache() {
+        if (!lastBackendSignupMessage) {
             return;
         }
 
-        for (var i = 0; i < errorMessageNodes.length; i += 1) {
-            errorMessageNodes[i].textContent = message;
+        var nodes = getLockErrorNodes();
+        if (!nodes || !nodes.length) {
+            return;
         }
+
+        for (var i = 0; i < nodes.length; i += 1) {
+            var currentText = nodes[i].textContent || '';
+            if (isGenericSignupMessage(currentText)) {
+                nodes[i].textContent = lastBackendSignupMessage;
+            }
+        }
+    }
+
+    function extractMessageFromArgs(args) {
+        for (var i = 0; i < args.length; i += 1) {
+            var message = extractMessage(args[i]);
+            if (message) {
+                return message;
+            }
+        }
+        return null;
+    }
+
+    function toArray(argsLike) {
+        return Array.prototype.slice.call(argsLike || []);
     }
 
     function attachSignupErrorHandler(lockInstance) {
@@ -334,27 +374,93 @@ var countryObjs = [
             return;
         }
 
-        function handleSignupErrorPayload(payload) {
-            var message = extractSignupErrorMessage(payload);
-            if (!message) {
+        function handleLockError(eventName, argsLike) {
+            var args = toArray(argsLike);
+            safeLog('Auth0Lock ' + eventName, args.length <= 1 ? args[0] : args);
+
+            var message = extractMessageFromArgs(args);
+            if (message) {
+                lastBackendSignupMessage = message;
+                setTimeout(function () {
+                    setLockErrorMessage(message);
+                }, 0);
                 return;
             }
 
-            // Let Lock render its error UI first, then replace only the message text.
-            setTimeout(function () {
-                setLockErrorMessage(message);
-            }, 0);
+            setTimeout(replaceGenericLockMessageFromCache, 0);
         }
 
         lockInstance.__tcSignupErrorHandlerAttached = true;
-        lockInstance.on('signup error', handleSignupErrorPayload);
-        lockInstance.on('signup submit response', handleSignupErrorPayload);
+        lockInstance.on('signup error', function () {
+            handleLockError('signup error', arguments);
+        });
+        lockInstance.on('signup submit response', function () {
+            handleLockError('signup submit response', arguments);
+        });
+        lockInstance.on('unrecoverable_error', function () {
+            handleLockError('unrecoverable_error', arguments);
+        });
+        lockInstance.on('authorization_error', function () {
+            handleLockError('authorization_error', arguments);
+        });
+
+        if (window.MutationObserver && document.body && !lockInstance.__tcSignupErrorObserverAttached) {
+            lockInstance.__tcSignupErrorObserverAttached = true;
+            var observer = new MutationObserver(function () {
+                replaceGenericLockMessageFromCache();
+            });
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true,
+                characterData: true
+            });
+            lockInstance.__tcSignupErrorObserver = observer;
+        }
     }
 
-    Auth0LockCtor.prototype.show = function () {
-        attachSignupErrorHandler(this);
-        return originalShow.apply(this, arguments);
-    };
+    function applyPatchIfReady() {
+        if (!window.Auth0Lock || !window.Auth0Lock.prototype) {
+            return false;
+        }
 
-    Auth0LockCtor.prototype.__tcSignupErrorPatchApplied = true;
+        var Auth0LockCtor = window.Auth0Lock;
+        if (Auth0LockCtor.prototype.__tcSignupErrorPatchApplied) {
+            return true;
+        }
+
+        var originalShow = Auth0LockCtor.prototype.show;
+        if (typeof originalShow !== 'function') {
+            return false;
+        }
+
+        Auth0LockCtor.prototype.show = function () {
+            attachSignupErrorHandler(this);
+            return originalShow.apply(this, arguments);
+        };
+
+        Auth0LockCtor.prototype.__tcSignupErrorPatchApplied = true;
+        safeLog('Applied Auth0 Lock signup error patch', {
+            hasAuth0Lock: true
+        });
+        return true;
+    }
+
+    function patchWithRetry(retriesLeft) {
+        if (applyPatchIfReady()) {
+            return;
+        }
+
+        if (retriesLeft <= 0) {
+            safeLog('Unable to apply Auth0 Lock signup error patch', {
+                hasAuth0Lock: !!window.Auth0Lock
+            });
+            return;
+        }
+
+        setTimeout(function () {
+            patchWithRetry(retriesLeft - 1);
+        }, 100);
+    }
+
+    patchWithRetry(100);
 })();
