@@ -11,6 +11,96 @@ var qs = (function (a) {
   }
   return b;
 })(window.location.search.substr(1).split("&"));
+
+function parseSignupErrorPayload(jqXHR) {
+  if (!jqXHR) {
+    return null;
+  }
+
+  var payload = jqXHR.responseJSON;
+  if (typeof payload === "string") {
+    try {
+      payload = JSON.parse(payload);
+    } catch (e) {
+      return { message: payload };
+    }
+  }
+
+  if (payload) {
+    return payload;
+  }
+
+  if (!jqXHR.responseText || typeof jqXHR.responseText !== "string") {
+    return null;
+  }
+
+  try {
+    return JSON.parse(jqXHR.responseText);
+  } catch (e) {
+    return null;
+  }
+}
+
+function extractSignupErrorMessage(payload) {
+  if (!payload) {
+    return null;
+  }
+
+  if (typeof payload === "string") {
+    return payload;
+  }
+
+  if (typeof payload.message === "string" && payload.message.trim()) {
+    return payload.message;
+  }
+
+  if (typeof payload.description === "string" && payload.description.trim()) {
+    return payload.description;
+  }
+
+  if (
+    typeof payload.error_description === "string" &&
+    payload.error_description.trim()
+  ) {
+    return payload.error_description;
+  }
+
+  if (
+    payload.result &&
+    typeof payload.result.content === "string" &&
+    payload.result.content.trim()
+  ) {
+    return payload.result.content;
+  }
+
+  if (
+    payload.error &&
+    typeof payload.error.message === "string" &&
+    payload.error.message.trim()
+  ) {
+    return payload.error.message;
+  }
+
+  if (typeof payload.error === "string" && payload.error.trim()) {
+    return payload.error;
+  }
+
+  return null;
+}
+
+function getSignupErrorMessage(jqXHR) {
+  var message = extractSignupErrorMessage(parseSignupErrorPayload(jqXHR));
+
+  if (!message && jqXHR && typeof jqXHR.responseText === "string") {
+    var responseText = jqXHR.responseText.trim();
+    if (responseText && responseText.charAt(0) !== "{") {
+      message = responseText;
+    }
+  }
+
+  return message ? message.trim() : null;
+}
+
 $(document).ready(function () {
   window.history.forward();
   $.each(countryObjs, function () {
@@ -33,12 +123,12 @@ $(document).ready(function () {
     var handle = $("#handle").val();
     var country = $("#country").val();
     if (!handle){
-      $("#error").html("Need Username / Handle");
+      $("#error").text("Need Username / Handle");
       $("#error").closest(".message").fadeIn();
       return false;
     }
     if (!country){
-      $("#error").html("Choose your country");
+      $("#error").text("Choose your country");
       $("#error").closest(".message").fadeIn();
       return false;
     }
@@ -52,7 +142,7 @@ $(document).ready(function () {
         console.log(JSON.stringify(result));
         if (result && result.valid && submit_flag) {
           $("#error").closest(".message").fadeOut();
-          $("#error").html("");
+          $("#error").text("");
           let formAction = qs["formAction"];
           const opt1 = 'https://auth.{{DOMAIN}}/continue';
           const opt2 = 'https://{{AUTH0DOMAIN}}/continue';
@@ -73,31 +163,16 @@ $(document).ready(function () {
         }
       }, 
       error: function (jqXHR) {
-        // Try to extract server-provided message from JSON body
-        var message = null;
-        try {
-          if (jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.message) {
-            message = jqXHR.responseJSON.message;
-          } else if (jqXHR && jqXHR.responseText) {
-            var parsed = JSON.parse(jqXHR.responseText);
-            if (parsed && parsed.message) {
-              message = parsed.message;
-            }
-          }
-        } catch (e) {
-          // fall through to default message
-        }
-
+        var message = getSignupErrorMessage(jqXHR);
         if (!message) {
-          // Provide a sensible fallback when no message is available
           if (jqXHR && jqXHR.status === 409) {
             message = "Handle is already taken.";
           } else {
-            message = "An error occurred. Please try again.";
+            message = "We're sorry, something went wrong when attempting to sign up";
           }
         }
 
-        $("#error").html(message);
+        $("#error").text(message);
         $("#error").closest(".message").fadeIn();
       }
     });

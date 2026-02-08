@@ -243,3 +243,118 @@ var countryObjs = [
     { alpha2: 'ZM', alpha3: 'ZMB', code: 894, numericString: '894', name: 'Zambia' },
     { alpha2: 'ZW', alpha3: 'ZWE', code: 716, numericString: '716', name: 'Zimbabwe' }
 ];
+
+// For Auth0 Lock-based signup pages, prefer the backend signup error text
+// (for example /dbconnections/signup validation messages) over lock.fallback.
+(function () {
+    if (typeof window === 'undefined' || !window.Auth0Lock || !window.Auth0Lock.prototype) {
+        return;
+    }
+
+    var Auth0LockCtor = window.Auth0Lock;
+    if (Auth0LockCtor.prototype.__tcSignupErrorPatchApplied) {
+        return;
+    }
+
+    var originalShow = Auth0LockCtor.prototype.show;
+    if (typeof originalShow !== 'function') {
+        return;
+    }
+
+    function getText(value) {
+        return typeof value === 'string' && value.trim() ? value.trim() : null;
+    }
+
+    function extractMessage(payload) {
+        if (!payload) {
+            return null;
+        }
+
+        if (typeof payload === 'string') {
+            return getText(payload);
+        }
+
+        var message = getText(payload.description) ||
+            getText(payload.message) ||
+            getText(payload.error_description);
+        if (message) {
+            return message;
+        }
+
+        if (payload.result && getText(payload.result.content)) {
+            return getText(payload.result.content);
+        }
+
+        if (payload.error && typeof payload.error === 'object') {
+            return getText(payload.error.description) ||
+                getText(payload.error.message) ||
+                getText(payload.error.error_description);
+        }
+
+        if (getText(payload.error)) {
+            return getText(payload.error);
+        }
+
+        return null;
+    }
+
+    function extractSignupErrorMessage(error) {
+        var message = extractMessage(error);
+        if (message) {
+            return message;
+        }
+
+        if (error && error.original) {
+            message = extractMessage(error.original);
+            if (message) {
+                return message;
+            }
+
+            if (error.original.response && error.original.response.body) {
+                return extractMessage(error.original.response.body);
+            }
+        }
+
+        return null;
+    }
+
+    function setLockErrorMessage(message) {
+        var errorMessageNodes = document.querySelectorAll('.auth0-lock-error-msg');
+        if (!errorMessageNodes || !errorMessageNodes.length) {
+            return;
+        }
+
+        for (var i = 0; i < errorMessageNodes.length; i += 1) {
+            errorMessageNodes[i].textContent = message;
+        }
+    }
+
+    function attachSignupErrorHandler(lockInstance) {
+        if (!lockInstance || lockInstance.__tcSignupErrorHandlerAttached || typeof lockInstance.on !== 'function') {
+            return;
+        }
+
+        function handleSignupErrorPayload(payload) {
+            var message = extractSignupErrorMessage(payload);
+            if (!message) {
+                return;
+            }
+
+            // Let Lock render its error UI first, then replace only the message text.
+            setTimeout(function () {
+                setLockErrorMessage(message);
+            }, 0);
+        }
+
+        lockInstance.__tcSignupErrorHandlerAttached = true;
+        lockInstance.on('signup error', handleSignupErrorPayload);
+        lockInstance.on('signup submit response', handleSignupErrorPayload);
+    }
+
+    Auth0LockCtor.prototype.show = function () {
+        attachSignupErrorHandler(this);
+        return originalShow.apply(this, arguments);
+    };
+
+    Auth0LockCtor.prototype.__tcSignupErrorPatchApplied = true;
+})();
