@@ -63,6 +63,34 @@ const authSetup = function () {
     const registerSuccessUrl = host + '/check_email.html';
     const trustedDomains = ['www.topcoder.com', 'www.topcoder-dev.com', 'topcoder-dev.com', 'topcoder.com', 'wipro.com'];
 
+    function logError(label, details) {
+        try {
+            console.error("[tc-auth-lib] " + label, details);
+        } catch (e) {
+            // no-op
+        }
+        logger(label, details);
+    }
+
+    function getAuthErrorContext(extra) {
+        const context = {
+            url: window.location.href,
+            error: qs['error'],
+            error_description: qs['error_description'],
+            state: qs['state'],
+            code: qs['code'],
+            appUrl: appUrl,
+            returnAppUrl: returnAppUrl,
+            domain: domain
+        };
+        if (extra && typeof extra === 'object') {
+            Object.keys(extra).forEach(function (key) {
+                context[key] = extra[key];
+            });
+        }
+        return context;
+    }
+
     const urlValidator = function (url) {
         try {
             const decodedUrl = decodeURIComponent(url);
@@ -95,10 +123,27 @@ const authSetup = function () {
                 : 'memory',
             useRefreshTokens: useRefreshTokens
         }).then(_init).catch(function (e) {
-            logger("Error occurred in initializing auth0 object: ", e);
+            logError("Error occurred in initializing auth0 object", getAuthErrorContext({ errorObject: e }));
             window.location.reload();
         });
         window.addEventListener("message", receiveMessage, false);
+
+        // Capture runtime failures that can appear as generic "unrecoverable_error" in UI.
+        window.addEventListener("error", function (event) {
+            logError("Window runtime error", getAuthErrorContext({
+                message: event && event.message,
+                filename: event && event.filename,
+                lineno: event && event.lineno,
+                colno: event && event.colno,
+                errorObject: event && event.error
+            }));
+        });
+
+        window.addEventListener("unhandledrejection", function (event) {
+            logError("Unhandled promise rejection", getAuthErrorContext({
+                reason: event && event.reason
+            }));
+        });
     };
 
     const _init = function (authObj) {
@@ -109,7 +154,7 @@ const authSetup = function () {
                 showAuth0Info();
                 storeToken();
             }).catch(function (e) {
-                logger('handleRedirectCallback() error: ', e);
+                logError("handleRedirectCallback() error", getAuthErrorContext({ errorObject: e }));
             });
         } else if (shouldLogout) {
             host = returnAppUrl ? decodeURIComponent(returnAppUrl) : host;
@@ -119,7 +164,9 @@ const authSetup = function () {
             login();
         } else if (qs['error'] && qs['state']) {
             var error_description = encode(qs['error_description']);
-            logger("Error in executing callback(): ", error_description);
+            logError("Error in executing callback()", getAuthErrorContext({
+                encoded_error_description: error_description
+            }));
             showLoginError(error_description, appUrl);
         } else {
             logger("User already logged in", true);
@@ -643,7 +690,7 @@ const authSetup = function () {
             messageElement.innerHTML = message;
             document.getElementById("loading_message_p").innerHTML = messageElement.value + " <a href=" + linkUrl + ">click here</a>";
         } catch (err) {
-            logger("Error in changing loading message: ", err.message)
+            logError("Error in changing loading message", getAuthErrorContext({ errorObject: err }))
         }
     }
 
