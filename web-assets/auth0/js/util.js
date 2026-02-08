@@ -315,24 +315,79 @@ var countryObjs = [
     function isGenericSignupMessage(text) {
         var normalized = String(text || '').toLowerCase().replace(/\s+/g, ' ').trim();
         return normalized.indexOf("we're sorry, something went wrong when attempting to sign up") !== -1 ||
-            normalized.indexOf('were sorry, something went wrong when attempting to sign up') !== -1;
+            normalized.indexOf('were sorry, something went wrong when attempting to sign up') !== -1 ||
+            normalized === 'lock.fallback';
     }
 
     function getLockErrorNodes() {
         return document.querySelectorAll('.auth0-lock-error-msg');
     }
 
-    function setLockErrorMessage(message) {
-        var nodes = getLockErrorNodes();
-        if (!nodes || !nodes.length) {
+    function replaceGenericTextNodes(message) {
+        var roots = document.querySelectorAll('.auth0-lock');
+        if (!roots || !roots.length || !document.createTreeWalker || !window.NodeFilter) {
             return false;
         }
 
-        for (var i = 0; i < nodes.length; i += 1) {
-            nodes[i].textContent = message;
+        var replaced = false;
+        for (var i = 0; i < roots.length; i += 1) {
+            var walker = document.createTreeWalker(
+                roots[i],
+                window.NodeFilter.SHOW_TEXT,
+                null,
+                false
+            );
+            var node = walker.nextNode();
+            while (node) {
+                if (isGenericSignupMessage(node.nodeValue)) {
+                    node.nodeValue = message;
+                    replaced = true;
+                }
+                node = walker.nextNode();
+            }
         }
 
-        return true;
+        return replaced;
+    }
+
+    function setLockErrorMessage(message) {
+        var replaced = false;
+        var selectors = [
+            '.auth0-lock-error-msg',
+            '.auth0-lock-error p',
+            '.auth0-lock-error span',
+            '.auth0-global-message'
+        ];
+
+        for (var i = 0; i < selectors.length; i += 1) {
+            var nodes = document.querySelectorAll(selectors[i]);
+            for (var j = 0; j < nodes.length; j += 1) {
+                var currentText = (nodes[j].textContent || '').trim();
+                if (!currentText || isGenericSignupMessage(currentText)) {
+                    nodes[j].textContent = message;
+                    replaced = true;
+                }
+            }
+        }
+
+        if (replaceGenericTextNodes(message)) {
+            replaced = true;
+        }
+
+        return replaced;
+    }
+
+    function forceLockErrorMessage(message, attemptsLeft) {
+        if (!message) {
+            return;
+        }
+        setLockErrorMessage(message);
+        if (attemptsLeft <= 0) {
+            return;
+        }
+        setTimeout(function () {
+            forceLockErrorMessage(message, attemptsLeft - 1);
+        }, 50);
     }
 
     var lastBackendSignupMessage = null;
@@ -381,21 +436,22 @@ var countryObjs = [
             var message = extractMessageFromArgs(args);
             if (message) {
                 lastBackendSignupMessage = message;
-                setTimeout(function () {
-                    setLockErrorMessage(message);
-                }, 0);
+                safeLog('Resolved signup error message', message);
+                forceLockErrorMessage(message, 40);
                 return;
             }
 
-            setTimeout(replaceGenericLockMessageFromCache, 0);
+            setTimeout(function () {
+                replaceGenericLockMessageFromCache();
+                if (lastBackendSignupMessage) {
+                    forceLockErrorMessage(lastBackendSignupMessage, 20);
+                }
+            }, 0);
         }
 
         lockInstance.__tcSignupErrorHandlerAttached = true;
         lockInstance.on('signup error', function () {
             handleLockError('signup error', arguments);
-        });
-        lockInstance.on('signup submit response', function () {
-            handleLockError('signup submit response', arguments);
         });
         lockInstance.on('unrecoverable_error', function () {
             handleLockError('unrecoverable_error', arguments);
