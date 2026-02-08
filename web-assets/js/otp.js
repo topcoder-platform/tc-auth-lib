@@ -48,6 +48,11 @@ $(document).ready(function () {
           $("#resend").hide();
         },
         error: function (error) {
+          console.error("[tc-auth-lib] otp resendOtpEmail error", {
+            status: error && error.status,
+            responseJSON: error && error.responseJSON,
+            responseText: error && error.responseText
+          });
           if (error.responseJSON && error.responseJSON.result) {
             $("#error").html(error.responseJSON.result.content);
             $("#error").closest(".message-wrapper").fadeIn();

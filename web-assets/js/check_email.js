@@ -54,6 +54,11 @@ $(document).ready(function () {
         $("#verifyOtp").submit();
       },
       error: function (error) {
+        console.error("[tc-auth-lib] check_email activate error", {
+          status: error && error.status,
+          responseJSON: error && error.responseJSON,
+          responseText: error && error.responseText
+        });
         if (error.responseJSON && error.responseJSON.result) {
           $("#error").html(error.responseJSON.result.content);
           $("#error").closest(".message-wrapper").fadeIn();
@@ -85,6 +90,11 @@ $(document).ready(function () {
           $("#resend-text").hide();
         },
         error: function (error) {
+          console.error("[tc-auth-lib] check_email resendActivationEmail error", {
+            status: error && error.status,
+            responseJSON: error && error.responseJSON,
+            responseText: error && error.responseText
+          });
           if (error.responseJSON && error.responseJSON.result) {
             $("#error").html(error.responseJSON.result.content);
             $("#error").closest(".message-wrapper").fadeIn();

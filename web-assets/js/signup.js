@@ -163,6 +163,11 @@ $(document).ready(function () {
         }
       }, 
       error: function (jqXHR) {
+        console.error("[tc-auth-lib] signup validateHandle error", {
+          status: jqXHR && jqXHR.status,
+          responseJSON: jqXHR && jqXHR.responseJSON,
+          responseText: jqXHR && jqXHR.responseText
+        });
         var message = getSignupErrorMessage(jqXHR);
         if (!message) {
           if (jqXHR && jqXHR.status === 409) {
