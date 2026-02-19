@@ -58,6 +58,10 @@ function extractSignupErrorMessage(payload) {
     return payload.description;
   }
 
+  if (typeof payload.reason === "string" && payload.reason.trim()) {
+    return payload.reason;
+  }
+
   if (
     typeof payload.error_description === "string" &&
     payload.error_description.trim()
@@ -160,6 +164,20 @@ $(document).ready(function () {
           $("#signup").submit();
           submit_flag = false;
           //setContinueButtonDisabledStatus(true);
+          return;
+        }
+
+        if (result && result.valid === false) {
+          var message = extractSignupErrorMessage(result);
+          if (!message && result.reasonCode === "ALREADY_TAKEN") {
+            message = "Handle is already taken.";
+          }
+          if (!message) {
+            message = "Please enter a different Username / Handle.";
+          }
+
+          $("#error").text(message);
+          $("#error").closest(".message").fadeIn();
         }
       }, 
       error: function (jqXHR) {
