@@ -747,3 +747,9 @@ select::-ms-expand {
   outline: 0;
   width: 14px;
 }
+
+.guide {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  text-align: left;
+}
