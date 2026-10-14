@@ -131,6 +131,12 @@ $(document).ready(function () {
       $("#error").closest(".message").fadeIn();
       return false;
     }
+    // identity-api accepts longer handles, so enforce the signup limit here
+    if (handle.trim().length < 3 || handle.trim().length > 15) {
+      $("#error").text("Handle must be between 3 and 15 characters");
+      $("#error").closest(".message").fadeIn();
+      return false;
+    }
     if (!country){
       $("#error").text("Choose your country");
       $("#error").closest(".message").fadeIn();

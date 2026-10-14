@@ -245,7 +245,8 @@ var countryObjs = [
 ];
 
 // For Auth0 Lock-based signup pages, prefer backend signup text
-// (for example /dbconnections/signup validation messages) over lock.fallback.
+// (for example /dbconnections/signup validation messages) over lock.fallback,
+// and block signup submits whose handle is outside the allowed length.
 (function () {
     if (typeof window === 'undefined') {
         return;
@@ -474,6 +475,138 @@ var countryObjs = [
         }
     }
 
+    // Lock only enforces a username length when the database connection defines
+    // validation.username, which accounts-login does not, so without this guard
+    // the signup form submits (and creates) handles of any length.
+    var HANDLE_MIN_LENGTH = 3;
+    var HANDLE_MAX_LENGTH = 15;
+    var HANDLE_LENGTH_MESSAGE = 'Handle must be between ' + HANDLE_MIN_LENGTH +
+        ' and ' + HANDLE_MAX_LENGTH + ' characters';
+    var HANDLE_ERROR_ID = 'auth0-lock-error-msg-username';
+
+    /**
+     * Checks whether a signup handle has an allowed number of characters.
+     *
+     * @param {string} handle Value of the Lock username / handle input.
+     * @returns {boolean} true when the trimmed handle has between
+     *     HANDLE_MIN_LENGTH and HANDLE_MAX_LENGTH characters.
+     */
+    function isHandleLengthValid(handle) {
+        var length = String(handle || '').trim().length;
+        return length >= HANDLE_MIN_LENGTH && length <= HANDLE_MAX_LENGTH;
+    }
+
+    /**
+     * Shows the handle length error under the Lock username input, using the
+     * same markup as Lock's own field errors. Does nothing when an error for
+     * the username field is already displayed (for example by the hosted page).
+     *
+     * @param {HTMLInputElement} input The Lock username / handle input.
+     * @returns {void}
+     */
+    function showHandleLengthError(input) {
+        var container = input.closest && input.closest('.auth0-lock-input-block');
+        if (!container || document.getElementById(HANDLE_ERROR_ID)) {
+            return;
+        }
+
+        var errorWrapper = document.createElement('div');
+        errorWrapper.className = 'auth0-lock-error-msg';
+        errorWrapper.id = HANDLE_ERROR_ID;
+        errorWrapper.setAttribute('role', 'alert');
+        errorWrapper.setAttribute('data-tc-handle-length-error', 'true');
+
+        var errorText = document.createElement('div');
+        errorText.className = 'auth0-lock-error-invalid-hint';
+        errorText.textContent = HANDLE_LENGTH_MESSAGE;
+        errorWrapper.appendChild(errorText);
+
+        container.classList.add('auth0-lock-error');
+        container.appendChild(errorWrapper);
+        input.setAttribute('aria-invalid', 'true');
+        input.setAttribute('aria-describedby', HANDLE_ERROR_ID);
+    }
+
+    /**
+     * Removes an error previously added by showHandleLengthError.
+     *
+     * @param {HTMLInputElement} input The Lock username / handle input.
+     * @returns {void}
+     */
+    function clearHandleLengthError(input) {
+        var container = input.closest && input.closest('.auth0-lock-input-block');
+        var errorWrapper = container && container.querySelector('[data-tc-handle-length-error]');
+        if (!errorWrapper) {
+            return;
+        }
+
+        errorWrapper.parentNode.removeChild(errorWrapper);
+        container.classList.remove('auth0-lock-error');
+        input.setAttribute('aria-invalid', 'false');
+        input.removeAttribute('aria-describedby');
+    }
+
+    /**
+     * Prevents the Lock signup form from being submitted while the handle is
+     * outside the allowed length, so /dbconnections/signup is never called and
+     * the user is not created. Empty handles are left to Lock's own validation,
+     * and the sign-in screen (which shares the username input) is not affected.
+     *
+     * @param {Object} lockInstance The Auth0Lock instance being shown.
+     * @returns {void}
+     */
+    function attachSignupHandleLengthGuard(lockInstance) {
+        if (!lockInstance || lockInstance.__tcSignupHandleGuardAttached || typeof lockInstance.on !== 'function') {
+            return;
+        }
+
+        lockInstance.__tcSignupHandleGuardAttached = true;
+        var isSignupScreen = false;
+        lockInstance.on('signup ready', function () {
+            isSignupScreen = true;
+        });
+        lockInstance.on('signin ready', function () {
+            isSignupScreen = false;
+        });
+        lockInstance.on('forgot_password ready', function () {
+            isSignupScreen = false;
+        });
+
+        /**
+         * Finds the handle input of the Lock form containing an event target.
+         *
+         * @param {EventTarget} target Target of a submit or input event.
+         * @returns {HTMLInputElement|null} The username input when the target is
+         *     inside the Lock form on the signup screen, otherwise null.
+         */
+        function getSignupHandleInput(target) {
+            var form = target && target.closest && target.closest('.auth0-lock form');
+            return isSignupScreen && form ? form.querySelector('input[name="username"]') : null;
+        }
+
+        // Capture phase on window runs before Lock's own submit handler.
+        window.addEventListener('submit', function (event) {
+            var input = getSignupHandleInput(event.target);
+            if (!input || !input.value.trim() || isHandleLengthValid(input.value)) {
+                return;
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+            showHandleLengthError(input);
+            safeLog('Blocked signup with invalid handle length', {
+                length: input.value.trim().length
+            });
+        }, true);
+
+        window.addEventListener('input', function (event) {
+            var input = getSignupHandleInput(event.target);
+            if (input === event.target && isHandleLengthValid(input.value)) {
+                clearHandleLengthError(input);
+            }
+        }, true);
+    }
+
     function applyPatchIfReady() {
         if (!window.Auth0Lock || !window.Auth0Lock.prototype) {
             return false;
@@ -491,6 +624,7 @@ var countryObjs = [
 
         Auth0LockCtor.prototype.show = function () {
             attachSignupErrorHandler(this);
+            attachSignupHandleLengthGuard(this);
             return originalShow.apply(this, arguments);
         };
 
