@@ -1,5 +1,6 @@
+const hasVerifiedEmail = require('../web-assets/js/email-verification')
 const { createFrame } = require('./iframe')
-const { getToken, isTokenExpired } = require('./token')
+const { getToken, isTokenExpired, decodeToken } = require('./token')
 
 let iframe = null
 let loading = null
@@ -82,7 +83,12 @@ export function getFreshToken() {
   }
 
   return proxyCall()
-    .then(data => data.token)
+    .then(data => {
+      if (!hasVerifiedEmail(decodeToken(data.token))) {
+        throw new Error('EMAIL_VERIFICATION_REQUIRED')
+      }
+      return data.token
+    })
 }
 
 

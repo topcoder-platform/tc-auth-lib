@@ -60,7 +60,6 @@ const authSetup = function () {
     var idToken = null;
     var callRefreshTokenFun = null;
     var host = window.location.protocol + "//" + window.location.host
-    const registerSuccessUrl = host + '/check_email.html';
     const trustedDomains = ['www.topcoder.com', 'www.topcoder-dev.com', 'topcoder-dev.com', 'topcoder.com', 'wipro.com'];
 
     function logError(label, details) {
@@ -146,14 +145,36 @@ const authSetup = function () {
         });
     };
 
+    function isVerifiedToken(token) {
+        try { return hasVerifiedEmail(decodeToken(token)); }
+        catch (error) { return false; }
+    }
+
+    function requiresActivation(error) {
+        const message = error && (error.error_description || error.message || error.code);
+        return typeof message === 'string' && (message.includes('EMAIL_VERIFICATION_REQUIRED') ||
+            message.includes('Activate your account before logging in.'));
+    }
+
+    function showActivationRequired() {
+        clearInterval(callRefreshTokenFun);
+        clearAllCookies();
+        window.location.assign(host + '/activation_required.html');
+    }
+
     const _init = function (authObj) {
         auth0 = authObj
+        if (requiresActivation(qs)) {
+            showActivationRequired();
+            return;
+        }
         if (qs['code'] && qs['state']) {
             auth0.handleRedirectCallback().then(function (data) {
                 logger('handleRedirectCallback() success: ', data);
                 showAuth0Info();
                 storeToken();
             }).catch(function (e) {
+                if (requiresActivation(e)) { showActivationRequired(); return; }
                 logError("handleRedirectCallback() error", getAuthErrorContext({ errorObject: e }));
             });
         } else if (shouldLogout) {
@@ -186,6 +207,11 @@ const authSetup = function () {
         let d = new Date();
         logger('checking token status at: ', `${d.getHours()}::${d.getMinutes()}::${d.getSeconds()} `);
         var token = getCookie(tcJWTCookie);
+        if (token && !isVerifiedToken(token)) {
+            clearInterval(callRefreshTokenFun);
+            clearAllCookies();
+            return;
+        }
         if (!token || isTokenExpired(token)) {
             logger('refreshing token... at: ', `${d.getHours()}::${d.getMinutes()}::${d.getSeconds()} `);
             try {
@@ -298,7 +324,8 @@ const authSetup = function () {
 
     const isLoggedIn = function () {
         var token = getCookie(tcJWTCookie);
-        return token ? !isTokenExpired(token) : false;
+        try { return !!token && isVerifiedToken(token) && !isTokenExpired(token); }
+        catch (error) { return false; }
     };
 
     const redirectToOnboardingWizard = function () {
@@ -358,7 +385,7 @@ const authSetup = function () {
                 }
                 return false;
             });            
-            if (userActive) {
+            if (userActive === true && hasVerifiedEmail(claims)) {
                 let tcsso = '';
                 Object.keys(claims).findIndex(function (key) {
                     if (key.includes(tcSSOCookie)) {
@@ -392,8 +419,7 @@ const authSetup = function () {
                 }
             } else {
                 logger("User active ? ", userActive);
-                host = registerSuccessUrl;
-                logout();
+                showActivationRequired();
             }
         }).catch(function (e) {
             logger("Error in fetching token from auth0: ", e);
@@ -560,7 +586,7 @@ const authSetup = function () {
                             }
                             return false;
                         });
-                        if (userActive) {
+                        if (userActive === true && hasVerifiedEmail(claims)) {
                             let tcsso = '';
                             Object.keys(claims).findIndex(function (key) {
                                 if (key.includes(tcSSOCookie)) {
@@ -581,6 +607,7 @@ const authSetup = function () {
                             }
                         } else {
                             logger("Refeshed token - user active ? ", userActive);
+                            clearAllCookies();
                             informIt(failed);
                         }
                     }).catch(function (err) {
@@ -600,7 +627,10 @@ const authSetup = function () {
                 };
 
                 // main execution start here
-                if (token && !isTokenExpired(token)) {
+                if (token && !isVerifiedToken(token)) {
+                    clearAllCookies();
+                    informIt(failed);
+                } else if (token && !isTokenExpired(token)) {
                     informIt(success);
                 } else if (!token) {
                     const auth0Session = getCookie('auth0.is.authenticated');

@@ -33,6 +33,9 @@ DICEVERIFIER="./web-assets/static-pages/dice-verifier.html"
 perl -pi -e "s/\{\{DOMAIN\}\}/$DOMAIN/g" $DICEVERIFIER
 perl -pi -e "s/\{\{DICE_AUTH\}\}/$DICE_AUTH/g" $DICEVERIFIER
 
+ACTIVATIONPAGE="./web-assets/static-pages/activation_required.html"
+perl -pi -e "s/\{\{DOMAIN\}\}/$DOMAIN/g" $ACTIVATIONPAGE
+
 INDEXPAGE="./web-assets/static-pages/index.html"
 perl -pi -e "s/\{\{DOMAIN\}\}/$DOMAIN/g" $INDEXPAGE
 
