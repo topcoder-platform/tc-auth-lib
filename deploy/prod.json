@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "environment": "prod",
+  "branch": "master",
+  "region": "us-east-1",
+  "accountId": "409275337247",
+  "repository": "github.com/topcoder-platform/tc-auth-lib",
+  "circleciOrgId": "947bef5e-1669-415d-b83c-4fc85155b7df",
+  "circleciProjectId": "63854f65-91c8-40fa-aab8-13e92fc09453",
+  "buildRoleArn": "arn:aws:iam::409275337247:role/tc-auth-lib-prod-build",
+  "deployRoleArn": "arn:aws:iam::409275337247:role/tc-auth-lib-prod-deploy",
+  "buildConfig": {
+    "bucket": "tc-platform-prod",
+    "key": "securitymanager/prod-tc-auth-lib-buildvar.json",
+    "versionId": "5_a7rkqgr8yFi7rAZ.xIjc3m01iwkjKl",
+    "sha256": "43c4917920dc481474d447889871cf95d70d196d62a8c70dde73bad6b2c587d2"
+  },
+  "targets": {
+    "accounts": {
+      "bucket": "accounts-auth0.topcoder.com",
+      "prefix": "",
+      "distributionId": "E3PS8DKF1P5Q74",
+      "publicUrl": "https://accounts-auth0.topcoder.com",
+      "origin": "accounts-auth0.topcoder.com.s3.us-east-1.amazonaws.com",
+      "directory": "dist"
+    },
+    "static": {
+      "bucket": "tc-public-static-files",
+      "prefix": "topcoder-auth/",
+      "distributionId": "E660F096J7YP7",
+      "publicUrl": "https://tc-public-static-files.topcoder.com/topcoder-auth",
+      "origin": "tc-public-static-files.s3.amazonaws.com",
+      "directory": "diststatic"
+    }
+  }
+}
