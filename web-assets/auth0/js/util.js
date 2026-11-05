@@ -276,13 +276,15 @@ var countryObjs = [
         var message = getText(payload.description) ||
             getText(payload.message) ||
             getText(payload.error_description) ||
-            getText(payload.msg);
+            getText(payload.msg) ||
+            getText(payload.code);
         if (message) {
             return message;
         }
 
-        if (payload.result && getText(payload.result.content)) {
-            return getText(payload.result.content);
+        if (payload.result && payload.result.content) {
+            message = extractMessage(payload.result.content);
+            if (message) return message;
         }
 
         if (payload.response && payload.response.body) {
@@ -435,6 +437,11 @@ var countryObjs = [
             safeLog('Auth0Lock ' + eventName, args.length <= 1 ? args[0] : args);
 
             var message = extractMessageFromArgs(args);
+            if (message && (message.indexOf('EMAIL_VERIFICATION_REQUIRED') !== -1 ||
+                message.indexOf('Activate your account before logging in.') !== -1)) {
+                window.location.assign('https://accounts-auth0.{{DOMAIN}}/activation_required.html');
+                return;
+            }
             if (message) {
                 lastBackendSignupMessage = message;
                 safeLog('Resolved signup error message', message);

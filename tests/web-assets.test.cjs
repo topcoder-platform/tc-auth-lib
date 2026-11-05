@@ -125,7 +125,8 @@ function lockPage() {
   const listeners = {};
   const input = { value: '', closest: () => ({}) };
   const form = { querySelector: () => input };
-  const window = { addEventListener: (name, listener) => { listeners[name] = listener; } };
+  const redirects = [];
+  const window = { location: { assign: value => redirects.push(value) }, addEventListener: (name, listener) => { listeners[name] = listener; } };
   const document = { getElementById: () => ({}) };
   /** Fake Lock constructor for installing the patch; no arguments or errors. */
   function Auth0Lock() {}
@@ -137,6 +138,7 @@ function lockPage() {
   new Auth0Lock().show();
   return {
     events,
+    redirects,
     /**
      * Dispatches a handle value through the real capture-phase submit listener.
      * @param {string} handle Signup handle or login identifier.
@@ -173,3 +175,15 @@ test('login and password reset accept long identifiers after visiting signup', (
   events['forgot_password ready']();
   assert.equal(blocked('long.email@example.com'), false);
 });
+
+for (const error of [
+  { code: 'EMAIL_VERIFICATION_REQUIRED' },
+  { error_description: 'Activate your account before logging in.' },
+  { original: { result: { content: { code: 'EMAIL_VERIFICATION_REQUIRED' } } } }
+]) {
+  test('hosted Lock login redirects verification failures to account activation', () => {
+    const { events, redirects } = lockPage();
+    events.authorization_error(error);
+    assert.deepEqual(redirects, ['https://accounts-auth0.{{DOMAIN}}/activation_required.html']);
+  });
+}
