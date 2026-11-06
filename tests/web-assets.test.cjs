@@ -9,13 +9,14 @@ const vm = require('node:vm');
  * No inputs; returns selectors, requests and the VM for exercising page handlers.
  * Used by activation tests; propagates script loading/execution errors.
  */
-function activationPage() {
+function activationPage(options = {}) {
   const elements = new Map();
   const requests = [];
   const document = {};
+  const redirects = [];
   const window = {
     history: { forward() {} },
-    location: { search: '?formAction=https%3A%2F%2Fauth.{{DOMAIN}}%2Fcontinue&userId=123&resendToken=test&canResend=true&state=state-test' }
+    location: { search: options.search ?? '?formAction=https%3A%2F%2Fauth.topcoder-dev.com%2Fcontinue&userId=123&resendToken=test&canResend=true&state=state-test', hash: options.hash || '', replace: url => redirects.push(url) }
   };
   /**
    * Adapts the selector/object supplied by the page to a chainable jQuery fixture.
@@ -46,9 +47,9 @@ function activationPage() {
     return elements.get(selector);
   }
   $.ajax = options => requests.push(options);
-  const context = vm.createContext({ $, document, window, console: { error() {} } });
-  vm.runInContext(readFileSync(join(__dirname, '../web-assets/js/check_email.js'), 'utf8'), context);
-  return { $, requests, context };
+  const context = vm.createContext({ $, document, window, URL, URLSearchParams, console: { error() {} } });
+  vm.runInContext(readFileSync(join(__dirname, '../web-assets/js/check_email.js'), 'utf8').replaceAll('{{DOMAIN}}', 'topcoder-dev.com').replaceAll('{{AUTH0DOMAIN}}', 'topcoder-dev.auth0.com'), context);
+  return { $, requests, context, redirects };
 }
 
 for (const [name, error, expected] of [
@@ -93,7 +94,7 @@ test('successful activation continues the Auth0 flow with the original state', (
   assert.deepEqual(JSON.parse(requests[0].data).param, { userId: '123', resendToken: 'test', otp: '012345' });
   requests[0].success({ id: 123 });
   assert.equal($('#verifyOtp').submits, 1);
-  assert.equal($('#verifyOtp').attributes.action, 'https://auth.{{DOMAIN}}/continue');
+  assert.equal($('#verifyOtp').attributes.action, 'https://auth.topcoder-dev.com/continue');
   assert.equal($('#state').value, 'state-test');
 });
 
@@ -185,5 +186,64 @@ for (const error of [
     const { events, redirects } = lockPage();
     events.authorization_error(error);
     assert.deepEqual(redirects, ['https://accounts-auth0.{{DOMAIN}}/activation_required.html']);
+  });
+}
+
+const activationProof = { code: 'EMAIL_VERIFICATION_REQUIRED', activation: { userId: '123', resendToken: 'header.payload.signature', canResend: true } };
+for (const event of ['signup error', 'authorization_error']) {
+  for (const error of [
+    { code: 'blocked_user', description: JSON.stringify(activationProof) },
+    { original: { response: { body: { message: JSON.stringify(activationProof) } } } },
+    { code: 'EMAIL_VERIFICATION_REQUIRED', original: { description: JSON.stringify(activationProof) } }
+  ]) {
+    test(`${event} opens standalone OTP activation using the limited proof in the fragment`, () => {
+      const { events, redirects } = lockPage();events[event](error);
+      assert.equal(redirects.length, 1);
+      const url = new URL(redirects[0].replace('{{DOMAIN}}', 'topcoder-dev.com'));
+      assert.equal(url.origin, 'https://accounts-auth0.topcoder-dev.com');assert.equal(url.pathname, '/check_email.html');
+      assert.equal(url.search, '?mode=standalone');
+      assert.equal(new URLSearchParams(url.hash.slice(1)).get('resendToken'), 'header.payload.signature');
+    });
+  }
+}
+test('malformed activation proof cannot select a redirect or expose arbitrary payload', () => {
+  const { events, redirects } = lockPage();
+  events.authorization_error({ description: JSON.stringify({ ...activationProof, activation: { userId: '123', resendToken: 'https://evil.test' } }) });
+  assert.deepEqual(redirects, ['https://accounts-auth0.{{DOMAIN}}/activation_required.html']);
+});
+function standalone(returnUrl = 'https://www.topcoder-dev.com/challenges', canResend = 'true') {
+  return activationPage({ search: '?mode=standalone', hash: '#userId=123&resendToken=header.payload.signature&canResend=' + canResend + '&returnUrl=' + encodeURIComponent(returnUrl) });
+}
+test('standalone activation posts OTP proof and then starts a fresh login, without resuming Auth0', () => {
+  const { $, requests, redirects } = standalone();$('#otp').val('123456');$('#continueBtn').handlers.click();
+  assert.equal(requests[0].url, 'https://api.topcoder-dev.com/v6/users/activate');
+  assert.deepEqual(JSON.parse(requests[0].data), { param: { userId: '123', resendToken: 'header.payload.signature', otp: '123456' } });
+  requests[0].success({});assert.equal($('#verifyOtp').submits, 0);
+  assert.equal(redirects[0], 'https://accounts-auth0.topcoder-dev.com/?retUrl=' + encodeURIComponent('https://www.topcoder-dev.com/challenges'));
+});
+test('standalone activation failure stays on the form and permits retry', () => {
+  const { $, requests, redirects } = standalone();$('#otp').val('123456');$('#continueBtn').handlers.click();
+  requests[0].error({ responseJSON: { message: 'Wrong activation code' } });
+  assert.equal(redirects.length, 0);assert.equal($('#error').textValue, 'Wrong activation code');assert.equal($('#continueBtn').attributes.disabled, undefined);
+});
+test('standalone resend uses only the activation proof and does not create a session', () => {
+  const { $, requests, redirects } = standalone();$('#resend').handlers.click();
+  assert.deepEqual(JSON.parse(requests[0].data), { param: { userId: '123', resendToken: 'header.payload.signature' } });
+  requests[0].success({});assert.equal(redirects.length, 0);
+  assert.equal(standalone(undefined, 'false').$('#resend-text').hidden, true);
+});
+for (const target of ['https://evil.test/', 'https://topcoder-dev.com.evil.test/', 'https://topcoder-dev.com@evil.test/', 'javascript:alert(1)', '//evil.test/', 'http://www.topcoder-dev.com/', 'https://www.topcoder-dev.com:8443/', 'https://user:pass@www.topcoder-dev.com/']) {
+  test(`standalone activation rejects unsafe return destination ${target}`, () => {
+    const { $, requests, redirects } = standalone(target);$('#otp').val('123456');$('#continueBtn').handlers.click();requests[0].success({});
+    assert.equal(redirects[0], 'https://accounts-auth0.topcoder-dev.com/?retUrl=' + encodeURIComponent('https://www.topcoder-dev.com/'));
+  });
+}
+for (const options of [
+  { search: '?mode=standalone', hash: '#userId=123&resendToken=invalid' },
+  { search: '?mode=standalone&formAction=https://evil.test/', hash: '#userId=123&resendToken=header.payload.signature' },
+  { search: '?formAction=https://auth.topcoder-dev.com/continue.evil&userId=123' }
+]) {
+  test('invalid activation context binds no submit handler', () => {
+    const { $, requests } = activationPage(options);assert.equal($('#continueBtn').handlers.click, undefined);assert.equal(requests.length, 0);
   });
 }

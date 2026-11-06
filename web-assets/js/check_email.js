@@ -40,17 +40,40 @@ function getActivationErrorMessage(error, fallback) {
 
 $(document).ready(function () {
   window.history.forward();
-  const resendToken = qs["resendToken"];
-  const canResend = qs["canResend"];
-  const userId = qs["userId"];
+  // Standalone activation starts after Auth0 has rejected an unverified login.
+  // It never resumes that failed transaction or fabricates a verified session.
+  const standalone = qs.mode === 'standalone' && !qs.formAction;
+  const params = standalone
+    ? Object.fromEntries(new URLSearchParams((window.location.hash || '').slice(1)))
+    : qs;
+  const resendToken = params.resendToken;
+  const canResend = params.canResend === 'true';
+  const userId = params.userId;
   let isActivating = false;
-  let formAction = qs["formAction"] || "#";
+  const formAction = qs.formAction || '#';
   const opt1 = 'https://auth.{{DOMAIN}}/continue';
   const opt2 = 'https://{{AUTH0DOMAIN}}/continue';
-  if (!formAction.startsWith(opt1) && !formAction.startsWith(opt2)) {
-    // looks like XSS attack
-    formAction = "#";
+  if ((!standalone && formAction !== opt1 && formAction !== opt2) ||
+      (standalone && (!/^\d+$/.test(userId || '') ||
+        typeof resendToken !== 'string' || resendToken.length > 8192 ||
+        !/^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(resendToken)))) {
+    $('#error').text('Your activation link is invalid. Please sign in again.');
+    $('#error').closest('.message-wrapper').fadeIn();
+    setContinueButtonDisabledStatus(true);
     return false;
+  }
+
+  let afterActivation = 'https://www.{{DOMAIN}}/';
+  if (standalone && params.returnUrl) {
+    try {
+      const target = new URL(params.returnUrl);
+      const domain = '{{DOMAIN}}';
+      if (target.protocol === 'https:' && !target.username && !target.password &&
+          (!target.port || target.port === '443') &&
+          (target.hostname === domain || target.hostname.endsWith('.' + domain))) {
+        afterActivation = target.href;
+      }
+    } catch (ignored) { /* Keep the safe default destination. */ }
   }
   const apiServerUrl = "https://api.{{DOMAIN}}/v6/users";
   $("#continueBtn").click(function () {
@@ -82,6 +105,10 @@ $(document).ready(function () {
         $("#notify").html("Your account is activated");
         $("#notify").closest(".message-wrapper").fadeIn();
         $("#resend-text").hide();
+        if (standalone) {
+          window.location.replace('https://accounts-auth0.{{DOMAIN}}/?retUrl=' + encodeURIComponent(afterActivation));
+          return;
+        }
         $('#verifyOtp').attr('action', formAction);
         $("#state").val(qs["state"]);
         $("#returnUrl").val(qs["returnUrl"]);
