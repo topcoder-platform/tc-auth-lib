@@ -121,25 +121,52 @@ test('resend displays v6 errors and keeps the retry link available', () => {
  * No inputs; returns the Lock event handlers and guard submission helper.
  * Used to verify signup-only interception. Propagates loading/execution errors.
  */
-function lockPage() {
+function lockPage({ navigationFails = false } = {}) {
   const events = {};
   const listeners = {};
   const input = { value: '', closest: () => ({}) };
   const form = { querySelector: () => input };
   const redirects = [];
-  const window = { location: { assign: value => redirects.push(value) }, addEventListener: (name, listener) => { listeners[name] = listener; } };
-  const document = { getElementById: () => ({}) };
+  const navigationStates = [];
+  const errorNode = { textContent: "We're sorry, something went wrong when attempting to sign up." };
+  const timers = [];
+  const logs = [];
+  const pendingNodes = [];
+  const window = {
+    location: { assign(value) {
+      navigationStates.push(pendingNodes.length);
+      if (navigationFails) throw new Error('Navigation failed');
+      redirects.push(value);
+    } },
+    addEventListener: (name, listener) => { listeners[name] = listener; }
+  };
+  const document = {
+    getElementById: () => ({}),
+    querySelectorAll: selector => selector === '.auth0-lock-error-msg' ? [errorNode] : [],
+    body: { appendChild: node => pendingNodes.push(node) },
+    createElement(tagName) {
+      return {
+        tagName, children: [], attributes: {}, style: {},
+        setAttribute(name, value) { this.attributes[name] = value; },
+        appendChild(node) { this.children.push(node); },
+        remove() { pendingNodes.splice(pendingNodes.indexOf(this), 1); }
+      };
+    }
+  };
   /** Fake Lock constructor for installing the patch; no arguments or errors. */
   function Auth0Lock() {}
   Auth0Lock.prototype.on = (name, handler) => { events[name] = handler; };
   Auth0Lock.prototype.show = () => {};
   window.Auth0Lock = Auth0Lock;
-  const context = vm.createContext({ window, document, console: { log() {} }, setTimeout });
+  const context = vm.createContext({ window, document, console: { error: (...args) => logs.push(args) }, setTimeout: fn => timers.push(fn) });
   vm.runInContext(readFileSync(join(__dirname, '../web-assets/auth0/js/util.js'), 'utf8'), context);
   new Auth0Lock().show();
   return {
     events,
     redirects,
+    pendingNodes, navigationStates, errorNode, logs,
+    restore() { listeners.pageshow(); },
+    flushTimers() { while (timers.length) timers.shift()(); },
     /**
      * Dispatches a handle value through the real capture-phase submit listener.
      * @param {string} handle Signup handle or login identifier.
@@ -190,6 +217,41 @@ for (const error of [
 }
 
 const activationProof = { code: 'EMAIL_VERIFICATION_REQUIRED', activation: { userId: '123', resendToken: 'header.payload.signature', canResend: true } };
+test('activation pending UI precedes navigation and duplicate events redirect only once', () => {
+  const page = lockPage();
+  page.events['signup error']({ description: JSON.stringify(activationProof) });
+  page.events.authorization_error({ description: JSON.stringify(activationProof) });
+  assert.deepEqual(page.navigationStates, [1]);
+  assert.equal(page.redirects.length, 1);
+  const status = page.pendingNodes[0].children.find(node => node.attributes.role === 'status');
+  assert.equal(status.textContent, 'Opening email verification…');
+  assert.equal(status.attributes['aria-live'], 'polite');
+  assert.equal(JSON.stringify(page.logs).includes(activationProof.activation.resendToken), false);
+  page.restore();
+  assert.equal(page.pendingNodes.length, 0);
+  page.events['signup error'](activationProof);
+  assert.equal(page.redirects.length, 2);
+});
+
+test('ordinary signup errors remain visible without an activation screen or redirect', () => {
+  const page = lockPage();
+  page.events['signup error']({ code: 'user_exists', description: 'The user already exists.' });
+  page.flushTimers();
+  assert.equal(page.errorNode.textContent, 'The user already exists.');
+  assert.equal(page.pendingNodes.length, 0);
+  assert.equal(page.redirects.length, 0);
+});
+
+test('failed navigation restores Lock and replaces its later fallback with a retry message', () => {
+  const page = lockPage({ navigationFails: true });
+  page.events['signup error'](activationProof);
+  page.errorNode.textContent = "We're sorry, something went wrong when attempting to sign up.";
+  page.flushTimers();
+  assert.equal(page.pendingNodes.length, 0);
+  assert.equal(page.redirects.length, 0);
+  assert.equal(page.errorNode.textContent, 'Unable to open email verification. Please try again.');
+});
+
 for (const event of ['signup error', 'authorization_error']) {
   for (const error of [
     { code: 'blocked_user', description: JSON.stringify(activationProof) },

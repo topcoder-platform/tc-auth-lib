@@ -451,6 +451,48 @@ var countryObjs = [
         return null;
     }
 
+    var activationPending = null;
+
+    function clearActivationPending() {
+        if (!activationPending) return;
+        activationPending.remove();
+        activationPending = null;
+    }
+
+    // Lock renders its fallback after emitting signup error. Hide its UI
+    // synchronously before navigation, including any subsequent React render.
+    // Keep this state outside Lock's DOM so that render cannot remove it.
+    function redirectToActivation(url) {
+        if (activationPending) return;
+        var pending = document.createElement('div');
+        pending.setAttribute('data-tc-activation-pending', '');
+        var style = document.createElement('style');
+        style.textContent = '.auth0-lock { visibility: hidden !important; }';
+        pending.appendChild(style);
+        var status = document.createElement('div');
+        status.setAttribute('role', 'status');
+        status.setAttribute('aria-live', 'polite');
+        status.style.cssText = 'position:fixed;top:0;right:0;bottom:0;left:0;' +
+            'z-index:2147483647;display:flex;align-items:center;justify-content:center;' +
+            'background:#fff;color:#333;font:18px Roboto,Arial,sans-serif;' +
+            'padding:24px;text-align:center;';
+        status.textContent = 'Opening email verification…';
+        pending.appendChild(status);
+        document.body.appendChild(pending);
+        activationPending = pending;
+        lastBackendSignupMessage = null;
+        try {
+            window.location.assign(url);
+        } catch (ignored) {
+            clearActivationPending();
+            lastBackendSignupMessage = 'Unable to open email verification. Please try again.';
+            forceLockErrorMessage(lastBackendSignupMessage, 40);
+        }
+    }
+
+    // A restored page must not retain the pending UI from its previous visit.
+    window.addEventListener('pageshow', clearActivationPending);
+
     function showActivationForm(proof) {
         // Keep the limited-use proof out of request URLs, referrers and logs.
         // The destination is fixed; no server-supplied redirect URL is trusted.
@@ -459,7 +501,7 @@ var countryObjs = [
             '&resendToken=' + encodeURIComponent(proof.resendToken) +
             '&canResend=' + (proof.canResend === true ? 'true' : 'false');
         if (typeof returnUrl === 'string') fragment += '&returnUrl=' + encodeURIComponent(returnUrl);
-        window.location.assign('https://accounts-auth0.{{DOMAIN}}/check_email.html?mode=standalone#' + fragment);
+        redirectToActivation('https://accounts-auth0.{{DOMAIN}}/check_email.html?mode=standalone#' + fragment);
     }
 
     function attachSignupErrorHandler(lockInstance) {
@@ -479,7 +521,7 @@ var countryObjs = [
             var message = extractMessageFromArgs(args);
             if (message && (message.indexOf('EMAIL_VERIFICATION_REQUIRED') !== -1 ||
                 message.indexOf('Activate your account before logging in.') !== -1)) {
-                window.location.assign('https://accounts-auth0.{{DOMAIN}}/activation_required.html');
+                redirectToActivation('https://accounts-auth0.{{DOMAIN}}/activation_required.html');
                 return;
             }
             if (message) {
