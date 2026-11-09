@@ -32,6 +32,15 @@ then complete activation with a fresh emailed code. A remaining activation API
 failure now shows its actual reason (for example an expired or wrong code)
 instead of "Unknown Error"; the UI does not bypass activation checks.
 
+For PM-6722, the hosted Lock helper displays "Opening email verification…"
+before redirecting a recognized verification response to activation. It hides
+Lock while navigation is pending so Lock's subsequent fallback error render
+cannot flash on screen. Other signup failures retain their error messages.
+Returning through browser history restores the form. This change is published
+as both `util.js` and `country.js`; the hosted login HTML needs no change.
+QA should check successful signup through OTP activation with a slow connection,
+duplicate-account errors, and returning to the form with the browser Back button.
+
 ## CircleCI OIDC deployments
 
 The pipeline reads the pinned public browser configuration with a read-only OIDC
