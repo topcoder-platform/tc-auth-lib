@@ -6,6 +6,8 @@ CONFFILENAME="./web-assets/auth0/css/custom.css"
 perl -pi -e "s/\{\{DOMAIN\}\}/$DOMAIN/g" $CONFFILENAME
 
 
+perl -pi -e "s/\{\{DOMAIN\}\}/$DOMAIN/g" ./web-assets/auth0/js/util.js
+
 mkdir diststatic
 cp -rv ./web-assets/auth0/css ./diststatic/
 cp -rv ./web-assets/auth0/js ./diststatic/

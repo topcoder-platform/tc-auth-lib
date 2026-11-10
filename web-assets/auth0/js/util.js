@@ -276,13 +276,15 @@ var countryObjs = [
         var message = getText(payload.description) ||
             getText(payload.message) ||
             getText(payload.error_description) ||
-            getText(payload.msg);
+            getText(payload.msg) ||
+            getText(payload.code);
         if (message) {
             return message;
         }
 
-        if (payload.result && getText(payload.result.content)) {
-            return getText(payload.result.content);
+        if (payload.result && payload.result.content) {
+            message = extractMessage(payload.result.content);
+            if (message) return message;
         }
 
         if (payload.response && payload.response.body) {
@@ -425,6 +427,83 @@ var countryObjs = [
         return Array.prototype.slice.call(argsLike || []);
     }
 
+    // Auth0 wraps custom database validation errors differently for signup and
+    // login. Read only our explicit activation payload, including JSON messages.
+    function activationContext(value, depth) {
+        if (!value || depth > 8) return null;
+        if (typeof value === 'string') {
+            try { return activationContext(JSON.parse(value), depth + 1); }
+            catch (ignored) { return null; }
+        }
+        if (typeof value !== 'object') return null;
+        var proof = value.activation;
+        if (value.code === 'EMAIL_VERIFICATION_REQUIRED' && proof &&
+            /^\d+$/.test(String(proof.userId || '')) &&
+            typeof proof.resendToken === 'string' && proof.resendToken.length <= 8192 &&
+            /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(proof.resendToken)) {
+            return proof;
+        }
+        var keys = ['description', 'message', 'error_description', 'original', 'response', 'body', 'result', 'content', 'error'];
+        for (var i = 0; i < keys.length; i += 1) {
+            var found = activationContext(value[keys[i]], depth + 1);
+            if (found) return found;
+        }
+        return null;
+    }
+
+    var activationPending = null;
+
+    function clearActivationPending() {
+        if (!activationPending) return;
+        activationPending.remove();
+        activationPending = null;
+    }
+
+    // Lock renders its fallback after emitting signup error. Hide its UI
+    // synchronously before navigation, including any subsequent React render.
+    // Keep this state outside Lock's DOM so that render cannot remove it.
+    function redirectToActivation(url) {
+        if (activationPending) return;
+        var pending = document.createElement('div');
+        pending.setAttribute('data-tc-activation-pending', '');
+        var style = document.createElement('style');
+        style.textContent = '.auth0-lock { visibility: hidden !important; }';
+        pending.appendChild(style);
+        var status = document.createElement('div');
+        status.setAttribute('role', 'status');
+        status.setAttribute('aria-live', 'polite');
+        status.style.cssText = 'position:fixed;top:0;right:0;bottom:0;left:0;' +
+            'z-index:2147483647;display:flex;align-items:center;justify-content:center;' +
+            'background:#fff;color:#333;font:18px Roboto,Arial,sans-serif;' +
+            'padding:24px;text-align:center;';
+        status.textContent = 'Opening email verification…';
+        pending.appendChild(status);
+        document.body.appendChild(pending);
+        activationPending = pending;
+        lastBackendSignupMessage = null;
+        try {
+            window.location.assign(url);
+        } catch (ignored) {
+            clearActivationPending();
+            lastBackendSignupMessage = 'Unable to open email verification. Please try again.';
+            forceLockErrorMessage(lastBackendSignupMessage, 40);
+        }
+    }
+
+    // A restored page must not retain the pending UI from its previous visit.
+    window.addEventListener('pageshow', clearActivationPending);
+
+    function showActivationForm(proof) {
+        // Keep the limited-use proof out of request URLs, referrers and logs.
+        // The destination is fixed; no server-supplied redirect URL is trusted.
+        var returnUrl = window.config && window.config.extraParams && window.config.extraParams.returnUrl;
+        var fragment = 'userId=' + encodeURIComponent(proof.userId) +
+            '&resendToken=' + encodeURIComponent(proof.resendToken) +
+            '&canResend=' + (proof.canResend === true ? 'true' : 'false');
+        if (typeof returnUrl === 'string') fragment += '&returnUrl=' + encodeURIComponent(returnUrl);
+        redirectToActivation('https://accounts-auth0.{{DOMAIN}}/check_email.html?mode=standalone#' + fragment);
+    }
+
     function attachSignupErrorHandler(lockInstance) {
         if (!lockInstance || lockInstance.__tcSignupErrorHandlerAttached || typeof lockInstance.on !== 'function') {
             return;
@@ -432,9 +511,19 @@ var countryObjs = [
 
         function handleLockError(eventName, argsLike) {
             var args = toArray(argsLike);
-            safeLog('Auth0Lock ' + eventName, args.length <= 1 ? args[0] : args);
-
+            for (var i = 0; i < args.length; i += 1) {
+                var proof = activationContext(args[i], 0);
+                if (proof) {
+                    showActivationForm(proof);
+                    return;
+                }
+            }
             var message = extractMessageFromArgs(args);
+            if (message && (message.indexOf('EMAIL_VERIFICATION_REQUIRED') !== -1 ||
+                message.indexOf('Activate your account before logging in.') !== -1)) {
+                redirectToActivation('https://accounts-auth0.{{DOMAIN}}/activation_required.html');
+                return;
+            }
             if (message) {
                 lastBackendSignupMessage = message;
                 safeLog('Resolved signup error message', message);
