@@ -15,9 +15,10 @@ function activationPage(options = {}) {
   const document = {};
   const redirects = [];
   const window = {
-    history: { forward() {} },
+    history: { forward() {}, replaceState(state, title, href) { window.location.href = href; } },
     location: { search: options.search ?? '?formAction=https%3A%2F%2Fauth.topcoder-dev.com%2Fcontinue&userId=123&resendToken=test&canResend=true&state=state-test', hash: options.hash || '', replace: url => redirects.push(url) }
   };
+  window.location.href = 'https://accounts-auth0.topcoder-dev.com/check_email.html' + window.location.search + window.location.hash;
   /**
    * Adapts the selector/object supplied by the page to a chainable jQuery fixture.
    * @param {string|Object} selector CSS selector or an existing fixture/document.
@@ -25,6 +26,13 @@ function activationPage(options = {}) {
    */
   function $(selector) {
     if (typeof selector === 'object' && selector !== document) return selector;
+    if (typeof selector === 'string' && selector.includes(', ')) {
+      const members = selector.split(', ').map($);
+      return {
+        toggle(visible) { members.forEach(element => element.toggle(visible)); },
+        click(fn) { members.forEach(element => element.click(fn)); }
+      };
+    }
     if (!elements.has(selector)) {
       const element = {
         value: '', textValue: '', attributes: {}, handlers: {}, hidden: false, submits: 0,
@@ -35,6 +43,9 @@ function activationPage(options = {}) {
         closest() { return this; },
         fadeIn() { this.hidden = false; return this; },
         fadeOut() { this.hidden = true; return this; },
+        trigger() { return this; },
+        toggle(visible) { this.hidden = !visible; return this; },
+        prop(name, value) { this.attributes[name] = value; return this; },
         hide() { this.hidden = true; return this; },
         attr(name, value) { this.attributes[name] = value; return this; },
         removeAttr(name) { delete this.attributes[name]; return this; },
@@ -47,7 +58,7 @@ function activationPage(options = {}) {
     return elements.get(selector);
   }
   $.ajax = options => requests.push(options);
-  const context = vm.createContext({ $, document, window, URL, URLSearchParams, console: { error() {} } });
+  const context = vm.createContext({ $, document, window, URL, URLSearchParams, clearTimeout() {}, setTimeout() {}, console: { error() {} } });
   vm.runInContext(readFileSync(join(__dirname, '../web-assets/js/check_email.js'), 'utf8').replaceAll('{{DOMAIN}}', 'topcoder-dev.com').replaceAll('{{AUTH0DOMAIN}}', 'topcoder-dev.auth0.com'), context);
   return { $, requests, context, redirects };
 }
@@ -55,9 +66,9 @@ function activationPage(options = {}) {
 for (const [name, error, expected] of [
   ['v6 message', { responseJSON: { message: 'Wrong activation code' } }, 'Wrong activation code'],
   ['v6 validation array', { responseJSON: { message: ['Invalid user', 'Invalid code'] } }, 'Invalid user Invalid code'],
-  ['legacy error', { responseJSON: { result: { content: 'Activation code expired' } } }, 'Activation code expired'],
+  ['legacy error', { responseJSON: { result: { content: 'Invalid code' } } }, 'Invalid code'],
   ['nested message', { responseJSON: { error: { message: 'Expired token' } } }, 'Expired token'],
-  ['JSON response text', { responseText: '{"message":"Too many attempts"}' }, 'Too many attempts'],
+  ['JSON response text', { responseText: '{"message":"Invalid code"}' }, 'Invalid code'],
   ['network failure', { status: 0 }, 'Unable to activate your account. Please try again.'],
   ['non-JSON response', { responseText: '<html>Bad gateway</html>' }, 'Unable to activate your account. Please try again.'],
   ['HTML in API message', { responseJSON: { message: '<img src=x onerror=alert(1)>' } }, '<img src=x onerror=alert(1)>']
@@ -309,3 +320,52 @@ for (const options of [
     const { $, requests } = activationPage(options);assert.equal($('#continueBtn').handlers.click, undefined);assert.equal(requests.length, 0);
   });
 }
+
+test('expired code opens a replacement action, guards double clicks and accepts the emailed code', () => {
+  const page = lockPage();
+  page.events.authorization_error({ description: JSON.stringify({ code: activationProof.code,
+    activation: { ...activationProof.activation, activationCodeState: 'expired' } }) });
+  const url = new URL(page.redirects[0].replace('{{DOMAIN}}', 'topcoder-dev.com'));
+  const { $, requests, redirects } = activationPage({ search: url.search, hash: url.hash });
+  assert.equal($('#error').textValue, 'Your activation code has expired.');
+  assert.equal($('#otp').hidden, true);
+  assert.equal(requests.length, 0);
+  $('#replacement').handlers.click();
+  $('#replacement').handlers.click();
+  assert.equal(requests.length, 1);
+  requests[0].success({ message: 'SUCCESS', nextResendAt: new Date(Date.now() + 60_000).toISOString() });
+  assert.equal($('#otp').hidden, false);
+  assert.equal($('#resend-time').hidden, false);
+  assert.equal($('#resend-text').hidden, true);
+  $('#otp').val('012345');
+  $('#continueBtn').handlers.click();
+  assert.equal(requests.length, 2);
+  requests[1].success({});
+  assert.equal(redirects.length, 1);
+});
+
+for (const control of ['#continueBtn', '#resend']) {
+  test('expired proof on ' + control + ' offers a fresh sign-in', () => {
+    const { $, requests } = standalone();
+    $('#otp').val('012345');
+    $(control).handlers.click();
+    requests[0].error({ status: 410 });
+    assert.equal($('#sign-in').hidden, false);
+    assert.match($('#sign-in').attributes.href, /^https:\/\/accounts-auth0\.topcoder-dev\.com\//);
+    assert.equal($('#resend-text').hidden, true);
+    $(control).handlers.click();
+    assert.equal(requests.length, 1);
+  });
+}
+test('code expiring on the open page offers replacement; a throttled request shows the next time', () => {
+  const { $, requests } = standalone(undefined, 'false');
+  $('#otp').val('123456');
+  $('#continueBtn').handlers.click();
+  requests[0].error({ status: 400, responseJSON: { message: 'Activation code expired' } });
+  assert.equal($('#replacement').hidden, false);
+  $('#replacement').handlers.click();
+  requests[1].error({ status: 429, responseJSON: { retryAt: new Date(Date.now() + 90000).toISOString() } });
+  assert.equal($('#resend-time').hidden, false);
+  $('#replacement').handlers.click();
+  assert.equal(requests.length, 2);
+});

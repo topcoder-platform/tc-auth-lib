@@ -500,6 +500,8 @@ var countryObjs = [
         var fragment = 'userId=' + encodeURIComponent(proof.userId) +
             '&resendToken=' + encodeURIComponent(proof.resendToken) +
             '&canResend=' + (proof.canResend === true ? 'true' : 'false');
+        if (proof.activationCodeState) fragment += '&activationCodeState=' + encodeURIComponent(proof.activationCodeState);
+        if (proof.nextResendAt) fragment += '&nextResendAt=' + encodeURIComponent(proof.nextResendAt);
         if (typeof returnUrl === 'string') fragment += '&returnUrl=' + encodeURIComponent(returnUrl);
         redirectToActivation('https://accounts-auth0.{{DOMAIN}}/check_email.html?mode=standalone#' + fragment);
     }

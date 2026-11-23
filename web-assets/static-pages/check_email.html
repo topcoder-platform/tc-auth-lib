@@ -64,6 +64,9 @@
             </div>
           </div>
         </div>
+        <button type="button" id="replacement" class="continue-btn" style="display:none">Send me a new code</button>
+        <a id="enter-code" href="#" style="display:none">I have a code</a>
+        <a id="sign-in" href="/" style="display:none">Sign in again</a>
         <input id="state" name="state" value="" type="hidden" />
         <input id="returnUrl" name="returnUrl" value="" type="hidden" />
         <input id="otp" name="otp" size="6" class="input-text" autocomplete="off" placeholder="One Time Activation Code"
@@ -74,8 +77,9 @@
       </form>
       <ul class="page-description">
         <li>Don't see an email? Check your spam folder.</li>
-        <li id="resend-text">Still no luck? Request to have us <a href="#" id="resend">resend</a> your activation email.
+        <li id="resend-text"><a href="#" id="resend">Send me a new code</a>
         </li>
+        <li id="resend-time" aria-live="polite" style="display:none"></li>
         <li>Any other issues? Contact <a href="mailto:support@topcoder.com">support@topcoder.com</a>.</li>
       </ul>
     </div>

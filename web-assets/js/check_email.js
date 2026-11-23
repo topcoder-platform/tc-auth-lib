@@ -30,6 +30,7 @@ function getActivationErrorMessage(error, fallback) {
   var message = payload && (payload.message ||
     (payload.result && payload.result.content) ||
     (payload.error && payload.error.message));
+  if (message && typeof message === 'object' && !Array.isArray(message)) message = message.message;
   if (Array.isArray(message)) {
     message = message.filter(function (item) {
       return typeof item === "string" && item.trim();
@@ -47,9 +48,14 @@ $(document).ready(function () {
     ? Object.fromEntries(new URLSearchParams((window.location.hash || '').slice(1)))
     : qs;
   const resendToken = params.resendToken;
-  const canResend = params.canResend === 'true';
+  let canResend = params.canResend === 'true';
   const userId = params.userId;
   let isActivating = false;
+  let isResending = false;
+  let sessionExpired = false;
+  let codeState = params.activationCodeState;
+  let nextResend = Date.parse(params.nextResendAt) || 0;
+  let retryTimer;
   const formAction = qs.formAction || '#';
   const opt1 = 'https://auth.{{DOMAIN}}/continue';
   const opt2 = 'https://{{AUTH0DOMAIN}}/continue';
@@ -64,7 +70,7 @@ $(document).ready(function () {
   }
 
   let afterActivation = 'https://www.{{DOMAIN}}/';
-  if (standalone && params.returnUrl) {
+  if (params.returnUrl) {
     try {
       const target = new URL(params.returnUrl);
       const domain = '{{DOMAIN}}';
@@ -76,8 +82,62 @@ $(document).ready(function () {
     } catch (ignored) { /* Keep the safe default destination. */ }
   }
   const apiServerUrl = "https://api.{{DOMAIN}}/v6/users";
+  const signInUrl = 'https://accounts-auth0.{{DOMAIN}}/?retUrl=' + encodeURIComponent(afterActivation);
+
+  function needsReplacement() {
+    return canResend && (codeState === 'expired' || codeState === 'replacement_required');
+  }
+
+  function renderActions() {
+    const needsCode = needsReplacement();
+    const remaining = Math.max(0, nextResend - Date.now());
+    $('#otp, #continueBtn').toggle(!sessionExpired && !needsCode);
+    $('#replacement, #enter-code').toggle(!sessionExpired && needsCode);
+    $('#replacement').prop('disabled', isResending || remaining > 0);
+    $('#resend-text').toggle(!sessionExpired && !needsCode && canResend && !remaining);
+    $('#sign-in').attr('href', signInUrl).toggle(sessionExpired);
+    $('#resend-time').toggle(!sessionExpired && canResend && remaining > 0);
+    clearTimeout(retryTimer);
+    if (remaining && !sessionExpired) {
+      $('#resend-time').text('You can request another code at ' + new Date(nextResend).toLocaleString() + '.');
+      retryTimer = setTimeout(renderActions, Math.min(remaining, 86400000));
+    }
+    setContinueButtonDisabledStatus(sessionExpired || needsCode || isActivating || isResending || !/^\d{6}$/.test($('#otp').val().trim()));
+  }
+
+  function showError(message) {
+    $('#error').text(message).closest('.message-wrapper').fadeIn();
+    $('#notify').closest('.message-wrapper').fadeOut();
+  }
+
+  function handleFailure(error, fallback) {
+    const message = getActivationErrorMessage(error, fallback);
+    if (error.status === 410) {
+      sessionExpired = true;
+      showError('Your activation session expired. Sign in again to continue.');
+    } else if (error.status === 429 && error.responseJSON && Date.parse(error.responseJSON.retryAt)) {
+      nextResend = Date.parse(error.responseJSON.retryAt);
+      showError('Please try again at ' + new Date(nextResend).toLocaleString() + '.');
+    } else {
+      if (message === 'Activation code expired') codeState = 'expired';
+      if (['Too many attempts', 'Request a new activation code', 'No activation code found'].includes(message)) codeState = 'replacement_required';
+      if (codeState === 'expired' || codeState === 'replacement_required') canResend = true;
+      showError(message);
+    }
+    renderActions();
+  }
+
+  if (codeState === 'expired') showError('Your activation code has expired.');
+  if (codeState === 'replacement_required') showError('Request a new code to activate your account.');
+  $('#enter-code').click(function () {
+    codeState = 'valid';
+    $('#error').closest('.message-wrapper').fadeOut();
+    renderActions();
+    $('#otp').trigger('focus');
+    return false;
+  });
   $("#continueBtn").click(function () {
-    if (isActivating) {
+    if (isActivating || isResending || sessionExpired || needsReplacement()) {
       return false;
     }
     var otp = $("#otp").val().trim();
@@ -106,7 +166,7 @@ $(document).ready(function () {
         $("#notify").closest(".message-wrapper").fadeIn();
         $("#resend-text").hide();
         if (standalone) {
-          window.location.replace('https://accounts-auth0.{{DOMAIN}}/?retUrl=' + encodeURIComponent(afterActivation));
+          window.location.replace(signInUrl);
           return;
         }
         $('#verifyOtp').attr('action', formAction);
@@ -116,66 +176,61 @@ $(document).ready(function () {
         $("#verifyOtp").submit();
       },
       error: function (error) {
-        console.error("[tc-auth-lib] check_email activate error", {
-          status: error && error.status,
-          responseJSON: error && error.responseJSON,
-          responseText: error && error.responseText
-        });
-        $("#error").text(getActivationErrorMessage(error,
-          "Unable to activate your account. Please try again."));
-        $("#error").closest(".message-wrapper").fadeIn();
         isActivating = false;
-        setContinueButtonDisabledStatus(!/^\d{6}$/.test($("#otp").val().trim()));
+        handleFailure(error, 'Unable to activate your account. Please try again.');
       }
     });
     return false;
   });
-  if (canResend) {
-    $("#resend").click(function () {
-      $.ajax({
-        type: "POST",
-        url: apiServerUrl + "/resendActivationEmail",
-        contentType: "application/json",
-        mimeType: "application/json",
-        data: JSON.stringify({
-          "param": {
-            userId, resendToken
-          }
-        }),
-        dataType: "json",
-        success: function (result) {
-          $("#notify").html("Email sent");
-          $("#notify").closest(".message-wrapper").fadeIn();
-          $("#resend-text").hide();
-        },
-        error: function (error) {
-          console.error("[tc-auth-lib] check_email resendActivationEmail error", {
-            status: error && error.status,
-            responseJSON: error && error.responseJSON,
-            responseText: error && error.responseText
-          });
-          $("#error").text(getActivationErrorMessage(error,
-            "Unable to resend your activation email. Please try again."));
-          $("#error").closest(".message-wrapper").fadeIn();
+  $("#resend, #replacement").click(function () {
+    if (!canResend || sessionExpired || isActivating || isResending || nextResend > Date.now()) return false;
+    isResending = true;
+    renderActions();
+    $.ajax({
+      type: "POST",
+      url: apiServerUrl + "/resendActivationEmail",
+      contentType: "application/json",
+      mimeType: "application/json",
+      data: JSON.stringify({
+        "param": {
+          userId, resendToken
         }
-      });
-      return false;
+      }),
+      dataType: "json",
+      success: function (result) {
+        isResending = false;
+        codeState = 'valid';
+        const content = (result.result && result.result.content) || result;
+        nextResend = Date.parse(content.nextResendAt) || 0;
+        // Refreshing the page should reopen code entry with the same proof.
+        const url = new URL(window.location.href);
+        const locationParams = standalone ? new URLSearchParams(url.hash.slice(1)) : url.searchParams;
+        locationParams.set('activationCodeState', 'valid');
+        locationParams.set('canResend', 'true');
+        if (nextResend) locationParams.set('nextResendAt', new Date(nextResend).toISOString());
+        else locationParams.delete('nextResendAt');
+        if (standalone) url.hash = locationParams.toString();
+        window.history.replaceState(window.history.state, '', url.href);
+        $('#otp').val('');
+        $('#error').closest('.message-wrapper').fadeOut();
+        $('#notify').text('Check your email and enter the newest six-digit code.').closest('.message-wrapper').fadeIn();
+        renderActions();
+        $('#otp').trigger('focus');
+      },
+      error: function (error) {
+        isResending = false;
+        handleFailure(error, 'Unable to resend your activation email. Please try again.');
+      }
     });
-  } else {
-    $("#resend-text").hide();
-  }
+    return false;
+  });
 
   $(".close-error").on("click", function () {
     $(this).closest(".message-wrapper").fadeOut();
   });
 
-  $("#otp").on("change keydown paste input", function () {
-    if (isActivating || !/^\d{6}$/.test($(this).val().trim())) {
-      setContinueButtonDisabledStatus(true)
-    } else {
-      setContinueButtonDisabledStatus(false)
-    }
-  });
+  $("#otp").on("input change", renderActions);
+  renderActions();
 });
 /**
  * Enables or disables the activation action during validation and API requests.
